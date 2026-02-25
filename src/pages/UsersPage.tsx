@@ -22,6 +22,7 @@ import {
   Check,
   X,
 } from "lucide-react";
+import { API_URL } from "@/config/api";
 
 /* ================= TYPES ================= */
 type User = {
@@ -57,7 +58,7 @@ const navigate = useNavigate();
 
   /* ================= FETCH ================= */
   useEffect(() => {
-    fetch("http://localhost:5000/api/admin/users")
+    fetch(`${API_URL}/api/admin/users`)
       .then((r) => r.json())
       .then((d) => {
         setUsers(d);
@@ -98,7 +99,7 @@ const navigate = useNavigate();
 
   /* ================= ACTIONS ================= */
    const updateStatus = async (id, status) => {
-    await fetch(`http://localhost:5000/api/admin/update-status/${id}`, {
+    await fetch(`${API_URL}/api/admin/update-status/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
@@ -112,7 +113,7 @@ const navigate = useNavigate();
 const deleteUser = async (id: number) => {
   if (!confirm("Delete this user?")) return;
 
-  await fetch(`http://localhost:5000/api/admin/delete/${id}`, {
+  await fetch(`${API_URL}/api/admin/delete/${id}`, {
     method: "DELETE",
   });
 

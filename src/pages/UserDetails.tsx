@@ -4,6 +4,7 @@ import AdminLayout from "../components/admin/AdminLayout";
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
+import { API_URL } from "@/config/api";
 
 export default function UserDetails() {
   const { id } = useParams();
@@ -12,7 +13,7 @@ export default function UserDetails() {
 
  useEffect(() => {
   const loadUser = async () => {
-    const res = await fetch(`http://localhost:5000/api/admin/user/${id}`);
+    const res = await fetch(`${API_URL}/api/admin/user/${id}`);
     const data = await res.json();
     setUser(data);
     setGeneratedPassword(data.admin_password || "");
@@ -22,7 +23,7 @@ export default function UserDetails() {
 }, [id]);
 
 const approveUser = async () => {
-  const res = await fetch(`http://localhost:5000/api/admin/approve/${id}`, {
+  const res = await fetch(`${API_URL}/api/admin/approve/${id}`, {
     method: "POST",
   });
 
@@ -39,7 +40,7 @@ const approveUser = async () => {
 };
 
   const rejectUser = async () => {
-    await fetch(`http://localhost:5000/api/admin/update-status/${id}`, {
+    await fetch(`${API_URL}/api/admin/update-status/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "rejected" }),

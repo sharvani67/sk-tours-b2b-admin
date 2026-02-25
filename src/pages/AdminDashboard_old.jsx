@@ -1,17 +1,20 @@
 
 import { useEffect, useState } from "react";
+import { API_URL } from "@/config/api";
+
+
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-   fetch("http://localhost:5000/api/admin/users")
+   fetch(`${API_URL}/api/admin/users`)
       .then(res => res.json())
       .then(setUsers);
   }, []);
 
   const updateStatus = async (id, status) => {
-    await fetch(`http://localhost:5000/api/admin/update-status/${id}`, {
+    await fetch(`${API_URL}/api/admin/update-status/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
