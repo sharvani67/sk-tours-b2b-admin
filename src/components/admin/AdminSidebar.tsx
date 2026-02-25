@@ -82,7 +82,10 @@ export function AdminSidebar() {
       {/* FOOTER */}
      <SidebarFooter className="p-4 border-t border-sidebar-border">
   <button
-    onClick={() => navigate("/")}
+    onClick={() => {
+  localStorage.removeItem("admin");
+  navigate("/");
+}}
     className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm text-sidebar-muted transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
   >
     <LogOut className="w-4 h-4" />

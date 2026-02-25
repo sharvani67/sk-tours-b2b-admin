@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Building2, Lock, Mail } from "lucide-react";
+import { API_URL } from "@/config/api";
+import { Building2, Lock, Mail, Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -8,17 +9,35 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
 
-    // ✅ Static credentials
-    if (email === "admin@b2b.com" && password === "Admin@123") {
-      navigate("/dashboard");
-    } else {
-      setError("Invalid email or password");
+  try {
+    const res = await fetch(`${API_URL}/api/auth/admin-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.message || "Login failed");
+      return;
     }
-  };
+
+    // Save admin session
+    localStorage.setItem("admin", JSON.stringify(data.admin));
+
+    navigate("/dashboard");
+
+  } catch (err) {
+    setError("Server error. Please try again.");
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100">
@@ -65,20 +84,30 @@ const Login = () => {
 
           {/* Password */}
           <div>
-            <label className="text-sm font-medium text-gray-600">
-              Password
-            </label>
-            <div className="flex items-center border rounded-xl px-3 mt-1 focus-within:ring-2 focus-within:ring-blue-500">
-              <Lock size={18} className="text-gray-400" />
-              <input
-                type="password"
-                placeholder="Enter password"
-                className="w-full p-3 outline-none"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
+  <label className="text-sm font-medium text-gray-600">
+    Password
+  </label>
+
+  <div className="flex items-center border rounded-xl px-3 mt-1 focus-within:ring-2 focus-within:ring-blue-500">
+    <Lock size={18} className="text-gray-400" />
+
+    <input
+      type={showPassword ? "text" : "password"}
+      placeholder="Enter password"
+      className="w-full p-3 outline-none"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="text-gray-400 hover:text-gray-600"
+    >
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+</div>
 
           {/* Error */}
           {error && (
