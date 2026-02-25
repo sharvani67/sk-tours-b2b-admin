@@ -6,6 +6,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import { useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -20,13 +21,15 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainNav = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Users", url: "/users", icon: Users },
   { title: "Deals", url: "/deals", icon: Handshake },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {
+
+  const navigate = useNavigate();
   return (
     <Sidebar className="border-r border-sidebar-border bg-sidebar">
 
@@ -77,12 +80,15 @@ export function AdminSidebar() {
       </SidebarContent>
 
       {/* FOOTER */}
-      <SidebarFooter className="p-4 border-t border-sidebar-border">
-        <button className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm text-sidebar-muted transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-          <LogOut className="w-4 h-4" />
-          <span>Sign Out</span>
-        </button>
-      </SidebarFooter>
+     <SidebarFooter className="p-4 border-t border-sidebar-border">
+  <button
+    onClick={() => navigate("/")}
+    className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm text-sidebar-muted transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+  >
+    <LogOut className="w-4 h-4" />
+    <span>Sign Out</span>
+  </button>
+</SidebarFooter>
 
     </Sidebar>
   );
