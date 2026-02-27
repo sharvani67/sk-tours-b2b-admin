@@ -24,6 +24,7 @@ const mainNav = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Users", url: "/users", icon: Users },
   { title: "Deals", url: "/deals", icon: Handshake },
+  { title: "Categories", url: "/categories", icon: Handshake },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
