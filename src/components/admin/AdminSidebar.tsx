@@ -26,6 +26,7 @@ const mainNav = [
   { title: "Bookings", url: "/bookings", icon: Handshake },
   { title: "Properties", url: "/properties", icon: Settings },
   // { title: "Deals", url: "/deals", icon: Handshake },
+  { title: "Categories", url: "/categories", icon: Handshake },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 

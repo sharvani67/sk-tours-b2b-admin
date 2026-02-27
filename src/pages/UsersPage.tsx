@@ -5,7 +5,7 @@ import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Eye, Pencil, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -52,7 +52,7 @@ export default function UsersPage() {
 
   const [sortKey, setSortKey] = useState<SortKey>("created_at");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const pageSize = 8;
 
@@ -129,10 +129,12 @@ const deleteUser = async (id: number) => {
           <div>
             <h1 className="text-2xl font-bold">Users</h1>
             <p className="text-muted-foreground">Manage agents & suppliers</p>
+
+           
           </div>
-          {/* <Button>
+          <Button onClick={()=>navigate('/user-form')}>
             <Plus className="w-4 h-4 mr-2" /> Add User
-          </Button> */}
+          </Button>
         </div>
 
         <Card>
