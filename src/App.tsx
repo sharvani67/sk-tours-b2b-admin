@@ -10,6 +10,10 @@ import DealsPage from "./pages/DealsPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import AdminBookings from "./pages/AdminBookings";
+import AdminProperties from "./pages/AdminProperties";
+import AdminBookingDetails from "./pages/AdminBookingDetails";
+import AdminPropertyDetails from "./pages/AdminPropertyDetails";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +37,13 @@ const App = () => (
           <Route path="/" element={<Login />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/users/:id" element={<UserDetails />} />
+          <Route path="/bookings" element={<AdminBookings />} />
+          <Route path="/admin/booking/:bookingNumber" element={<AdminBookingDetails />} />
+         <Route path="/properties" element={<AdminProperties />} />
+         <Route
+            path="/admin/properties/:id"
+            element={<AdminPropertyDetails />}
+          />
           <Route path="/deals" element={<DealsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFound />} />

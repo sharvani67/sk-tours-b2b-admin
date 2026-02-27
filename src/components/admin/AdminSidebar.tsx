@@ -23,7 +23,9 @@ import {
 const mainNav = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Users", url: "/users", icon: Users },
-  { title: "Deals", url: "/deals", icon: Handshake },
+  { title: "Bookings", url: "/bookings", icon: Handshake },
+  { title: "Properties", url: "/properties", icon: Settings },
+  // { title: "Deals", url: "/deals", icon: Handshake },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
