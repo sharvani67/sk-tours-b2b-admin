@@ -18,9 +18,6 @@ import CategoryTable from "./pages/Categories/CategoryTable";
 import UserDetails from "./pages/UserDetails";
 import UsersPage from "./pages/UsersPage";
 
-\
-
-
 
 const queryClient = new QueryClient();
 
