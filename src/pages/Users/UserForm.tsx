@@ -21,18 +21,19 @@ const UserForm = ({ role }: { role: string }) => {
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
-    companyName: "",
-    contactPerson: "",
-    email: "",
-    mobile: "",
-    city: "",
-    pincode: "",
-    country: "",
-    supplierType: "",
-    otherSupplierType: "",
-    gstApplicable: "no",
-    gstNumber: "",
-  });
+  companyName: "",
+  contactPerson: "",
+  email: "",
+  mobile: "",
+  city: "",
+  pincode: "",
+  country: "",
+  supplierType: "",
+  otherSupplierType: "",
+  gstApplicable: "no",
+  gstNumber: "",
+  agentType: "", // NEW
+});
 
   const handleChange = (field: string, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -50,24 +51,28 @@ const handleSubmit = async (e: FormEvent) => {
   setLoading(true);
 
   try {
-    const payload = {
-      role,
-      company_name: form.companyName,
-      contact_person: form.contactPerson,
-      email: form.email,
-      mobile: form.mobile,
-      city: form.city,
-      pincode: form.pincode,
-      country: form.country,
-      supplier_type:
-        role === "supplier"
-          ? form.supplierType === "Others"
-            ? form.otherSupplierType
-            : form.supplierType
-          : null,
-      gst_applicable: form.gstApplicable,
-      gst_number: form.gstApplicable === "yes" ? form.gstNumber : null,
-    };
+  const payload = {
+  role,
+  company_name: form.companyName,
+  contact_person: form.contactPerson,
+  email: form.email,
+  mobile: form.mobile,
+  city: form.city,
+  pincode: form.pincode,
+  country: form.country,
+  supplier_type:
+    role === "supplier"
+      ? form.supplierType === "Others"
+        ? form.otherSupplierType
+        : form.supplierType
+      : null,
+  agent_type: role === "agent" ? form.agentType : null,
+  gst_applicable: form.gstApplicable,
+  gst_number:
+    form.gstApplicable === "yes"
+      ? form.gstNumber
+      : null,
+};
 
     const res = await fetch(`${API_URL}/api/admin/create-user`, {
       method: "POST",
@@ -84,7 +89,7 @@ const handleSubmit = async (e: FormEvent) => {
     }
 
     toast.success("User created & credentials sent to email 🎉");
-navigate("/users");
+    navigate("/users");
 
 
   } catch (error) {
@@ -177,6 +182,25 @@ navigate("/users");
           </div>
         </div>
       )}
+
+
+      {role === "agent" && (
+  <div>
+    <Label>Agent Type</Label>
+    <select
+      className={inputClass}
+      value={form.agentType}
+      onChange={(e) =>
+        handleChange("agentType", e.target.value)
+      }
+      required
+    >
+      <option value="">Select Agent Type</option>
+      <option value="Domestic">Domestic</option>
+      <option value="International">International</option>
+    </select>
+  </div>
+)}
 
       {/* GST SECTION */}
       <div>
