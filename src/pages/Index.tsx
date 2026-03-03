@@ -20,6 +20,8 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import "./../index.css";
+
 
 const barData = [
   { month: "Jan", deals: 45, revenue: 28 },
@@ -41,11 +43,41 @@ const lineData = [
 ];
 
 const recentDeals = [
-  { id: "D-1024", partner: "TechCorp Ltd", amount: "$12,500", status: "Active", date: "Feb 23" },
-  { id: "D-1023", partner: "Global Supplies", amount: "$8,200", status: "Pending", date: "Feb 22" },
-  { id: "D-1022", partner: "MegaTrade Inc", amount: "$23,100", status: "Active", date: "Feb 21" },
-  { id: "D-1021", partner: "FastLogistics", amount: "$5,800", status: "Completed", date: "Feb 20" },
-  { id: "D-1020", partner: "ProServices", amount: "$15,400", status: "Active", date: "Feb 19" },
+  {
+    id: "D-1024",
+    partner: "TechCorp Ltd",
+    amount: "$12,500",
+    status: "Active",
+    date: "Feb 23",
+  },
+  {
+    id: "D-1023",
+    partner: "Global Supplies",
+    amount: "$8,200",
+    status: "Pending",
+    date: "Feb 22",
+  },
+  {
+    id: "D-1022",
+    partner: "MegaTrade Inc",
+    amount: "$23,100",
+    status: "Active",
+    date: "Feb 21",
+  },
+  {
+    id: "D-1021",
+    partner: "FastLogistics",
+    amount: "$5,800",
+    status: "Completed",
+    date: "Feb 20",
+  },
+  {
+    id: "D-1020",
+    partner: "ProServices",
+    amount: "$15,400",
+    status: "Active",
+    date: "Feb 19",
+  },
 ];
 
 const statusColors: Record<string, string> = {
@@ -59,7 +91,11 @@ const Dashboard = () => {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <h1
+            className="text-2xl font-bold tracking-tight heading"
+          >
+            Dashboard
+          </h1>
           <p className="text-muted-foreground text-sm mt-1">
             Welcome back, here's your overview.
           </p>
@@ -99,14 +135,26 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card className="border-border/50 shadow-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold">Deals & Revenue</CardTitle>
+              <CardTitle className="text-base font-semibold heading">
+                Deals & Revenue
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={barData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--border))"
+                  />
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fontSize: 12 }}
+                    stroke="hsl(var(--muted-foreground))"
+                  />
+                  <YAxis
+                    tick={{ fontSize: 12 }}
+                    stroke="hsl(var(--muted-foreground))"
+                  />
                   <Tooltip
                     contentStyle={{
                       background: "hsl(var(--card))",
@@ -115,8 +163,16 @@ const Dashboard = () => {
                       fontSize: 12,
                     }}
                   />
-                  <Bar dataKey="deals" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  <Bar
+                    dataKey="deals"
+                    fill="hsl(var(--accent))"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="revenue"
+                    fill="hsl(var(--primary))"
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -124,14 +180,26 @@ const Dashboard = () => {
 
           <Card className="border-border/50 shadow-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold">User Activity</CardTitle>
+              <CardTitle className="text-base font-semibold heading">
+                User Activity
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={lineData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="day" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--border))"
+                  />
+                  <XAxis
+                    dataKey="day"
+                    tick={{ fontSize: 12 }}
+                    stroke="hsl(var(--muted-foreground))"
+                  />
+                  <YAxis
+                    tick={{ fontSize: 12 }}
+                    stroke="hsl(var(--muted-foreground))"
+                  />
                   <Tooltip
                     contentStyle={{
                       background: "hsl(var(--card))",
@@ -140,8 +208,20 @@ const Dashboard = () => {
                       fontSize: 12,
                     }}
                   />
-                  <Line type="monotone" dataKey="agents" stroke="hsl(var(--accent))" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="suppliers" stroke="hsl(var(--success))" strokeWidth={2} dot={false} />
+                  <Line
+                    type="monotone"
+                    dataKey="agents"
+                    stroke="hsl(var(--accent))"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="suppliers"
+                    stroke="hsl(var(--success))"
+                    strokeWidth={2}
+                    dot={false}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -151,8 +231,13 @@ const Dashboard = () => {
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-semibold">Recent Deals</CardTitle>
-              <a href="/deals" className="text-sm text-accent font-medium flex items-center gap-1 hover:underline">
+              <CardTitle className="text-base font-semibold heading">
+                Recent Deals
+              </CardTitle>
+              <a
+                href="/deals"
+                className="text-sm text-accent font-medium flex items-center gap-1 hover:underline"
+              >
                 View All <ArrowUpRight className="w-3 h-3" />
               </a>
             </div>
@@ -162,25 +247,43 @@ const Dashboard = () => {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">Deal ID</th>
-                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">Partner</th>
-                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">Amount</th>
-                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">Status</th>
-                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">Date</th>
+                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">
+                      Deal ID
+                    </th>
+                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">
+                      Partner
+                    </th>
+                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">
+                      Amount
+                    </th>
+                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">
+                      Status
+                    </th>
+                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">
+                      Date
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentDeals.map((deal) => (
-                    <tr key={deal.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                    <tr
+                      key={deal.id}
+                      className="border-b border-border/50 hover:bg-muted/30 transition-colors"
+                    >
                       <td className="py-3 px-2 font-medium">{deal.id}</td>
                       <td className="py-3 px-2">{deal.partner}</td>
                       <td className="py-3 px-2 font-semibold">{deal.amount}</td>
                       <td className="py-3 px-2">
-                        <Badge variant="outline" className={statusColors[deal.status]}>
+                        <Badge
+                          variant="outline"
+                          className={statusColors[deal.status]}
+                        >
                           {deal.status}
                         </Badge>
                       </td>
-                      <td className="py-3 px-2 text-muted-foreground">{deal.date}</td>
+                      <td className="py-3 px-2 text-muted-foreground">
+                        {deal.date}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

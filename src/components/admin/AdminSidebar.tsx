@@ -37,7 +37,7 @@ export function AdminSidebar() {
     <Sidebar className="border-r border-sidebar-border bg-sidebar">
 
       {/* HEADER */}
-      <SidebarHeader className="px-6 py-5 border-b border-sidebar-border">
+      <SidebarHeader className="px-6 py-5 border-b border-sidebar-border" style={{backgroundColor: "#4763A8" }}>
         <div className="flex items-center justify-center">
           <img
             src="/b2blogo.png"
@@ -48,10 +48,10 @@ export function AdminSidebar() {
       </SidebarHeader>
 
       {/* CONTENT */}
-      <SidebarContent className="px-3 py-6">
+      <SidebarContent className="px-3 py-6" style={{backgroundColor: "#4763A8" }}>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[11px] uppercase tracking-widest text-sidebar-muted px-3 mb-3">
+          <SidebarGroupLabel className="text-[11px] uppercase tracking-widest px-3 mb-3">
             Main Navigation
           </SidebarGroupLabel>
 
@@ -66,6 +66,7 @@ export function AdminSidebar() {
                       to={item.url}
                       end={item.url === "/"}
                       className="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      
                       activeClassName="bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
                     >
                       <item.icon className="w-4 h-4 shrink-0 transition-colors group-hover:scale-105" />
@@ -83,7 +84,7 @@ export function AdminSidebar() {
       </SidebarContent>
 
       {/* FOOTER */}
-     <SidebarFooter className="p-4 border-t border-sidebar-border">
+     <SidebarFooter className="p-4 border-t border-sidebar-border" style={{backgroundColor: "#4763A8" }}>
   <button
     onClick={() => {
   localStorage.removeItem("admin");

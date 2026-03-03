@@ -119,3 +119,8 @@
     @apply bg-gradient-to-br from-card to-secondary/30;
   }
 }
+
+.heading {
+  color: #C9A227;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.2);
+}

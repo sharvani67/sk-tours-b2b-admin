@@ -23,6 +23,7 @@ import {
   X,
 } from "lucide-react";
 import { API_URL } from "@/config/api";
+import "../index.css"
 
 /* ================= TYPES ================= */
 type User = {
@@ -127,7 +128,7 @@ const deleteUser = async (id: number) => {
         {/* HEADER */}
         <div className="flex justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Users</h1>
+            <h1 className="text-2xl font-bold heading">Users</h1>
             <p className="text-muted-foreground">Manage agents & suppliers</p>
 
            
@@ -172,24 +173,24 @@ const deleteUser = async (id: number) => {
                     <tr className="border-b text-left">
 
                       <th onClick={() => toggleSort("company_name")}
-                        className="cursor-pointer py-3">
+                        className="cursor-pointer py-3 heading">
                         Company {sortKey === "company_name" && (sortDir === "asc" ? <ChevronUp /> : <ChevronDown />)}
                       </th>
 
                       <th onClick={() => toggleSort("email")}
-                        className="cursor-pointer py-3 hidden md:table-cell">
+                        className="cursor-pointer py-3 hidden md:table-cell heading">
                         Email
                       </th>
 
-                      <th className="py-3">Role</th>
-                      <th className="py-3">Status</th>
+                      <th className="py-3 heading">Role</th>
+                      <th className="py-3 heading">Status</th>
 
                       <th onClick={() => toggleSort("created_at")}
-                        className="cursor-pointer py-3 hidden lg:table-cell">
+                        className="cursor-pointer py-3 hidden lg:table-cell heading">
                         Joined
                       </th>
 
-                      <th className="cursor-pointer py-3 hidden lg:table-cell">
+                      <th className="cursor-pointer py-3 hidden lg:table-cell heading">
                         Actions
                       </th>
                     </tr>
