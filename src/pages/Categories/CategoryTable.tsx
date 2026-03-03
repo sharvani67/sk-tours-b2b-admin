@@ -20,6 +20,7 @@ export default function CategoryTable() {
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("created_at");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
@@ -105,18 +106,27 @@ export default function CategoryTable() {
           />
         )}
 
-        <Card>
-          <CardHeader>
-            <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
+        <Card className="p-6 space-y-6">
+        {/* SEARCH + FILTER */}
+     <div className="flex flex-col sm:flex-row gap-3 mt-2 w-full">
+               <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 className="pl-9"
                 placeholder="Search category..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
               />
             </div>
-          </CardHeader>
+            <Button
+      onClick={() => {
+        setPage(1);
+        setSearch(searchInput);
+      }}
+    >
+      Search
+    </Button>
+          </div>
 
           <CardContent>
             {loading ? (
@@ -182,6 +192,13 @@ export default function CategoryTable() {
                         </td>
                       </tr>
                     ))}
+                     {rows.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-6 text-center text-muted-foreground">
+                    No Categories found
+                  </td>
+                </tr>
+              )}
                   </tbody>
                 </table>
 

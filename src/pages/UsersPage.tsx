@@ -49,6 +49,8 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+    const [roleInput, setroleInput] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
 
   const [sortKey, setSortKey] = useState<SortKey>("created_at");
@@ -146,21 +148,38 @@ const deleteUser = async (id: number) => {
               <Input
                 className="pl-9"
                 placeholder="Search company or email..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={roleInput}
+                onChange={(e) => setroleInput(e.target.value)}
               />
             </div>
+            <Button
+      onClick={() => {
+        setPage(1);
+        setSearch(roleInput);
+      }}
+    >
+      Search
+    </Button>
 
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-40 h-42">
-                <SelectValue placeholder="Role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="agent">Agent</SelectItem>
-                <SelectItem value="supplier">Supplier</SelectItem>
-              </SelectContent>
-            </Select>
+  <Select value={roleInput} onValueChange={setroleInput}>
+    <SelectTrigger className="w-40 h-42">
+      <SelectValue placeholder="Role" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="all">All</SelectItem>
+      <SelectItem value="agent">Agent</SelectItem>
+      <SelectItem value="supplier">Supplier</SelectItem>
+    </SelectContent>
+  </Select>
+            <Button
+  variant="outline"
+  onClick={() => {
+    setPage(1);
+    setRoleFilter(roleInput);
+  }}
+>
+  Filter
+</Button>
           </CardHeader>
 
           <CardContent>
@@ -243,6 +262,14 @@ const deleteUser = async (id: number) => {
 
                       </tr>
                     ))}
+                    {rows.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-6 text-center text-muted-foreground">
+                    No Users found
+                  </td>
+                </tr>
+              )}
+          
                   </tbody>
                 </table>
 
