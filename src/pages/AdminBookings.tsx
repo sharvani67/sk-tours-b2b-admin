@@ -13,7 +13,9 @@ export default function AdminBookings() {
 
   const [bookings, setBookings] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+    const [statusFilter, setStatusFilter] = useState("");
+    const [statusInput, setStatusInput] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -33,6 +35,7 @@ export default function AdminBookings() {
   useEffect(() => {
     fetchBookings();
   }, [page, search, statusFilter]);
+  
 
   const deleteBooking = async (id: number) => {
     if (!confirm("Delete this booking?")) return;
@@ -64,30 +67,39 @@ export default function AdminBookings() {
     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
     <Input
       placeholder="Search booking, agent or property..."
-      value={search}
-      className="pl-9 w-full"
-      onChange={(e) => {
-        setPage(1);
-        setSearch(e.target.value);
-      }}
+       className="pl-9"
+      value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
     />
   </div>
-
+<Button
+      onClick={() => {
+        setPage(1);
+        setSearch(searchInput);
+      }}
+    >
+      Search
+    </Button>
   {/* Status Filter */}
   <select
     className="h-10 border rounded-lg px-3 bg-background min-w-[160px]"
-    value={statusFilter}
-    onChange={(e) => {
-      setPage(1);
-      setStatusFilter(e.target.value);
-    }}
+    value={statusInput}
+  onChange={(e) => setStatusInput(e.target.value)}
   >
     <option value="">All Status</option>
     <option value="Pending">Pending</option>
     <option value="Cancelled">Cancelled</option>
     <option value="Confirmed">Confirmed</option>
   </select>
-
+<Button
+  variant="outline"
+  onClick={() => {
+    setPage(1);
+    setStatusFilter(statusInput);
+  }}
+>
+  Filter
+</Button>
 </div>
 
         {/* TABLE */}
@@ -147,6 +159,13 @@ export default function AdminBookings() {
 
               </tr>
             ))}
+             {bookings.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-6 text-center text-muted-foreground">
+                    No Bookings found
+                  </td>
+                </tr>
+              )}
           </tbody>
         </table>
 

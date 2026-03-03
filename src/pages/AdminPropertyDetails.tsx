@@ -25,7 +25,7 @@ const tabs = [
 const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const fetchProperty = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/properties/${id}/full`);
+      const res = await fetch(`${API_URL}/api/admin/property/${id}/full`);
       if (!res.ok) throw new Error("Failed");
       const json = await res.json();
       setData(json);
@@ -124,60 +124,78 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
   <Card className="p-6 space-y-6">
 
   {/* TOP ROW */}
-  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+<div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
-    {/* LEFT SECTION */}
-    <div className="flex items-center gap-10">
+  {/* LEFT SIDE INFO */}
+  <div className="flex flex-wrap items-center gap-8">
 
-      {/* Status */}
-      <div>
-        <p className="text-sm text-muted-foreground">Status</p>
+    {/* Status Section */}
+    <div className="space-y-1">
+      <p className="text-sm text-muted-foreground">Status</p>
+
+      <div className="flex items-center gap-3">
         <Badge
           className={
             property.status === "Approved"
               ? "bg-green-100 text-green-600"
               : property.status === "Rejected"
               ? "bg-red-100 text-red-600"
+              : property.status === "Deleted"
+              ? "bg-red-200 text-red-700 border border-red-400"
+              : property.status === "Inactive"
+              ? "bg-gray-200 text-gray-700"
               : "bg-yellow-100 text-yellow-600"
           }
         >
           {property.status}
         </Badge>
-      </div>
 
-      {/* Category */}
-      <div>
-        <p className="text-sm text-muted-foreground">Category</p>
-        <Badge className="bg-blue-100 text-blue-600">
-          {property.category}
-        </Badge>
+        
       </div>
-
-      {/* City */}
-      <div>
-        <p className="text-sm text-muted-foreground">City</p>
-        <p className="font-semibold">{property.city}</p>
-      </div>
-
     </div>
 
-    {/* ACTION BUTTONS */}
-    {property.status === "Pending" && (
-      <div className="flex gap-3">
-        <Button onClick={() => updateStatus("Approved")}>
-          Approve
-        </Button>
+    {/* Category */}
+    <div className="space-y-1">
+      <p className="text-sm text-muted-foreground">Category</p>
+      <Badge className="bg-blue-100 text-blue-600">
+        {property.category}
+      </Badge>
+    </div>
 
-        <Button
-          variant="destructive"
-          onClick={() => updateStatus("Rejected")}
-        >
-          Reject
-        </Button>
-      </div>
-    )}
+    {/* City */}
+    <div className="space-y-1">
+      <p className="text-sm text-muted-foreground">City</p>
+      <p className="font-semibold">{property.city}</p>
+    </div>
 
   </div>
+
+  {/* RIGHT SIDE ACTION BUTTONS */}
+  {property.status === "Pending" && (
+    <div className="flex gap-3">
+      <Button onClick={() => updateStatus("Approved")}>
+        Approve
+      </Button>
+
+      <Button
+        variant="destructive"
+        onClick={() => updateStatus("Rejected")}
+      >
+        Reject
+      </Button>
+    </div>
+  )}
+{/* Restore Button Inline */}
+        {property.status === "Deleted" && (
+          <Button
+            size="sm"
+            onClick={() => updateStatus("Approved")}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            Restore Property
+          </Button>
+        )}
+</div>
 
 </Card>
         <div className="flex flex-wrap gap-3 mt-6">
@@ -222,6 +240,11 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
       <div>
         <p className="text-sm text-muted-foreground">Category</p>
         <p className="font-medium">{property.category}</p>
+      </div>
+
+       <div>
+        <p className="text-sm text-muted-foreground">Total Rooms:</p>
+        <p className="font-medium">{property.total_rooms}</p>
       </div>
 
       <div>
@@ -340,7 +363,7 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
         )}
         <p className="font-semibold">{s.name}</p>
         <p className="text-sm text-muted-foreground">{s.designation}</p>
-        <p className="text-sm">{s.mobile}</p>
+        <p className="text-sm">{s.phones}</p>
       </div>
     ))}
   </Card>

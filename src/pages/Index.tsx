@@ -2,6 +2,8 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { StatCard } from "@/components/admin/StatCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import { API_URL } from "@/config/api";
 import {
   Users,
   Handshake,
@@ -55,6 +57,30 @@ const statusColors: Record<string, string> = {
 };
 
 const Dashboard = () => {
+  const [stats, setStats] = useState({
+  suppliers: 0,
+  agents: 0,
+  approvedSuppliers: 0,
+  pendingSuppliers: 0,
+  todayRegistrations: 0,
+  totalProperties: 0,
+  totalBookings: 0,
+  totalRevenue: 0,
+});
+useEffect(() => {
+  const fetchStats = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/dashboard-stats`);
+      const data = await res.json();
+      setStats(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchStats();
+}, []);
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -65,36 +91,72 @@ const Dashboard = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Users"
-            value="2,847"
-            change="+12.5% from last month"
-            changeType="positive"
-            icon={Users}
-          />
-          <StatCard
-            title="Active Deals"
-            value="384"
-            change="+8.2% from last month"
-            changeType="positive"
-            icon={Handshake}
-          />
-          <StatCard
-            title="Revenue"
-            value="$142.8K"
-            change="+23.1% from last month"
-            changeType="positive"
-            icon={DollarSign}
-          />
-          <StatCard
-            title="Growth Rate"
-            value="18.2%"
-            change="-2.4% from last month"
-            changeType="negative"
-            icon={TrendingUp}
-          />
-        </div>
+       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+  <StatCard
+    title="Total Suppliers"
+    value={String(stats.suppliers)}
+    change="Live Count"
+    changeType="positive"
+    icon={Users}
+  />
+
+  <StatCard
+    title="Total Agents"
+    value={String(stats.agents)}
+    change="Live Count"
+    changeType="positive"
+    icon={Handshake}
+  />
+  <StatCard
+    title="Approved Suppliers"
+    value={String(stats.approvedSuppliers)}
+    change="Active suppliers"
+    changeType="positive"
+    icon={Users}
+  />
+
+  <StatCard
+    title="Pending Suppliers"
+    value={String(stats.pendingSuppliers)}
+    change="Awaiting approval"
+    changeType="negative"
+    icon={Users}
+  />
+
+  <StatCard
+    title="Today's Registrations"
+    value={String(stats.todayRegistrations)}
+    change="New users today"
+    changeType="positive"
+    icon={Users}
+  />
+
+  <StatCard
+    title="Total Properties"
+    value={String(stats.totalProperties)}
+    change="All listed properties"
+    changeType="positive"
+    icon={Handshake}
+  />
+
+  <StatCard
+    title="Total Bookings"
+    value={String(stats.totalBookings)}
+    change="All bookings"
+    changeType="positive"
+    icon={TrendingUp}
+  />
+
+  <StatCard
+    title="Total Revenue"
+    value={`₹${Number(stats.totalRevenue).toLocaleString()}`}
+    change="From confirmed bookings"
+    changeType="positive"
+    icon={DollarSign}
+  />
+
+</div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card className="border-border/50 shadow-sm">

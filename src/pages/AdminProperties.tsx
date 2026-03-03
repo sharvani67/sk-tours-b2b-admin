@@ -11,7 +11,10 @@ export default function AdminProperties() {
   const navigate = useNavigate();
   const [properties, setProperties] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
+    const [statusInput, setStatusInput] = useState("");
+
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -27,9 +30,9 @@ export default function AdminProperties() {
     setTotal(data.total);
   };
 
-  useEffect(() => {
-    fetchProperties();
-  }, [page, search, statusFilter]);
+ useEffect(() => {
+  fetchProperties();
+}, [page, statusFilter, search]);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -59,37 +62,62 @@ export default function AdminProperties() {
 
         {/* Table */}
         <Card className="p-6 space-y-6">
-             <div className="flex flex-col sm:flex-row gap-3 mt-2 w-full">
+            <div className="flex flex-col sm:flex-row gap-3 mt-2 w-full">
 
-  {/* Search Input */}
-  <div className="relative flex-1">
-    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-       <Input
-            placeholder="Search property, city, supplier..."
-            className="pl-9"
-            value={search}
-            onChange={(e) => {
-              setPage(1);
-              setSearch(e.target.value);
-            }}
-          />
-           </div>
-            {/* Status Filter */}
-  <select
-    className="h-10 border rounded-lg px-3 bg-background min-w-[160px]"
-    value={statusFilter}
-    onChange={(e) => {
-      setPage(1);
-      setStatusFilter(e.target.value);
-    }}
-  >
-    <option value="">All Status</option>
-    <option value="Pending">Pending</option>
-    <option value="Cancelled">Cancelled</option>
-    <option value="Confirmed">Confirmed</option>
-  </select>
- 
-          </div>
+  {/* Search Box + Button */}
+  <div className="flex flex-1 gap-2">
+
+    <div className="relative flex-1">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      
+      <Input
+        placeholder="Search property, city, supplier..."
+        className="pl-9"
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+      />
+    </div>
+
+    <Button
+      onClick={() => {
+        setPage(1);
+        setSearch(searchInput);
+      }}
+    >
+      Search
+    </Button>
+
+  </div>
+
+  {/* Status Filter + Button */}
+  <div className="flex gap-2">
+
+<select
+  className="h-10 border rounded-lg px-3 bg-background min-w-[160px]"
+  value={statusInput}
+  onChange={(e) => setStatusInput(e.target.value)}
+>
+  <option value="">All Status</option>
+  <option value="Pending">Pending</option>
+  <option value="Approved">Approved</option>
+  <option value="Rejected">Rejected</option>
+  <option value="Inactive">Inactive</option>
+  <option value="Deleted">Deleted</option>
+</select>
+
+<Button
+  variant="outline"
+  onClick={() => {
+    setPage(1);
+    setStatusFilter(statusInput);
+  }}
+>
+  Filter
+</Button>
+
+  </div>
+
+</div>
           <table className="w-full text-sm">
             <thead className="border-b bg-muted/40">
               <tr>
