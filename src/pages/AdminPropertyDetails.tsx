@@ -7,7 +7,18 @@ import { API_URL } from "@/config/api";
 import { Button } from "@/components/ui/button";
 
 export default function AdminPropertyDetails() {
+const [activeTab, setActiveTab] = useState("overview");
 
+const tabs = [
+  { key: "overview", label: "Overview" },
+  { key: "rooms", label: "Rooms & Pricing" },
+  { key: "amenities", label: "Amenities" },
+  { key: "staff", label: "Staff" },
+  { key: "nearby", label: "Sight Seeing" },
+  { key: "policies", label: "Policies" },
+  { key: "media", label: "Media" },
+  { key: "financial", label: "Bank & Check-in" },
+];
   const { id } = useParams();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -109,6 +120,7 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
         </div>
 
         {/* ================= STATUS CARD ================= */}
+
   <Card className="p-6 space-y-6">
 
   {/* TOP ROW */}
@@ -168,136 +180,273 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
   </div>
 
 </Card>
+        <div className="flex flex-wrap gap-3 mt-6">
+  {tabs.map(tab => (
+    <button
+      key={tab.key}
+      onClick={() => setActiveTab(tab.key)}
+      className={`px-5 py-2 rounded-full text-sm font-medium transition
+        ${activeTab === tab.key
+          ? "bg-primary text-white shadow"
+          : "bg-muted hover:bg-muted/70"}
+      `}
+    >
+      {tab.label}
+    </button>
+  ))}
+</div>
 
-        {/* ================= PROPERTY + CONTACT ================= */}
-        <div className="grid md:grid-cols-2 gap-6">
 
-          <Card className="p-6 space-y-3">
-            <h2 className="font-semibold text-lg mb-2">
-              Property Details
-            </h2>
-            <p><b>Address:</b> {property.address}</p>
-            <p><b>Area:</b> {property.area}</p>
-            <p><b>Pincode:</b> {property.pincode}</p>
-          </Card>
+{/* ================= OVERVIEW ================= */}
+{activeTab === "overview" && (
+  <Card className="p-8 rounded-2xl shadow-sm border bg-white">
+    
+    {/* Header */}
+    <div className="mb-6 border-b pb-4">
+      <h2 className="text-xl font-semibold tracking-tight">
+        Property Overview
+      </h2>
+      <p className="text-sm text-muted-foreground">
+        Complete property information and registration details
+      </p>
+    </div>
 
-          <Card className="p-6 space-y-3">
-            <h2 className="font-semibold text-lg mb-2">
-              Contact Details
-            </h2>
-            <p><b>Contact:</b> {property.contact}</p>
-            <p><b>Email:</b> {property.email}</p>
-          </Card>
+    {/* Details Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
 
-        </div>
+      <div>
+        <p className="text-sm text-muted-foreground">Property Name</p>
+        <p className="font-medium">{property.name}</p>
+      </div>
 
-        {/* ================= IMAGE GALLERY ================= */}
-       <Card className="p-6">
-        <h2 className="font-semibold text-lg mb-4">
-            Property Images
-        </h2>
+      <div>
+        <p className="text-sm text-muted-foreground">Category</p>
+        <p className="font-medium">{property.category}</p>
+      </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {images.map((img: any) => (
-            <img
-                key={img.id}
-                src={`${API_URL}/uploads/${img.image_path}`}
-                onClick={() =>
-                setSelectedImage(`${API_URL}/uploads/${img.image_path}`)
-                }
-                className="rounded-xl h-36 w-full object-cover shadow cursor-pointer hover:scale-105 transition"
-            />
-            ))}
-        </div>
-        </Card>
+      <div>
+        <p className="text-sm text-muted-foreground">City</p>
+        <p className="font-medium">{property.city}</p>
+      </div>
 
-        {/* ================= ROOMS ================= */}
-        <Card className="p-6">
-          <h2 className="font-semibold text-lg mb-6">
-            Rooms
-          </h2>
+      <div>
+        <p className="text-sm text-muted-foreground">Area</p>
+        <p className="font-medium">{property.area}</p>
+      </div>
 
-          {rooms.map((room: any) => {
+      <div>
+        <p className="text-sm text-muted-foreground">Pincode</p>
+        <p className="font-medium">{property.pincode}</p>
+      </div>
 
-            const roomRates = rates.filter(
-              (r: any) => r.room_id === room.id
-            );
+      <div>
+        <p className="text-sm text-muted-foreground">Contact</p>
+        <p className="font-medium">{property.contact}</p>
+      </div>
 
-            return (
-              <div
-                key={room.id}
-                className="border rounded-xl p-5 mb-6"
-              >
-                <div className="mb-4">
-                  <p className="font-semibold text-lg">
-                    {room.type}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Max Adults: {room.max_adults} | 
-                    Max Children: {room.max_children}
-                  </p>
-                </div>
+      <div>
+        <p className="text-sm text-muted-foreground">Email</p>
+        <p className="font-medium">{property.email}</p>
+      </div>
 
-                <div className="grid md:grid-cols-3 gap-4 text-sm">
-                  {roomRates.map((rate: any, index: number) => (
-                    <div
-                      key={index}
-                      className="border rounded-lg p-3"
-                    >
-                      <p><b>Plan:</b> {rate.plan}</p>
-                      <p><b>Type:</b> {rate.rate_type}</p>
-                      <p><b>Base:</b> ₹{rate.base_price}</p>
-                      <p><b>Extra Adult:</b> ₹{rate.extra_adult_price}</p>
-                    </div>
-                  ))}
-                </div>
+      <div className="md:col-span-2">
+        <p className="text-sm text-muted-foreground">Address</p>
+        <p className="font-medium">{property.address}</p>
+      </div>
+
+    </div>
+
+    {/* Registration Certificate */}
+    {property.registration_certificate && (
+      <div className="mt-8 border-t pt-6">
+        <p className="text-sm font-semibold mb-3">
+          Registration Certificate
+        </p>
+
+        <a
+          href={`${API_URL}/uploads/${property.registration_certificate}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border bg-muted hover:bg-muted/70 transition text-sm font-medium"
+        >
+          View Certificate
+        </a>
+      </div>
+    )}
+  </Card>
+)}
+
+{/* ================= ROOMS ================= */}
+{activeTab === "rooms" && rooms.map(room => {
+
+  const roomRates = rates.filter(r => r.room_id === room.id);
+  const plans = ["EP", "CP", "MAP", "AP"];
+
+  return (
+    <Card key={room.id} className="p-6 space-y-4">
+      <h3 className="font-bold text-lg">{room.type}</h3>
+      <p>Max Adults: {room.max_adults} | Max Children: {room.max_children}</p>
+
+      {plans.map(plan => {
+        const planRates = roomRates.filter(r => r.plan === plan);
+        if (!planRates.length) return null;
+
+        return (
+          <div key={plan} className="border rounded-lg p-4">
+            <h4 className="font-semibold mb-3">{plan} Plan</h4>
+
+            {planRates.map(rate => (
+              <div key={rate.id} className="text-sm mb-2">
+                <p><b>{rate.rate_type}</b> — ₹{rate.base_price}</p>
+                <p className="text-muted-foreground">
+                  Extra Adult: ₹{rate.extra_adult_price}
+                </p>
+                <p className="text-muted-foreground">
+                  Child w/ Bed: ₹{rate.child_with_bed_price}
+                </p>
+                <p className="text-muted-foreground">
+                  Child w/o Bed: ₹{rate.child_without_bed_price}
+                </p>
               </div>
-            );
-          })}
-        </Card>
+            ))}
+          </div>
+        );
+      })}
+    </Card>
+  );
+})}
 
-        {/* ================= POLICIES ================= */}
-      <Card className="p-6 space-y-6">
-  <h2 className="font-semibold text-lg">
-    Policies
-  </h2>
-
-  {/* Booking Policy */}
-  <div>
-    <p className="text-sm text-muted-foreground mb-2">
-      Booking Policy
-    </p>
-    <ul className="list-disc pl-6 space-y-1 text-sm">
-      {policies.booking_policy?.split("\n").map((item: string, index: number) => (
-        <li key={index}>{item}</li>
+{/* ================= AMENITIES ================= */}
+{activeTab === "amenities" && (
+  <Card className="p-6">
+    <div className="flex flex-wrap gap-3">
+      {data.amenities.map(a => (
+        <Badge key={a.id}>{a.amenity_name}</Badge>
       ))}
-    </ul>
-  </div>
+    </div>
+  </Card>
+)}
 
-  {/* Cancellation Policy */}
-  <div>
-    <p className="text-sm text-muted-foreground mb-2">
-      Cancellation Policy
-    </p>
-    <ul className="list-disc pl-6 space-y-1 text-sm">
-      {policies.cancellation_policy?.split("\n").map((item: string, index: number) => (
-        <li key={index}>{item}</li>
-      ))}
-    </ul>
-  </div>
+{/* ================= STAFF ================= */}
+{activeTab === "staff" && (
+  <Card className="p-6 grid md:grid-cols-3 gap-6">
+    {data.staff.map(s => (
+      <div key={s.id} className="border rounded-xl p-4">
+        {s.photo && (
+          <img
+            src={`${API_URL}/uploads/${s.photo}`}
+            className="h-40 w-full object-cover rounded-lg mb-3"
+          />
+        )}
+        <p className="font-semibold">{s.name}</p>
+        <p className="text-sm text-muted-foreground">{s.designation}</p>
+        <p className="text-sm">{s.mobile}</p>
+      </div>
+    ))}
+  </Card>
+)}
 
-  {/* Terms */}
-  <div>
-    <p className="text-sm text-muted-foreground mb-2">
-      Terms & Conditions
-    </p>
-    <ul className="list-disc pl-6 space-y-1 text-sm">
-      {policies.terms?.split("\n").map((item: string, index: number) => (
-        <li key={index}>{item}</li>
+{/* ================= SIGHT SEEING ================= */}
+{activeTab === "nearby" && (
+  <Card className="p-6 space-y-4">
+    {data.sightseeing.map(place => (
+      <div key={place.id} className="border rounded-xl p-4">
+        <p className="font-semibold">{place.place_name}</p>
+        <p className="text-sm text-muted-foreground">
+          {place.distance_km} km • {place.travel_time}
+        </p>
+        <p className="text-sm">{place.description}</p>
+      </div>
+    ))}
+  </Card>
+)}
+
+{/* ================= POLICIES ================= */}
+{activeTab === "policies" && (
+  <Card className="p-6 space-y-6">
+
+    <div>
+      <h4 className="font-semibold mb-2">Booking Policy</h4>
+      <ul className="list-disc pl-6 text-sm space-y-1">
+        {policies.booking_policy?.split("\n").map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    </div>
+
+    <div>
+      <h4 className="font-semibold mb-2">Cancellation Policy</h4>
+      <ul className="list-disc pl-6 text-sm space-y-1">
+        {policies.cancellation_policy?.split("\n").map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    </div>
+
+    <div>
+      <h4 className="font-semibold mb-2">Terms</h4>
+      <ul className="list-disc pl-6 text-sm space-y-1">
+        {policies.terms?.split("\n").map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    </div>
+
+  </Card>
+)}
+
+{/* ================= MEDIA ================= */}
+{activeTab === "media" && (
+  <Card className="p-6 space-y-6">
+
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {images.map(img => (
+        <img
+          key={img.id}
+          src={`${API_URL}/uploads/${img.image_path}`}
+          onClick={() =>
+            setSelectedImage(`${API_URL}/uploads/${img.image_path}`)
+          }
+          className="rounded-xl h-36 w-full object-cover cursor-pointer"
+        />
       ))}
-    </ul>
-  </div>
-</Card>
+    </div>
+
+    {data.videos?.length > 0 && (
+      <div className="grid md:grid-cols-2 gap-6">
+        {data.videos.map(v => (
+          <video key={v.id} controls className="rounded-xl">
+            <source src={`${API_URL}/uploads/${v.video_path}`} />
+          </video>
+        ))}
+      </div>
+    )}
+
+  </Card>
+)}
+
+{/* ================= FINANCIAL ================= */}
+{activeTab === "financial" && (
+  <Card className="p-6 space-y-6">
+
+    <div>
+      <h4 className="font-semibold mb-3">Check-in Details</h4>
+      <p>Check-in: {data.checkin?.check_in_time}</p>
+      <p>Check-out: {data.checkin?.check_out_time}</p>
+      <p>24Hr Check-in: {data.checkin?.is_24hr_checkin ? "Yes" : "No"}</p>
+    </div>
+
+    <div>
+      <h4 className="font-semibold mb-3">Bank Details</h4>
+      <p>Account Holder: {data.bank?.account_holder}</p>
+      <p>Bank Name: {data.bank?.bank_name}</p>
+      <p>Account Number: {data.bank?.account_number}</p>
+      <p>IFSC: {data.bank?.ifsc}</p>
+      <p>Branch: {data.bank?.branch}</p>
+    </div>
+
+  </Card>
+)}
 
         {/* ================= TIMELINE ================= */}
         <Card className="p-6">
