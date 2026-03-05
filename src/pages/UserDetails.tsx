@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AdminLayout from "../components/admin/AdminLayout";
 import { Card } from "../components/ui/card";
@@ -10,7 +10,7 @@ export default function UserDetails() {
   const { id } = useParams();
   const [user, setUser] = useState<any>(null);
   const [generatedPassword, setGeneratedPassword] = useState("");
-
+const navigate = useNavigate();
  useEffect(() => {
   const loadUser = async () => {
     const res = await fetch(`${API_URL}/api/admin/user/${id}`);
@@ -54,6 +54,15 @@ const approveUser = async () => {
 
   return (
    <AdminLayout>
+     <div className="max-w-4xl mx-auto mb-4">
+    <Button
+      variant="outline"
+      onClick={() => navigate(-1)}
+      className="mb-2"
+    >
+      ← Back
+    </Button>
+  </div>
   <Card className="p-6 max-w-4xl mx-auto space-y-6">
 
     {/* HEADER */}

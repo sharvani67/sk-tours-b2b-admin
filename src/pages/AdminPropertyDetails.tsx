@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Card } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export default function AdminPropertyDetails() {
 const [activeTab, setActiveTab] = useState("overview");
-
+const navigate = useNavigate();
 const tabs = [
   { key: "overview", label: "Overview" },
   { key: "rooms", label: "Rooms & Pricing" },
@@ -90,6 +90,15 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   return (
     <AdminLayout>
+        <div className="max-w-4xl mx-auto mb-4">
+    <Button
+      variant="outline"
+      onClick={() => navigate(-1)}
+      className="mb-2"
+    >
+      ← Back
+    </Button>
+  </div>
       <div className="max-w-6xl mx-auto space-y-8">
 
         {/* ================= COVER IMAGE ================= */}

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Card } from "@/components/ui/card";
@@ -12,8 +12,9 @@ export default function AdminBookingDetails() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [reason, setReason] = useState("");
+  
 const [specialPercent, setSpecialPercent] = useState(0);
-
+const navigate = useNavigate();
   // ================= FETCH BOOKING =================
   const fetchBooking = async () => {
     try {
@@ -156,6 +157,15 @@ const canCancel =
 
   return (
     <AdminLayout>
+              <div className="max-w-4xl mx-auto mb-4">
+    <Button
+      variant="outline"
+      onClick={() => navigate(-1)}
+      className="mb-2"
+    >
+      ← Back
+    </Button>
+  </div>
       <div className="max-w-6xl mx-auto space-y-8">
 
         {/* ================= HEADER ================= */}
