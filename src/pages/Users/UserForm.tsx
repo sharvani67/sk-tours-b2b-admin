@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
 
@@ -10,33 +10,62 @@ import { Button } from "@/components/ui/button";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { API_URL } from "@/config/api";
 
-const selectClass =
-  "h-12 rounded-xl bg-card border border-input focus:ring-2 focus:ring-ring px-3";
-
 const inputClass =
-  "h-12 rounded-xl bg-card border border-input focus:ring-2 focus:ring-ring px-3";
+  "h-12 rounded-xl bg-card border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3";
+
+const selectClass =
+  "h-12 rounded-xl bg-card border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3";
 
 const UserForm = ({ role }: { role: string }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
-  const [form, setForm] = useState({
+const [categories, setCategories] = useState<any[]>([]);
+const [form, setForm] = useState({
   companyName: "",
+  firstName: "",
+  lastName: "",
   contactPerson: "",
   email: "",
   mobile: "",
+
+  addressLine1: "",
+  addressLine2: "",
   city: "",
+  state: "",
   pincode: "",
   country: "",
+
   supplierType: "",
   otherSupplierType: "",
   gstApplicable: "no",
   gstNumber: "",
-  agentType: "", // NEW
+  agentType: "",
 });
+useEffect(() => {
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/auth/categories`);
+      const data = await res.json();
+      setCategories(data);
+    } catch (error) {
+      console.error("Failed to fetch categories");
+    }
+  };
 
-  const handleChange = (field: string, value: string) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  fetchCategories();
+}, []);
+const handleChange = (field: string, value: string) => {
+  setForm(prev => {
+    const updated = { ...prev, [field]: value };
+
+    if (field === "firstName" || field === "lastName") {
+      updated.contactPerson =
+        `${updated.firstName} ${updated.lastName}`.trim();
+    }
+
+    return updated;
+  });
+};
 
 const handleSubmit = async (e: FormEvent) => {
   e.preventDefault();
@@ -57,21 +86,25 @@ const handleSubmit = async (e: FormEvent) => {
   contact_person: form.contactPerson,
   email: form.email,
   mobile: form.mobile,
+
+  address_line1: form.addressLine1,
+  address_line2: form.addressLine2,
   city: form.city,
+  state: form.state,
   pincode: form.pincode,
   country: form.country,
+
   supplier_type:
     role === "supplier"
       ? form.supplierType === "Others"
         ? form.otherSupplierType
         : form.supplierType
       : null,
+
   agent_type: role === "agent" ? form.agentType : null,
+
   gst_applicable: form.gstApplicable,
-  gst_number:
-    form.gstApplicable === "yes"
-      ? form.gstNumber
-      : null,
+  gst_number: form.gstApplicable === "yes" ? form.gstNumber : null,
 };
 
     const res = await fetch(`${API_URL}/api/admin/create-user`, {
@@ -102,28 +135,80 @@ const handleSubmit = async (e: FormEvent) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 pt-6">
 
-      {/* BUSINESS */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
-          <Label>Company Name</Label>
-          <Input
-            className={inputClass}
-            value={form.companyName}
-            onChange={(e) => handleChange("companyName", e.target.value)}
-            required
-          />
-        </div>
+   <div className="space-y-4">
 
-        <div>
-          <Label>Contact Person</Label>
-          <Input
-            className={inputClass}
-            value={form.contactPerson}
-            onChange={(e) => handleChange("contactPerson", e.target.value)}
-            required
-          />
-        </div>
+{role === "agent" ? (
+
+  <>
+    {/* COMPANY NAME FULL WIDTH */}
+    <div>
+      <Label>Company Name</Label>
+      <Input
+        className={inputClass}
+        value={form.companyName}
+        onChange={(e) => handleChange("companyName", e.target.value)}
+        required
+      />
+    </div>
+
+    {/* FIRST + LAST NAME */}
+    <div className="grid sm:grid-cols-2 gap-4">
+
+      <div>
+        <Label>First Name</Label>
+        <Input
+          className={inputClass}
+          value={form.firstName}
+          onChange={(e) => handleChange("firstName", e.target.value)}
+          required
+        />
       </div>
+
+      <div>
+        <Label>Last Name</Label>
+        <Input
+          className={inputClass}
+          value={form.lastName}
+          onChange={(e) => handleChange("lastName", e.target.value)}
+          required
+        />
+      </div>
+
+    </div>
+  </>
+
+) : (
+
+  <>
+    {/* SUPPLIER LAYOUT */}
+    <div className="grid sm:grid-cols-2 gap-4">
+
+      <div>
+        <Label>Supplier Name</Label>
+        <Input
+          className={inputClass}
+          value={form.companyName}
+          onChange={(e) => handleChange("companyName", e.target.value)}
+          required
+        />
+      </div>
+
+      <div>
+        <Label>Contact Person</Label>
+        <Input
+          className={inputClass}
+          value={form.contactPerson}
+          onChange={(e) => handleChange("contactPerson", e.target.value)}
+          required
+        />
+      </div>
+
+    </div>
+  </>
+
+)}
+
+</div>
 
       {/* CONTACT */}
       <div>
@@ -162,10 +247,12 @@ const handleSubmit = async (e: FormEvent) => {
               required
             >
               <option value="">Select supplier type</option>
-              <option value="Hotel">Hotel</option>
-              <option value="Transport">Transport</option>
-              <option value="Farmhouse">Farmhouse</option>
-              <option value="Others">Others</option>
+
+{categories.map((cat) => (
+  <option key={cat.id} value={cat.category_name}>
+    {cat.category_name}
+  </option>
+))}
             </select>
 
             {form.supplierType === "Others" && (
@@ -184,15 +271,14 @@ const handleSubmit = async (e: FormEvent) => {
       )}
 
 
-      {role === "agent" && (
-  <div>
-    <Label>Agent Type</Label>
+ {role === "agent" && (
+  <div className="flex items-center gap-4">
+    <Label className="whitespace-nowrap">Agent Type</Label>
+
     <select
-      className={inputClass}
+      className={`${inputClass} w-56`}
       value={form.agentType}
-      onChange={(e) =>
-        handleChange("agentType", e.target.value)
-      }
+      onChange={(e) => handleChange("agentType", e.target.value)}
       required
     >
       <option value="">Select Agent Type</option>
@@ -236,26 +322,61 @@ const handleSubmit = async (e: FormEvent) => {
       </div>
 
       {/* LOCATION */}
-      <div className="grid sm:grid-cols-3 gap-4">
-        <Input
-          placeholder="City"
-          className={inputClass}
-          value={form.city}
-          onChange={(e) => handleChange("city", e.target.value)}
-        />
-        <Input
-          placeholder="Pincode"
-          className={inputClass}
-          value={form.pincode}
-          onChange={(e) => handleChange("pincode", e.target.value)}
-        />
-        <Input
-          placeholder="Country"
-          className={inputClass}
-          value={form.country}
-          onChange={(e) => handleChange("country", e.target.value)}
-        />
-      </div>
+      {/* ADDRESS */}
+<div className="space-y-3">
+
+  <div>
+    <Label>Address Line 1</Label>
+    <Input
+      className={inputClass}
+      value={form.addressLine1}
+      onChange={(e) => handleChange("addressLine1", e.target.value)}
+      required
+    />
+  </div>
+
+  <div>
+    <Label>Address Line 2</Label>
+    <Input
+      className={inputClass}
+      value={form.addressLine2}
+      onChange={(e) => handleChange("addressLine2", e.target.value)}
+    />
+  </div>
+
+  <div className="grid sm:grid-cols-2 gap-4">
+    <Input
+      placeholder="City"
+      className={inputClass}
+      value={form.city}
+      onChange={(e) => handleChange("city", e.target.value)}
+    />
+
+    <Input
+      placeholder="State"
+      className={inputClass}
+      value={form.state}
+      onChange={(e) => handleChange("state", e.target.value)}
+    />
+  </div>
+
+  <div className="grid sm:grid-cols-2 gap-4">
+    <Input
+      placeholder="Pincode"
+      className={inputClass}
+      value={form.pincode}
+      onChange={(e) => handleChange("pincode", e.target.value)}
+    />
+
+    <Input
+      placeholder="Country"
+      className={inputClass}
+      value={form.country}
+      onChange={(e) => handleChange("country", e.target.value)}
+    />
+  </div>
+
+</div>
 
      <Button
   type="submit"

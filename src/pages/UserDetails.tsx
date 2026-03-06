@@ -138,9 +138,13 @@ const approveUser = async () => {
         <Info label="Supplier Type" value={user.supplier_type || "-"} />
       )}
 
-      <Info label="Country" value={user.country} />
-      <Info label="City" value={user.city} />
-      <Info label="Pincode" value={user.pincode} />
+     <Info label="Address Line 1" value={user.address_line1 || "-"} />
+<Info label="Address Line 2" value={user.address_line2 || "-"} />
+
+<Info label="City" value={user.city} />
+<Info label="State" value={user.state || "-"} />
+<Info label="Pincode" value={user.pincode} />
+<Info label="Country" value={user.country} />
 
       {/* ✅ FIXED GST DISPLAY */}
       <Info

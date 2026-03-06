@@ -6,6 +6,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/sonner";
 import {
   Select,
   SelectContent,
@@ -32,6 +33,7 @@ type User = {
   company_name: string;
   email: string;
   status: "pending" | "approved" | "rejected";
+  is_active: number;
   created_at: string;
 };
 
@@ -123,6 +125,27 @@ const deleteUser = async (id: number) => {
   setUsers(users.filter(u => u.id !== id));
 };
 
+const toggleActive = async (id: number, current: number, company: string) => {
+
+  const newValue = current === 1 ? 0 : 1;
+
+  await fetch(`${API_URL}/api/admin/toggle-active/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ is_active: newValue }),
+  });
+
+  setUsers(users.map(u =>
+    u.id === id ? { ...u, is_active: newValue } : u
+  ));
+
+  toast.success(
+    newValue === 1
+      ? `${company} activated`
+      : `${company} deactivated`
+  );
+};
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -209,6 +232,8 @@ const deleteUser = async (id: number) => {
                         Joined
                       </th>
 
+                      <th className="py-3 heading">Active</th>
+
                       <th className="cursor-pointer py-3 hidden lg:table-cell heading">
                         Actions
                       </th>
@@ -234,7 +259,20 @@ const deleteUser = async (id: number) => {
                         <td className="hidden lg:table-cell">
                           {new Date(u.created_at).toLocaleDateString()}
                         </td>
-
+<td>
+  <button
+    onClick={() => toggleActive(u.id, u.is_active, u.company_name)}
+  className={`relative inline-flex h-6 w-11 items-center rounded-full transition hover:opacity-80
+${u.is_active ? "bg-green-500" : "bg-red-500"}
+    `}
+  >
+    <span
+      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200
+        ${u.is_active ? "translate-x-6" : "translate-x-1"}
+      `}
+    />
+  </button>
+</td>
                         <td className="flex gap-2 py-2">
 
                           {/* VIEW */}
