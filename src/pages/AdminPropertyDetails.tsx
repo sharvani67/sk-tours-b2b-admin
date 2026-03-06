@@ -327,20 +327,40 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
           <div key={plan} className="border rounded-lg p-4">
             <h4 className="font-semibold mb-3">{plan} Plan</h4>
 
-            {planRates.map(rate => (
-              <div key={rate.id} className="text-sm mb-2">
-                <p><b>{rate.rate_type}</b> — ₹{rate.base_price}</p>
-                <p className="text-muted-foreground">
-                  Extra Adult: ₹{rate.extra_adult_price}
-                </p>
-                <p className="text-muted-foreground">
-                  Child w/ Bed: ₹{rate.child_with_bed_price}
-                </p>
-                <p className="text-muted-foreground">
-                  Child w/o Bed: ₹{rate.child_without_bed_price}
-                </p>
-              </div>
-            ))}
+           {planRates.map(rate => (
+  <div key={rate.id} className="text-sm mb-3 border-b pb-2">
+
+    {/* RATE TYPE + PRICE */}
+    <p>
+      <b className="capitalize">{rate.rate_type.replace("_", " ")}</b> — ₹{rate.base_price}
+    </p>
+
+    {/* LONG WEEKEND DATE RANGE */}
+    {rate.rate_type === "long_weekend" &&
+      rate.long_weekend_from &&
+      rate.long_weekend_to && (
+        <p className="text-xs text-blue-600 mb-1">
+          <span>From: </span>{new Date(rate.long_weekend_from).toLocaleDateString()} 
+          {" - "}
+          <span>To: </span>{new Date(rate.long_weekend_to).toLocaleDateString()}
+        </p>
+    )}
+
+    {/* EXTRA PRICES */}
+    <p className="text-muted-foreground">
+      Extra Adult: ₹{rate.extra_adult_price}
+    </p>
+
+    <p className="text-muted-foreground">
+      Child w/ Bed: ₹{rate.child_with_bed_price}
+    </p>
+
+    <p className="text-muted-foreground">
+      Child w/o Bed: ₹{rate.child_without_bed_price}
+    </p>
+
+  </div>
+))}
           </div>
         );
       })}
@@ -362,19 +382,73 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
 {/* ================= STAFF ================= */}
 {activeTab === "staff" && (
   <Card className="p-6 grid md:grid-cols-3 gap-6">
-    {data.staff.map(s => (
-      <div key={s.id} className="border rounded-xl p-4">
-        {s.photo && (
-          <img
-            src={`${API_URL}/uploads/${s.photo}`}
-            className="h-40 w-full object-cover rounded-lg mb-3"
-          />
-        )}
-        <p className="font-semibold">{s.name}</p>
-        <p className="text-sm text-muted-foreground">{s.designation}</p>
-        <p className="text-sm">{s.phones}</p>
+
+    {data.staff.map((s) => {
+
+      const phones = Array.isArray(s.phones)
+        ? s.phones
+        : JSON.parse(s.phones || "[]");
+
+      const emails = Array.isArray(s.emails)
+        ? s.emails
+        : JSON.parse(s.emails || "[]");
+
+      return (
+        <div key={s.id} className="border rounded-xl p-4 space-y-3">
+
+          {s.photo && (
+            <img
+              src={`${API_URL}/uploads/${s.photo}`}
+              className="h-40 w-full object-cover rounded-lg"
+            />
+          )}
+
+          <div>
+            <p className="font-semibold text-lg">{s.name}</p>
+            <p className="text-sm text-muted-foreground">
+              {s.designation}
+            </p>
+          </div>
+
+          <div className="text-sm space-y-1">
+            <p><b>Phones:</b> {phones.join(", ")}</p>
+            <p><b>Emails:</b> {emails.join(", ")}</p>
+          </div>
+
+        <div className="pt-3 border-t">
+
+  <h4 className="text-sm font-semibold mb-2 text-gray-700">
+    Agent Visibility Settings
+  </h4>
+
+  <div className="text-xs space-y-2">
+    {[
+      { label: "Phone", value: s.show_phones },
+      { label: "Email", value: s.show_emails },
+      { label: "Photo", value: s.show_photo },
+    ].map((item) => (
+      <div key={item.label} className="flex items-center justify-between">
+        <span className="text-muted-foreground">{item.label}</span>
+
+        <Badge
+          className={
+            item.value
+              ? "bg-green-100 text-green-700 border border-green-300"
+              : "bg-red-100 text-red-700 border border-red-300"
+          }
+        >
+          {item.value ? "Visible" : "Hidden"}
+        </Badge>
       </div>
     ))}
+  </div>
+
+</div>
+
+        </div>
+      );
+    })}
+
   </Card>
 )}
 
