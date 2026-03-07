@@ -1,9 +1,20 @@
-import { Bell, Search } from "lucide-react";
+import { Bell, Search, LogOut } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useNavigate } from "react-router-dom";
 
 export function AdminHeader() {
+
+  const navigate = useNavigate();
+
+  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin");
+    navigate("/");
+  };
+
   return (
     <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
 
@@ -34,7 +45,7 @@ export function AdminHeader() {
         </button>
 
         {/* USER */}
-        <div className="flex items-center gap-3 cursor-pointer">
+        <div className="flex items-center gap-3">
 
           <Avatar className="w-8 h-8">
             <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
@@ -44,10 +55,21 @@ export function AdminHeader() {
 
           <div className="hidden sm:block leading-tight">
             <p className="text-sm font-medium">Admin</p>
-            <p className="text-xs text-muted-foreground">admin@b2b.com</p>
+            <p className="text-xs text-muted-foreground">
+              {admin?.email || "admin@b2b.com"}
+            </p>
           </div>
 
         </div>
+
+        {/* LOGOUT BUTTON */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </button>
 
       </div>
 
