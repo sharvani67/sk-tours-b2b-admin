@@ -121,7 +121,7 @@ const handleSubmit = async (e: FormEvent) => {
       return;
     }
 
-    toast.success("User created & credentials sent to email 🎉");
+    toast.success("User created Successfully🎉");
     navigate("/users");
 
 
