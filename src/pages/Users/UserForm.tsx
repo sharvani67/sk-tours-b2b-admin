@@ -383,7 +383,7 @@ const handleSubmit = async (e: FormEvent) => {
   disabled={loading}
   className="w-full h-12 rounded-xl"
 >
-  {loading ? "Submitting..." : "Create User"}
+  {loading ? "Submitting..." : "Save"}
 </Button>
     </form>
   );
