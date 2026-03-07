@@ -44,7 +44,7 @@ const [form, setForm] = useState({
 useEffect(() => {
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/auth/categories`);
+      const res = await fetch(`${API_URL}/api/categories`);
       const data = await res.json();
       setCategories(data);
     } catch (error) {
