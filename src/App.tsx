@@ -17,6 +17,7 @@ import UserForm from "./pages/Users/UserForm";
 import CategoryTable from "./pages/Categories/CategoryTable";
 import UserDetails from "./pages/UserDetails";
 import UsersPage from "./pages/UsersPage";
+import AdminAddProperty from "./pages/Properties/AddProperty";
 
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
           <Route path="/categories" element={<CategoryTable/>} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/user-form" element={<UserForm/>} />
+          <Route path="/add-property/:supplierId" element={<AdminAddProperty/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

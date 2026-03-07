@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2  } from "lucide-react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
 import {
@@ -275,6 +275,16 @@ ${u.is_active ? "bg-green-500" : "bg-red-500"}
 </td>
                         <td className="flex gap-2 py-2">
 
+
+  {u.role === "supplier" && (
+    <Button
+      size="icon"
+      variant="secondary"
+      onClick={() => navigate(`/add-property/${u.id}`)}
+    >
+      <Plus className="w-4 h-4" />
+    </Button>
+  )}
                           {/* VIEW */}
                           <Button
                             size="icon"
