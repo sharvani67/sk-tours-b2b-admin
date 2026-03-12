@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Eye, Pencil, Trash2  } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
 import {
@@ -50,10 +50,11 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-    const [roleInput, setroleInput] = useState("");
-  const [roleFilter, setRoleFilter] = useState("all");
+ const [search, setSearch] = useState("");
+const [searchInput, setSearchInput] = useState("");
+
+const [roleFilter, setRoleFilter] = useState("all");
+const [roleInput, setRoleInput] = useState("all");
 
   const [sortKey, setSortKey] = useState<SortKey>("created_at");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
@@ -72,24 +73,32 @@ export default function UsersPage() {
   }, []);
 
   /* ================= FILTER + SORT ================= */
-  const processed = useMemo(() => {
-    let data = users.filter(
+const processed = useMemo(() => {
+  let data = [...users];
+
+  if (search) {
+    data = data.filter(
       (u) =>
-        (u.company_name.toLowerCase().includes(search.toLowerCase()) ||
-          u.email.toLowerCase().includes(search.toLowerCase())) &&
-        (roleFilter === "all" || u.role === roleFilter)
+        u.company_name.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase())
     );
+  }
 
-    data.sort((a, b) => {
-      const A = a[sortKey];
-      const B = b[sortKey];
-      if (A < B) return sortDir === "asc" ? -1 : 1;
-      if (A > B) return sortDir === "asc" ? 1 : -1;
-      return 0;
-    });
+  if (roleFilter !== "all") {
+    data = data.filter((u) => u.role === roleFilter);
+  }
 
-    return data;
-  }, [users, search, roleFilter, sortKey, sortDir]);
+  data.sort((a, b) => {
+    const A = a[sortKey];
+    const B = b[sortKey];
+
+    if (A < B) return sortDir === "asc" ? -1 : 1;
+    if (A > B) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  return data;
+}, [users, search, roleFilter, sortKey, sortDir]);
 
   const totalPages = Math.ceil(processed.length / pageSize);
   const rows = processed.slice((page - 1) * pageSize, page * pageSize);
@@ -103,7 +112,7 @@ export default function UsersPage() {
   };
 
   /* ================= ACTIONS ================= */
-   const updateStatus = async (id, status) => {
+  const updateStatus = async (id, status) => {
     await fetch(`${API_URL}/api/admin/update-status/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -115,36 +124,36 @@ export default function UsersPage() {
     ));
   };
 
-const deleteUser = async (id: number) => {
-  if (!confirm("Delete this user?")) return;
+  const deleteUser = async (id: number) => {
+    if (!confirm("Delete this user?")) return;
 
-  await fetch(`${API_URL}/api/admin/delete/${id}`, {
-    method: "DELETE",
-  });
+    await fetch(`${API_URL}/api/admin/delete/${id}`, {
+      method: "DELETE",
+    });
 
-  setUsers(users.filter(u => u.id !== id));
-};
+    setUsers(users.filter(u => u.id !== id));
+  };
 
-const toggleActive = async (id: number, current: number, company: string) => {
+  const toggleActive = async (id: number, current: number, company: string) => {
 
-  const newValue = current === 1 ? 0 : 1;
+    const newValue = current === 1 ? 0 : 1;
 
-  await fetch(`${API_URL}/api/admin/toggle-active/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ is_active: newValue }),
-  });
+    await fetch(`${API_URL}/api/admin/toggle-active/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ is_active: newValue }),
+    });
 
-  setUsers(users.map(u =>
-    u.id === id ? { ...u, is_active: newValue } : u
-  ));
+    setUsers(users.map(u =>
+      u.id === id ? { ...u, is_active: newValue } : u
+    ));
 
-  toast.success(
-    newValue === 1
-      ? `${company} activated`
-      : `${company} deactivated`
-  );
-};
+    toast.success(
+      newValue === 1
+        ? `${company} activated`
+        : `${company} deactivated`
+    );
+  };
 
   return (
     <AdminLayout>
@@ -156,9 +165,9 @@ const toggleActive = async (id: number, current: number, company: string) => {
             <h1 className="text-2xl font-bold heading">Users</h1>
             <p className="text-muted-foreground">Manage agents & suppliers</p>
 
-           
+
           </div>
-          <Button onClick={()=>navigate('/user-form')}>
+          <Button onClick={() => navigate('/user-form')}>
             <Plus className="w-4 h-4 mr-2" /> Add User
           </Button>
         </div>
@@ -171,29 +180,29 @@ const toggleActive = async (id: number, current: number, company: string) => {
               <Input
                 className="pl-9"
                 placeholder="Search company or email..."
-                value={roleInput}
-                onChange={(e) => setroleInput(e.target.value)}
+                value={searchInput}
+onChange={(e) => setSearchInput(e.target.value)}
               />
             </div>
             <Button
-      onClick={() => {
-        setPage(1);
-        setSearch(roleInput);
-      }}
-    >
-      Search
-    </Button>
+  onClick={() => {
+    setPage(1);
+    setSearch(searchInput);
+  }}
+>
+  Search
+</Button>
 
-  <Select value={roleInput} onValueChange={setroleInput}>
-    <SelectTrigger className="w-40 h-42">
-      <SelectValue placeholder="Role" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="all">All</SelectItem>
-      <SelectItem value="agent">Agent</SelectItem>
-      <SelectItem value="supplier">Supplier</SelectItem>
-    </SelectContent>
-  </Select>
+            <Select value={roleInput} onValueChange={setRoleInput}>
+              <SelectTrigger className="w-40 h-42">
+                <SelectValue placeholder="Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="agent">Agent</SelectItem>
+                <SelectItem value="supplier">Supplier</SelectItem>
+              </SelectContent>
+            </Select>
             <Button
   variant="outline"
   onClick={() => {
@@ -202,6 +211,19 @@ const toggleActive = async (id: number, current: number, company: string) => {
   }}
 >
   Filter
+</Button>
+
+            <Button
+  variant="secondary"
+  onClick={() => {
+    setSearch("");
+    setSearchInput("");
+    setRoleFilter("all");
+    setRoleInput("all");
+    setPage(1);
+  }}
+>
+  Clear
 </Button>
           </CardHeader>
 
@@ -259,32 +281,24 @@ const toggleActive = async (id: number, current: number, company: string) => {
                         <td className="hidden lg:table-cell">
                           {new Date(u.created_at).toLocaleDateString()}
                         </td>
-<td>
-  <button
-    onClick={() => toggleActive(u.id, u.is_active, u.company_name)}
-  className={`relative inline-flex h-6 w-11 items-center rounded-full transition hover:opacity-80
+                        <td>
+                          <button
+                            onClick={() => toggleActive(u.id, u.is_active, u.company_name)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition hover:opacity-80
 ${u.is_active ? "bg-green-500" : "bg-red-500"}
     `}
-  >
-    <span
-      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200
         ${u.is_active ? "translate-x-6" : "translate-x-1"}
       `}
-    />
-  </button>
-</td>
+                            />
+                          </button>
+                        </td>
                         <td className="flex gap-2 py-2">
 
 
-  {u.role === "supplier" && (
-    <Button
-      size="icon"
-      variant="secondary"
-      onClick={() => navigate(`/add-property/${u.id}`)}
-    >
-      <Plus className="w-4 h-4" />
-    </Button>
-  )}
+
                           {/* VIEW */}
                           <Button
                             size="icon"
@@ -306,18 +320,28 @@ ${u.is_active ? "bg-green-500" : "bg-red-500"}
                             <Trash2 className="w-4 h-4" />
                           </Button>
 
+                          {u.role === "supplier" && (
+                            <Button
+                              size="icon"
+                              variant="secondary"
+                              onClick={() => navigate(`/add-property/${u.id}`)}
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          )}
+
                         </td>
 
                       </tr>
                     ))}
                     {rows.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="py-6 text-center text-muted-foreground">
-                    No Users found
-                  </td>
-                </tr>
-              )}
-          
+                      <tr>
+                        <td colSpan={5} className="py-6 text-center text-muted-foreground">
+                          No Users found
+                        </td>
+                      </tr>
+                    )}
+
                   </tbody>
                 </table>
 
