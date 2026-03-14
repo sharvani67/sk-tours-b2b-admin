@@ -53,6 +53,7 @@ const App = () => (
           <Route path="/categories" element={<CategoryTable/>} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/user-form" element={<UserForm/>} />
+          <Route path="/user-form/:id" element={<UserForm/>} />
           <Route path="/add-property/:supplierId" element={<AdminAddProperty/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>

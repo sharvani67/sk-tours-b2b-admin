@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 
 import AdminLayout from "@/components/admin/AdminLayout";
 import { API_URL } from "@/config/api";
+import { useParams } from "react-router-dom";
 
 const inputClass =
   "h-12 rounded-xl bg-card border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3";
@@ -18,6 +19,8 @@ const selectClass =
 
 const UserForm = ({ role }: { role: string }) => {
   const navigate = useNavigate();
+  const { id } = useParams();
+const isEdit = Boolean(id);
   const [loading, setLoading] = useState(false);
 const [categories, setCategories] = useState<any[]>([]);
 const [form, setForm] = useState({
@@ -54,6 +57,45 @@ useEffect(() => {
 
   fetchCategories();
 }, []);
+
+useEffect(() => {
+  if (!id) return;
+
+  const fetchUser = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/user/${id}`);
+      const data = await res.json();
+
+      setForm({
+        companyName: data.company_name || "",
+        firstName: data.contact_person?.split(" ")[0] || "",
+        lastName: data.contact_person?.split(" ")[1] || "",
+        contactPerson: data.contact_person || "",
+        email: data.email || "",
+        mobile: data.mobile || "",
+
+        addressLine1: data.address_line1 || "",
+        addressLine2: data.address_line2 || "",
+        city: data.city || "",
+        state: data.state || "",
+        pincode: data.pincode || "",
+        country: data.country || "",
+
+        supplierType: data.supplier_type || "",
+        otherSupplierType: "",
+        gstApplicable: data.gst_applicable || "no",
+        gstNumber: data.gst_number || "",
+        agentType: data.agent_type || "",
+      });
+    } catch (err) {
+      toast.error("Failed to load user");
+    }
+  };
+
+  fetchUser();
+}, [id]);
+
+
 const handleChange = (field: string, value: string) => {
   setForm(prev => {
     const updated = { ...prev, [field]: value };
@@ -107,11 +149,17 @@ const handleSubmit = async (e: FormEvent) => {
   gst_number: form.gstApplicable === "yes" ? form.gstNumber : null,
 };
 
-    const res = await fetch(`${API_URL}/api/admin/create-user`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    const url = isEdit
+  ? `${API_URL}/api/admin/update-user/${id}`
+  : `${API_URL}/api/admin/create-user`;
+
+const method = isEdit ? "PUT" : "POST";
+
+const res = await fetch(url, {
+  method,
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+});
 
     const data = await res.json();
 
@@ -383,7 +431,7 @@ const handleSubmit = async (e: FormEvent) => {
   disabled={loading}
   className="w-full h-12 rounded-xl"
 >
-  {loading ? "Submitting..." : "Save"}
+  {loading ? "Submitting..." : isEdit ? "Update User" : "Save"}
 </Button>
     </form>
   );
