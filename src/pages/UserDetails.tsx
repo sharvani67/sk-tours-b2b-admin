@@ -128,7 +128,16 @@ const approveUser = async () => {
 
       <Info label="Contact Person" value={user.contact_person} />
       <Info label="Email" value={user.email} />
-      <Info label="Mobile" value={user.mobile} />
+      <Info
+  label="Mobile Numbers"
+  value={
+    user.mobile
+      ? user.mobile.split(",").map((m, i) => (
+          <div key={i}>{m}</div>
+        ))
+      : "-"
+  }
+/>
 
       {/* 🔥 AGENT FIELDS */}
    
@@ -138,13 +147,16 @@ const approveUser = async () => {
         <Info label="Supplier Type" value={user.supplier_type || "-"} />
       )}
 
-     <Info label="Address Line 1" value={user.address_line1 || "-"} />
+<Info label="Address Line 1" value={user.address_line1 || "-"} />
 <Info label="Address Line 2" value={user.address_line2 || "-"} />
 
-<Info label="City" value={user.city} />
+<Info label="Area" value={user.area || "-"} />
+<Info label="Landmark" value={user.landmark || "-"} />
+
+<Info label="City" value={user.city || "-"} />
 <Info label="State" value={user.state || "-"} />
-<Info label="Pincode" value={user.pincode} />
-<Info label="Country" value={user.country} />
+<Info label="Pincode" value={user.pincode || "-"} />
+<Info label="Country" value={user.country || "-"} />
 
       {/* ✅ FIXED GST DISPLAY */}
       <Info

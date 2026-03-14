@@ -1,7 +1,7 @@
 import { useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
-
+import { Plus, Trash2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,13 +20,14 @@ const UserForm = ({ role }: { role: string }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 const [categories, setCategories] = useState<any[]>([]);
+const [errors, setErrors] = useState<any>({});
 const [form, setForm] = useState({
   companyName: "",
   firstName: "",
   lastName: "",
   contactPerson: "",
   email: "",
-  mobile: "",
+  mobiles: [""],
 
   addressLine1: "",
   addressLine2: "",
@@ -41,6 +42,33 @@ const [form, setForm] = useState({
   gstNumber: "",
   agentType: "",
 });
+
+const addMobile = () => {
+  setForm((prev) => ({
+    ...prev,
+    mobiles: [...prev.mobiles, ""],
+  }));
+};
+
+const removeMobile = (index: number) => {
+  const updated = [...form.mobiles];
+  updated.splice(index, 1);
+
+  setForm((prev) => ({
+    ...prev,
+    mobiles: updated,
+  }));
+};
+
+const updateMobile = (index: number, value: string) => {
+  const updated = [...form.mobiles];
+  updated[index] = value;
+
+  setForm((prev) => ({
+    ...prev,
+    mobiles: updated,
+  }));
+};
 useEffect(() => {
   const fetchCategories = async () => {
     try {
@@ -70,9 +98,35 @@ const handleChange = (field: string, value: string) => {
 const handleSubmit = async (e: FormEvent) => {
   e.preventDefault();
 
-  if (loading) return; // Prevent double click
+  if (loading) return;
 
-  if (!form.companyName || !form.contactPerson || !form.email || !form.mobile) {
+  const newErrors: any = {};
+
+  form.mobiles.forEach((mob, index) => {
+    if (!mob.trim()) {
+      newErrors[`mobile_${index}`] = "Mobile number required";
+      return;
+    }
+
+    if (!/^\d{10}$/.test(mob)) {
+      newErrors[`mobile_${index}`] = "Mobile must be 10 digits";
+    }
+
+    if (form.mobiles.indexOf(mob) !== index) {
+      newErrors[`mobile_${index}`] = "Duplicate mobile number";
+    }
+  });
+
+  setErrors(newErrors);
+
+  if (Object.keys(newErrors).length > 0) {
+    toast.error("Fix mobile errors");
+    return;
+  }
+
+  const cleanedMobiles = form.mobiles.filter(m => m.trim() !== "");
+
+  if (!form.companyName || !form.contactPerson || !form.email) {
     toast.error("Required fields missing");
     return;
   }
@@ -85,7 +139,7 @@ const handleSubmit = async (e: FormEvent) => {
   company_name: form.companyName,
   contact_person: form.contactPerson,
   email: form.email,
-  mobile: form.mobile,
+ mobiles: cleanedMobiles,
 
   address_line1: form.addressLine1,
   address_line2: form.addressLine2,
@@ -132,6 +186,8 @@ const handleSubmit = async (e: FormEvent) => {
     setLoading(false);
   }
 };
+
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6 pt-6">
 
@@ -222,15 +278,59 @@ const handleSubmit = async (e: FormEvent) => {
         />
       </div>
 
-      <div>
-        <Label>Mobile Number</Label>
+<div>
+  <Label>Mobile Number</Label>
+
+  {form.mobiles.map((mob, index) => (
+    <div key={index} className="mb-2">
+
+      <div className="flex gap-2 items-center">
+
         <Input
-          className={inputClass}
-          value={form.mobile}
-          onChange={(e) => handleChange("mobile", e.target.value)}
-          required
+          value={mob}
+          maxLength={10}
+          type="tel"
+          className={`${inputClass} ${
+            errors[`mobile_${index}`] ? "border-red-500" : ""
+          }`}
+          onChange={(e) =>
+            updateMobile(index, e.target.value.replace(/\D/g, ""))
+          }
         />
+
+        {/* ADD BUTTON */}
+        {index === form.mobiles.length - 1 && (
+          <button
+            type="button"
+            onClick={addMobile}
+            className="p-2 rounded-lg bg-green-500 hover:bg-green-600 text-white"
+          >
+            <Plus size={18} />
+          </button>
+        )}
+
+        {/* REMOVE BUTTON */}
+        {form.mobiles.length > 1 && (
+          <button
+            type="button"
+            onClick={() => removeMobile(index)}
+            className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white"
+          >
+            <Trash2 size={18} />
+          </button>
+        )}
+
       </div>
+
+      {errors[`mobile_${index}`] && (
+        <p className="text-red-500 text-sm mt-1">
+          {errors[`mobile_${index}`]}
+        </p>
+      )}
+
+    </div>
+  ))}
+</div>
 
       {/* SUPPLIER SECTION */}
       {role === "supplier" && (

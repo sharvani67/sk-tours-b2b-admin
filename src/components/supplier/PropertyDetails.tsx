@@ -7,7 +7,38 @@ const PropertyDetails = ({ form, handleChange, setCertificate }: any) => {
 
   const [allow24Hr, setAllow24Hr] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
+  const addContact = () => {
+    handleChange("contacts", [...form.contacts, ""]);
+  };
   
+  const removeContact = (index:number) => {
+    const updated = [...form.contacts];
+    updated.splice(index,1);
+    handleChange("contacts", updated);
+  };
+  
+  const updateContact = (index:number,value:string) => {
+    const updated = [...form.contacts];
+    updated[index] = value;
+    handleChange("contacts", updated);
+  };
+  
+  
+  const addEmail = () => {
+    handleChange("emails", [...form.emails, ""]);
+  };
+  
+  const removeEmail = (index:number) => {
+    const updated = [...form.emails];
+    updated.splice(index,1);
+    handleChange("emails", updated);
+  };
+  
+  const updateEmail = (index:number,value:string) => {
+    const updated = [...form.emails];
+    updated[index] = value;
+    handleChange("emails", updated);
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -23,6 +54,19 @@ const PropertyDetails = ({ form, handleChange, setCertificate }: any) => {
     fetchCategories();
   }, []);
 
+useEffect(() => {
+
+  if (!form.name && form.supplier_id) {
+
+    fetch(`${API_URL}/api/admin/supplier/${form.supplier_id}`)
+      .then(res => res.json())
+      .then(data => {
+        handleChange("name", data.company_name);
+      });
+
+  }
+
+}, []);
 
 return (
   <div className="space-y-12">
@@ -38,19 +82,18 @@ return (
     </div>
 
     {/* MAIN GRID */}
-    <div className="grid md:grid-cols-4 gap-6">
+      <div className="grid md:grid-cols-4 gap-4">
 
       {/* PROPERTY NAME */}
       <div className="space-y-2 md:col-span-1">
         <label className="text-sm font-semibold">
           Property Name *
         </label>
-        <Input
-          value={form.name}
-          onChange={e => handleChange("name", e.target.value)}
-          placeholder="e.g. Grand Palace Hotel"
-          className="h-12 rounded-xl"
-        />
+       <Input
+  value={form.name}
+  readOnly
+  className="h-12 rounded-xl text-black"
+/>
       </div>
 
       {/* CATEGORY */}
@@ -75,12 +118,12 @@ return (
       {/* TOTAL ROOMS */}
       <div className="space-y-2">
         <label className="text-sm font-semibold">
-          Total No. of Rooms *
+          Total No. of Rooms
         </label>
         <Input
           type="number"
           min="0"
-          value={form.total_rooms}
+          value={form.total_rooms || ""}
           onChange={e => handleChange("total_rooms", e.target.value)}
           className="h-12 rounded-xl"
         />
@@ -136,27 +179,73 @@ return (
 
       {/* CONTACT */}
       <div className="space-y-2">
-        <label className="text-sm font-semibold">
-          Contact Number
-        </label>
-        <Input
-          value={form.contact}
-          onChange={e => handleChange("contact", e.target.value)}
-          className="tele h-12 rounded-xl"
-        />
-      </div>
+<label className="text-sm font-semibold">Contact Numbers</label>
+
+{form.contacts.map((phone:string,index:number)=>(
+<div key={index} className="flex gap-2">
+
+<Input
+ value={phone}
+ onChange={e=>updateContact(index,e.target.value)}
+ className="h-12 rounded-xl"
+/>
+
+<button
+ type="button"
+ onClick={addContact}
+ className="px-3 bg-green-500 text-white rounded"
+>
++
+</button>
+
+{form.contacts.length>1 && (
+<button
+ type="button"
+ onClick={()=>removeContact(index)}
+ className="px-3 bg-red-500 text-white rounded"
+>
+-
+</button>
+)}
+
+</div>
+))}
+</div>
 
       {/* EMAIL */}
-      <div className="space-y-2 md:col-span-2">
-        <label className="text-sm font-semibold">
-          Email Address
-        </label>
-        <Input
-          value={form.email}
-          onChange={e => handleChange("email", e.target.value)}
-          className="h-12 rounded-xl"
-        />
-      </div>
+     <div className="space-y-2 md:col-span-2">
+<label className="text-sm font-semibold">Email Addresses</label>
+
+{form.emails.map((email:string,index:number)=>(
+<div key={index} className="flex gap-2">
+
+<Input
+ value={email}
+ onChange={e=>updateEmail(index,e.target.value)}
+ className="h-12 rounded-xl"
+/>
+
+<button
+ type="button"
+ onClick={addEmail}
+ className="px-3 bg-green-500 text-white rounded"
+>
++
+</button>
+
+{form.emails.length>1 && (
+<button
+ type="button"
+ onClick={()=>removeEmail(index)}
+ className="px-3 bg-red-500 text-white rounded"
+>
+-
+</button>
+)}
+
+</div>
+))}
+</div>
 
          {/* REGISTRATION CERTIFICATE */}
        <div className="space-y-2 md:col-span-2">
@@ -172,7 +261,7 @@ return (
       </div>
 
       {/* ADDRESS */}
-      <div className="md:col-span-4 space-y-2">
+      <div className="md:col-span-3 space-y-2">
         <label className="text-sm font-semibold">
           Full Address
         </label>
@@ -184,7 +273,7 @@ return (
       </div>
 
       {/* HOTEL REMARKS */}
-      <div className="md:col-span-4 space-y-2">
+      <div className="md:col-span-3 space-y-2">
         <label className="text-sm font-semibold">
           Hotel Remarks
         </label>

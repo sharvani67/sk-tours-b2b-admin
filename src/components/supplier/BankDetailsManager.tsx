@@ -37,7 +37,7 @@ const BankDetailsManager = ({
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-3 gap-6">
 
         {/* ACCOUNT HOLDER */}
         <div className="space-y-2">

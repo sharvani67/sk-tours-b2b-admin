@@ -53,7 +53,8 @@ export default function AdminAddProperty() {
  const { supplierId } = useParams();
   const [activeTab, setActiveTab] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-
+const [showCancelPopup, setShowCancelPopup] = useState(false);
+const [propertyDraftId, setPropertyDraftId] = useState<number | null>(null);
   /* ================= BASIC DETAILS ================= */
 
   const [form, setForm] = useState({
@@ -64,15 +65,36 @@ export default function AdminAddProperty() {
     pincode: "",
     address: "",
     landmark: "",
-    contact: "",
-    email: "",
+    contacts: [""],
+    emails: [""],
     total_rooms: "",
     hotel_remarks: ""
   });
 
+
+  useEffect(() => {
+
+    if (supplierId) {
+      loadDraft();
+    }
+
+  }, [supplierId]);
   const handleChange = (key: string, value: string) => {
     setForm(prev => ({ ...prev, [key]: value }));
   };
+
+  const handleBack = () => {
+  setShowCancelPopup(true);
+};
+
+const confirmCancel = () => {
+  navigate("/users");
+};
+
+const closePopup = () => {
+  setShowCancelPopup(false);
+};
+
 
   /* ================= STATES ================= */
 
@@ -100,8 +122,46 @@ export default function AdminAddProperty() {
     cancelled_cheque: null,
   });
 
-  /* ================= NAVIGATION ================= */
+const loadDraft = async () => {
 
+  try {
+
+    const res = await fetch(`${API_URL}/api/properties/get-draft/${supplierId}`);
+    const data = await res.json();
+
+    if (!data) return;
+
+    setPropertyDraftId(data.id);
+
+    setForm(data.form ? JSON.parse(data.form) : form);
+    setRooms(data.rooms ? JSON.parse(data.rooms) : []);
+    setStaff(data.staff ? JSON.parse(data.staff) : []);
+    setAmenities(data.amenities ? JSON.parse(data.amenities) : []);
+    setSightSeeing(data.sightseeing ? JSON.parse(data.sightseeing) : []);
+    setFaqs(data.faqs ? JSON.parse(data.faqs) : []);
+    setPolicies(data.policies ? JSON.parse(data.policies) : {});
+    setCancellationRules(data.cancellation_rules ? JSON.parse(data.cancellation_rules) : []);
+    setCheckinData(data.checkin_data ? JSON.parse(data.checkin_data) : {});
+    setBankDetails(data.bank_details ? JSON.parse(data.bank_details) : {});
+
+  } catch (err) {
+
+    console.error("Draft load error:", err);
+
+  }
+
+};
+
+  /* ================= NAVIGATION ================= */
+const saveAndContinue = async () => {
+
+  await saveDraft();
+
+  if (activeTab < TABS.length - 1) {
+    setActiveTab(prev => prev + 1);
+  }
+
+};
   const nextTab = () => {
     if (activeTab < TABS.length - 1) {
       setActiveTab(prev => prev + 1);
@@ -113,6 +173,56 @@ export default function AdminAddProperty() {
       setActiveTab(prev => prev - 1);
     }
   };
+
+
+const saveDraft = async () => {
+
+  try {
+
+    const formData = new FormData();
+
+    formData.append("form", JSON.stringify(form));
+    formData.append("supplier_id", String(supplierId));
+    formData.append("rooms", JSON.stringify(rooms));
+    formData.append("staff", JSON.stringify(staff));
+    formData.append("amenities", JSON.stringify(amenities));
+    formData.append("sightseeing", JSON.stringify(sightseeing));
+    formData.append("faqs", JSON.stringify(faqs));
+    formData.append("policies", JSON.stringify(policies));
+    formData.append("cancellation_rules", JSON.stringify(cancellationRules));
+    formData.append("checkin_data", JSON.stringify(checkinData));
+    formData.append("bank_details", JSON.stringify(bankDetails));
+
+    // formData.append("contacts", JSON.stringify(form.contacts));
+    // formData.append("emails", JSON.stringify(form.emails));
+
+    if (propertyDraftId) {
+      formData.append("property_id", String(propertyDraftId));
+    }
+
+    const res = await fetch(`${API_URL}/api/properties/save-draft`, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast.error(data.message);
+      return;
+    }
+
+    setPropertyDraftId(data.propertyId);
+
+    toast.success("Draft saved");
+
+  } catch (err) {
+    toast.error("Draft save failed");
+  }
+
+};
+
+
 
   /* ================= SUBMIT ================= */
 
@@ -144,7 +254,8 @@ export default function AdminAddProperty() {
       formData.append("policies", JSON.stringify(policies));
       formData.append("cancellation_rules", JSON.stringify(cancellationRules));
       formData.append("checkin_data", JSON.stringify(checkinData));
-
+      formData.append("contacts", JSON.stringify(form.contacts));
+      formData.append("emails", JSON.stringify(form.emails));
       if (certificate) formData.append("certificate", certificate);
 
       images.forEach(img => formData.append("images", img));
@@ -198,6 +309,23 @@ export default function AdminAddProperty() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeTab]);
 
+useEffect(() => {
+
+  const fetchSupplier = async () => {
+
+    const res = await fetch(`${API_URL}/api/admin/supplier/${supplierId}`);
+    const data = await res.json();
+
+    setForm(prev => ({
+      ...prev,
+      name: data.company_name
+    }));
+
+  };
+
+  if (supplierId) fetchSupplier();
+
+}, [supplierId]);
   /* ================= UI ================= */
 
   return (
@@ -207,12 +335,58 @@ export default function AdminAddProperty() {
 
         {/* PAGE HEADER */}
 
-        <div>
-          <h1 className="text-2xl font-bold">Add Property</h1>
-          <p className="text-muted-foreground">
-            Create a new hotel / resort property
-          </p>
-        </div>
+        <div className="flex items-center justify-between">
+  <div>
+    <h1 className="text-2xl font-bold">Add Property</h1>
+    <p className="text-muted-foreground">
+      Create a new hotel / resort property
+    </p>
+  </div>
+
+  <Button
+    variant="outline"
+    onClick={handleBack}
+  >
+    ← Back
+  </Button>
+</div>
+
+{showCancelPopup && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+
+    <div className="bg-white rounded-2xl shadow-xl p-6 w-[380px]">
+
+      <h2 className="text-lg font-semibold mb-2">
+        Cancel Property Entry
+      </h2>
+
+      <p className="text-sm text-muted-foreground mb-6">
+        Do you want to cancel this entry?  
+        All unsaved data will be lost.
+      </p>
+
+      <div className="flex justify-end gap-3">
+
+        <Button
+          variant="outline"
+          onClick={closePopup}
+        >
+          No
+        </Button>
+
+        <Button
+          variant="destructive"
+          onClick={confirmCancel}
+        >
+          Yes, Cancel
+        </Button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
 
         {/* CARD */}
 
@@ -356,20 +530,31 @@ export default function AdminAddProperty() {
                 ← Previous
               </Button>
             )}
+<div className="flex gap-3">
+            {/* SAVE ONLY */}
+            <Button
+             
+              onClick={saveDraft}
+            >
+              Save as Draft
+            </Button>
 
-            {activeTab < TABS.length - 1 ? (
-              <Button onClick={nextTab}>
-                Save & Continue →
-              </Button>
-            ) : (
-              <Button
-                onClick={submitProperty}
-                disabled={submitting}
-              >
-                {submitting ? "Submitting..." : "Submit Property"}
-              </Button>
-            )}
-
+            {/* SAVE AND CONTINUE */}
+    {activeTab < TABS.length - 1 && (
+      <Button onClick={saveAndContinue}>
+        Save & Continue →
+      </Button>
+    )}
+              {/* FINAL SUBMIT */}
+    {activeTab === TABS.length - 1 && (
+      <Button
+        onClick={submitProperty}
+        disabled={submitting}
+      >
+        {submitting ? "Submitting..." : "Submit All"}
+      </Button>
+    )}
+</div>
           </div>
 
         </div>
