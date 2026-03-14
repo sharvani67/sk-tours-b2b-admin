@@ -309,7 +309,11 @@ ${u.is_active ? "bg-green-500" : "bg-red-500"}
                           </Button>
 
                           {/* EDIT (future) */}
-                          <Button size="icon" variant="outline">
+                          <Button
+  size="icon"
+  variant="outline"
+  onClick={() => navigate(`/user-form/${u.id}`)}
+>
                             <Pencil className="w-4 h-4" />
                           </Button>
 

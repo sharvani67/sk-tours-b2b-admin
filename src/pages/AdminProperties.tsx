@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "@/config/api";
-import { Eye, Search, Trash2 } from "lucide-react";
+import { Eye, Search, Trash2   } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 export default function AdminProperties() {
   const navigate = useNavigate();
@@ -30,6 +31,29 @@ export default function AdminProperties() {
     setTotal(data.total);
   };
 
+  const updatePropertyStatus = async (id:number, current:string) => {
+
+  const newStatus = current === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+
+  const confirmMessage =
+    newStatus === "INACTIVE"
+      ? "This property will be hidden from users. Continue?"
+      : "This property will be visible to users. Continue?";
+
+  if (!confirm(confirmMessage)) return;
+
+  await fetch(`${API_URL}/api/admin/update-property-status/${id}`,{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      property_status:newStatus
+    })
+  });
+
+  fetchProperties();
+};
  useEffect(() => {
   fetchProperties();
 }, [page, statusFilter, search]);
@@ -127,6 +151,8 @@ export default function AdminProperties() {
                 <th className="text-left">Supplier</th>
                 <th className="text-left">Created</th>
                 <th className="text-left">Status</th>
+                <th className="text-left">Access</th>
+                <th className="text-left">Property Status</th>
                 <th className="text-left">Actions</th>
               </tr>
             </thead>
@@ -147,6 +173,7 @@ export default function AdminProperties() {
                   <td>
                     {new Date(p.created_at).toLocaleDateString()}
                   </td>
+                 
                   <td>
   <span
     className={
@@ -160,6 +187,31 @@ export default function AdminProperties() {
     {p.status}
   </span>
 </td>
+
+ <td>
+  <span
+    className={
+      (p.visibility_type || "FREE") === "FREE"
+        ? "px-3 py-1 text-xs rounded-full bg-green-100 text-green-600"
+        : "px-3 py-1 text-xs rounded-full bg-purple-100 text-purple-600"
+    }
+  >
+    {(p.visibility_type || "FREE") === "FREE" ? "Free" : "Paid"}
+  </span>
+</td>
+<td>
+  <span
+    className={
+      (p.property_status || "ACTIVE") === "ACTIVE"
+        ? "px-3 py-1 text-xs rounded-full bg-green-100 text-green-600"
+        : "px-3 py-1 text-xs rounded-full bg-red-100 text-red-600"
+    }
+  >
+    {(p.property_status || "ACTIVE") === "ACTIVE"
+      ? "Active"
+      : "Inactive"}
+  </span>
+</td>
                   <td className="text-left space-x-2">
                     <Button
                        size="sm"
@@ -168,7 +220,7 @@ export default function AdminProperties() {
                     <Eye className="w-4 h-4" />
                     </Button>
 
-                    
+           
 
                   <Button
                     size="sm"
@@ -177,7 +229,17 @@ export default function AdminProperties() {
                   >
                      <Trash2 className="w-4 h-4" />
                   </Button>
+
+                 <Switch
+    checked={(p.property_status || "ACTIVE") === "ACTIVE"}
+    onCheckedChange={() =>
+      updatePropertyStatus(p.id, p.property_status || "ACTIVE")
+    }
+  />
+
                     </td>
+
+                    
                 </tr>
               ))}
 
