@@ -31,6 +31,7 @@ type User = {
   id: number;
   role: "agent" | "supplier";
   company_name: string;
+  contact_person: string;
   email: string;
   status: "pending" | "approved" | "rejected";
   is_active: number;
@@ -80,17 +81,26 @@ const processed = useMemo(() => {
     data = data.filter(
       (u) =>
         u.company_name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase())
+        u.email?.split(",").some(e =>
+  e.toLowerCase().includes(search.toLowerCase())
+)
     );
   }
 
-  if (roleFilter !== "all") {
-    data = data.filter((u) => u.role === roleFilter);
-  }
+ if (roleFilter !== "all") {
+  data = data.filter((u) => u.role === roleFilter as "agent" | "supplier");
+}
 
   data.sort((a, b) => {
-    const A = a[sortKey];
-    const B = b[sortKey];
+   const A =
+  sortKey === "created_at"
+    ? new Date(a.created_at).getTime()
+    : a[sortKey];
+
+const B =
+  sortKey === "created_at"
+    ? new Date(b.created_at).getTime()
+    : b[sortKey];
 
     if (A < B) return sortDir === "asc" ? -1 : 1;
     if (A > B) return sortDir === "asc" ? 1 : -1;
@@ -236,10 +246,14 @@ onChange={(e) => setSearchInput(e.target.value)}
                   <thead className="uppercase">
                     <tr className="border-b text-left">
 
-                      <th onClick={() => toggleSort("company_name")}
-                        className="cursor-pointer py-3 heading">
-                        Company {sortKey === "company_name" && (sortDir === "asc" ? <ChevronUp /> : <ChevronDown />)}
-                      </th>
+                     <th
+  onClick={() => toggleSort("company_name")}
+  className="cursor-pointer py-3 heading"
+>
+  Company / Person{" "}
+  {sortKey === "company_name" &&
+    (sortDir === "asc" ? <ChevronUp className="inline w-4 h-4" /> : <ChevronDown className="inline w-4 h-4" />)}
+</th>
 
                       <th onClick={() => toggleSort("email")}
                         className="cursor-pointer py-3 hidden md:table-cell heading">
@@ -266,9 +280,20 @@ onChange={(e) => setSearchInput(e.target.value)}
                     {rows.map((u) => (
                       <tr key={u.id} className="border-b hover:bg-muted/40">
 
-                        <td className="py-3 font-medium">{u.company_name}</td>
+                       <td className="py-3 font-medium">
+  {u.role === "supplier"
+    ? u.company_name
+    : u.contact_person}
+</td>
 
-                        <td className="hidden md:table-cell">{u.email}</td>
+                        <td className="hidden md:table-cell">
+  {u.email?.split(",")[0]}
+  {u.email?.includes(",") && (
+    <span className="text-xs text-muted-foreground ml-1">
+      +{u.email.split(",").length - 1}
+    </span>
+  )}
+</td>
 
                         <td>{u.role}</td>
 
@@ -295,7 +320,8 @@ ${u.is_active ? "bg-green-500" : "bg-red-500"}
                             />
                           </button>
                         </td>
-                        <td className="flex gap-2 py-2">
+                        <td className="py-2">
+  <div className="flex gap-2">
 
 
 
@@ -333,7 +359,7 @@ ${u.is_active ? "bg-green-500" : "bg-red-500"}
                               <Plus className="w-4 h-4" />
                             </Button>
                           )}
-
+</div>
                         </td>
 
                       </tr>

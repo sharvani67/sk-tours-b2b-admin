@@ -42,13 +42,18 @@ const approveUser = async () => {
   }));
 };
 
-  const rejectUser = async () => {
-    await fetch(`${API_URL}/api/admin/update-status/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "rejected" }),
-    });
-  };
+ const rejectUser = async () => {
+  await fetch(`${API_URL}/api/admin/update-status/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "rejected" }),
+  });
+
+  setUser(prev => ({
+    ...prev,
+    status: "rejected",
+  }));
+};
 
   if (!user) return null;
 
@@ -73,8 +78,8 @@ const approveUser = async () => {
         <div>
           <p className="text-xs text-muted-foreground uppercase">Company</p>
           <h1 className="text-3xl font-semibold tracking-tight">
-            {user.company_name}
-          </h1>
+  {user.company_name || user.contact_person}
+</h1>
 
           <p className="mt-2 text-xs text-muted-foreground">
             Created on {new Date(user.created_at).toLocaleDateString()}
@@ -106,17 +111,17 @@ const approveUser = async () => {
 
           <div className="px-4 py-3 rounded-lg border bg-muted/40 min-w-[130px] text-center">
             <p className="text-xs text-muted-foreground uppercase">Status</p>
-            <p
-              className={`font-semibold ${
-                user.status === "approved"
-                  ? "text-green-600"
-                  : user.status === "rejected"
-                  ? "text-red-600"
-                  : "text-yellow-600"
-              }`}
-            >
-              {user.status}
-            </p>
+            <Badge
+  variant={
+    user.status === "approved"
+      ? "default"
+      : user.status === "rejected"
+      ? "destructive"
+      : "secondary"
+  }
+>
+  {user.status}
+</Badge>
           </div>
 
         </div>
@@ -127,7 +132,16 @@ const approveUser = async () => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
 
       <Info label="Contact Person" value={user.contact_person} />
-      <Info label="Email" value={user.email} />
+   <Info
+  label="Emails"
+  value={
+    user.email
+      ? user.email.split(",").map((e, i) => (
+          <div key={i}>{e}</div>
+        ))
+      : "-"
+  }
+/>
       <Info
   label="Mobile Numbers"
   value={
@@ -147,8 +161,8 @@ const approveUser = async () => {
         <Info label="Supplier Type" value={user.supplier_type || "-"} />
       )}
 
-<Info label="Address Line 1" value={user.address_line1 || "-"} />
-<Info label="Address Line 2" value={user.address_line2 || "-"} />
+{/* <Info label="Address Line 1" value={user.address_line1 || "-"} />
+<Info label="Address Line 2" value={user.address_line2 || "-"} /> */}
 
 <Info label="Area" value={user.area || "-"} />
 <Info label="Landmark" value={user.landmark || "-"} />

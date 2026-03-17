@@ -12,12 +12,14 @@ import { API_URL } from "@/config/api";
 import { useParams } from "react-router-dom";
 
 const inputClass =
-  "h-12 rounded-xl bg-card border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3";
+"h-9 text-sm rounded-lg bg-card border border-gray-300 focus:ring-1 focus:ring-blue-500 px-2";
 
 const selectClass =
-  "h-12 rounded-xl bg-card border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3";
+  "h-9 rounded-lg bg-card border border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 px-2";
 
-const UserForm = ({ role }: { role: string }) => {
+type Role = "agent" | "supplier";
+
+const UserForm = ({ role }: { role: Role }) => {
   const navigate = useNavigate();
   const { id } = useParams();
 const isEdit = Boolean(id);
@@ -29,11 +31,13 @@ const [form, setForm] = useState({
   firstName: "",
   lastName: "",
   contactPerson: "",
-  email: "",
+  emails: [""],
   mobiles: [""],
 
-  addressLine1: "",
-  addressLine2: "",
+  // addressLine1: "",
+  // addressLine2: "",
+  area: "",
+  landmark: "",
   city: "",
   state: "",
   pincode: "",
@@ -72,6 +76,34 @@ const updateMobile = (index: number, value: string) => {
     mobiles: updated,
   }));
 };
+
+const addEmail = () => {
+  setForm(prev => ({
+    ...prev,
+    emails: [...prev.emails, ""]
+  }));
+};
+
+const removeEmail = (index:number) => {
+  const updated = [...form.emails];
+  updated.splice(index,1);
+
+  setForm(prev => ({
+    ...prev,
+    emails: updated
+  }));
+};
+
+const updateEmail = (index:number,value:string) => {
+  const updated = [...form.emails];
+  updated[index] = value;
+
+  setForm(prev => ({
+    ...prev,
+    emails: updated
+  }));
+};
+
 useEffect(() => {
   const fetchCategories = async () => {
     try {
@@ -99,11 +131,13 @@ useEffect(() => {
         firstName: data.contact_person?.split(" ")[0] || "",
         lastName: data.contact_person?.split(" ")[1] || "",
         contactPerson: data.contact_person || "",
-        email: data.email || "",
-        mobile: data.mobile || "",
+       emails: data.email ? data.email.split(",") : [""],
+        mobiles: data.mobile ? data.mobile.split(",") : [""],
 
-        addressLine1: data.address_line1 || "",
-        addressLine2: data.address_line2 || "",
+        // addressLine1: data.address_line1 || "",
+        // addressLine2: data.address_line2 || "",
+        area: data.area || "",
+        landmark: data.landmark || "",
         city: data.city || "",
         state: data.state || "",
         pincode: data.pincode || "",
@@ -168,10 +202,14 @@ const handleSubmit = async (e: FormEvent) => {
 
   const cleanedMobiles = form.mobiles.filter(m => m.trim() !== "");
 
-  if (!form.companyName || !form.contactPerson || !form.email) {
-    toast.error("Required fields missing");
-    return;
-  }
+//  if (
+//   (role === "supplier" && !form.companyName) ||
+//   (role === "agent" && !form.firstName) ||
+//   form.emails.filter(e => e.trim()).length === 0
+// ) {
+//   toast.error("Required fields missing");
+//   return;
+// }
 
   setLoading(true);
 
@@ -180,11 +218,13 @@ const handleSubmit = async (e: FormEvent) => {
   role,
   company_name: form.companyName,
   contact_person: form.contactPerson,
-  email: form.email,
+  emails: form.emails.filter(e => e.trim() !== ""),
  mobiles: cleanedMobiles,
 
-  address_line1: form.addressLine1,
-  address_line2: form.addressLine2,
+  // address_line1: form.addressLine1,
+  // address_line2: form.addressLine2,
+  area: form.area,
+landmark: form.landmark,
   city: form.city,
   state: form.state,
   pincode: form.pincode,
@@ -239,100 +279,93 @@ const res = await fetch(url, {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 pt-6">
 
-   <div className="space-y-4">
+<div className="grid grid-cols-2 gap-2">
 
-{role === "agent" ? (
+{/* COMPANY NAME (SUPPLIER) */}
+{role === "supplier" && (
+  <div className="col-span-2">
+    <Label className="text-sm">Company Name</Label>
+    <Input
+      className={inputClass}
+      value={form.companyName}
+      onChange={(e) => handleChange("companyName", e.target.value)}
+    />
+  </div>
+)}
 
+{/* INDIVIDUAL NAME */}
+{role === "agent" && (
   <>
-    {/* COMPANY NAME FULL WIDTH */}
     <div>
-      <Label>Company Name</Label>
+      <Label className="text-sm">Individual Name</Label>
       <Input
         className={inputClass}
-        value={form.companyName}
-        onChange={(e) => handleChange("companyName", e.target.value)}
-        required
+        value={form.firstName}
+        onChange={(e) => handleChange("firstName", e.target.value)}
       />
     </div>
 
-    {/* FIRST + LAST NAME */}
-    <div className="grid sm:grid-cols-2 gap-4">
-
-      <div>
-        <Label>First Name</Label>
-        <Input
-          className={inputClass}
-          value={form.firstName}
-          onChange={(e) => handleChange("firstName", e.target.value)}
-          required
-        />
-      </div>
-
-      <div>
-        <Label>Last Name</Label>
-        <Input
-          className={inputClass}
-          value={form.lastName}
-          onChange={(e) => handleChange("lastName", e.target.value)}
-          required
-        />
-      </div>
-
+    <div>
+      <Label className="text-sm">Surname</Label>
+      <Input
+        className={inputClass}
+        value={form.lastName}
+        onChange={(e) => handleChange("lastName", e.target.value)}
+      />
     </div>
   </>
-
-) : (
-
-  <>
-    {/* SUPPLIER LAYOUT */}
-    <div className="grid sm:grid-cols-2 gap-4">
-
-      <div>
-        <Label>Supplier Name</Label>
-        <Input
-          className={inputClass}
-          value={form.companyName}
-          onChange={(e) => handleChange("companyName", e.target.value)}
-          required
-        />
-      </div>
-
-      <div>
-        <Label>Contact Person</Label>
-        <Input
-          className={inputClass}
-          value={form.contactPerson}
-          onChange={(e) => handleChange("contactPerson", e.target.value)}
-          required
-        />
-      </div>
-
-    </div>
-  </>
-
 )}
 
 </div>
 
-      {/* CONTACT */}
-      <div>
-        <Label>Email Address</Label>
-        <Input
-          type="email"
-          className={inputClass}
-          value={form.email}
-          onChange={(e) => handleChange("email", e.target.value)}
-          required
-        />
-      </div>
+<div className="grid md:grid-cols-2 gap-4">
 
+{/* EMAIL SECTION */}
+<div>
+  <Label className="text-sm">Email</Label>
+
+  {form.emails.map((email, index) => (
+    <div key={index} className="flex gap-2 mt-1">
+
+      <Input
+        type="email"
+        className={inputClass}
+        value={email}
+        onChange={(e) => updateEmail(index, e.target.value)}
+      />
+
+      {index === form.emails.length - 1 && (
+        <button
+          type="button"
+          onClick={addEmail}
+          className="px-2 rounded bg-green-500 text-white text-xs"
+        >
+          +
+        </button>
+      )}
+
+      {form.emails.length > 1 && (
+        <button
+          type="button"
+          onClick={() => removeEmail(index)}
+          className="px-2 rounded bg-red-500 text-white text-xs"
+        >
+          -
+        </button>
+      )}
+    </div>
+  ))}
+</div>
+
+
+{/* MOBILE SECTION */}
 <div>
   <Label>Mobile Number</Label>
 
   {form.mobiles.map((mob, index) => (
     <div key={index} className="mb-2">
 
-      <div className="flex gap-2 items-center">
+     <div className="flex gap-2 mt-1">
 
         <Input
           value={mob}
@@ -346,25 +379,23 @@ const res = await fetch(url, {
           }
         />
 
-        {/* ADD BUTTON */}
         {index === form.mobiles.length - 1 && (
           <button
             type="button"
             onClick={addMobile}
-            className="p-2 rounded-lg bg-green-500 hover:bg-green-600 text-white"
+            className="px-2 rounded bg-green-500 text-white text-xs"
           >
-            <Plus size={18} />
+             +
           </button>
         )}
 
-        {/* REMOVE BUTTON */}
         {form.mobiles.length > 1 && (
           <button
             type="button"
             onClick={() => removeMobile(index)}
-            className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white"
+            className="px-2 rounded bg-red-500 text-white text-xs"
           >
-            <Trash2 size={18} />
+            -
           </button>
         )}
 
@@ -380,6 +411,8 @@ const res = await fetch(url, {
   ))}
 </div>
 
+</div>
+
       {/* SUPPLIER SECTION */}
       {role === "supplier" && (
         <div>
@@ -392,7 +425,7 @@ const res = await fetch(url, {
               onChange={(e) =>
                 handleChange("supplierType", e.target.value)
               }
-              required
+              
             >
               <option value="">Select supplier type</option>
 
@@ -411,7 +444,7 @@ const res = await fetch(url, {
                 onChange={(e) =>
                   handleChange("otherSupplierType", e.target.value)
                 }
-                required
+                
               />
             )}
           </div>
@@ -441,16 +474,16 @@ const res = await fetch(url, {
         <Label>GST</Label>
 
         <div className="grid sm:grid-cols-4 gap-3 items-center">
-          <select
-            className={selectClass}
-            value={form.gstApplicable}
-            onChange={(e) =>
-              handleChange("gstApplicable", e.target.value)
-            }
-          >
-            <option value="no">Not Applicable</option>
-            <option value="yes">Applicable</option>
-          </select>
+        <select
+  className={selectClass}
+  value={form.gstApplicable}
+  onChange={(e) =>
+    handleChange("gstApplicable", e.target.value)
+  }
+>
+  <option value="no">Not Applicable</option>
+  <option value="yes">Applicable</option>
+</select>
 
           <Input
             placeholder="GST Number"
@@ -472,7 +505,7 @@ const res = await fetch(url, {
       {/* LOCATION */}
       {/* ADDRESS */}
 <div className="space-y-3">
-
+{/* <div className="grid grid-cols-2 gap-2">
   <div>
     <Label>Address Line 1</Label>
     <Input
@@ -491,38 +524,64 @@ const res = await fetch(url, {
       onChange={(e) => handleChange("addressLine2", e.target.value)}
     />
   </div>
+</div> */}
+<div className="grid grid-cols-2 gap-2">
 
-  <div className="grid sm:grid-cols-2 gap-4">
-    <Input
-      placeholder="City"
-      className={inputClass}
-      value={form.city}
-      onChange={(e) => handleChange("city", e.target.value)}
-    />
+<div>
+  <Label className="text-sm">Area</Label>
+  <Input
+    className={inputClass}
+    value={form.area}
+    onChange={(e) => handleChange("area", e.target.value)}
+  />
+</div>
 
-    <Input
-      placeholder="State"
-      className={inputClass}
-      value={form.state}
-      onChange={(e) => handleChange("state", e.target.value)}
-    />
-  </div>
+<div>
+  <Label className="text-sm">Landmark</Label>
+  <Input
+    className={inputClass}
+    value={form.landmark}
+    onChange={(e) => handleChange("landmark", e.target.value)}
+  />
+</div>
 
-  <div className="grid sm:grid-cols-2 gap-4">
-    <Input
-      placeholder="Pincode"
-      className={inputClass}
-      value={form.pincode}
-      onChange={(e) => handleChange("pincode", e.target.value)}
-    />
+<div>
+  <Label className="text-sm">Pincode</Label>
+  <Input
+    className={inputClass}
+    value={form.pincode}
+    onChange={(e) => handleChange("pincode", e.target.value)}
+  />
+</div>
 
-    <Input
-      placeholder="Country"
-      className={inputClass}
-      value={form.country}
-      onChange={(e) => handleChange("country", e.target.value)}
-    />
-  </div>
+<div>
+  <Label className="text-sm">City</Label>
+  <Input
+    className={inputClass}
+    value={form.city}
+    onChange={(e) => handleChange("city", e.target.value)}
+  />
+</div>
+
+<div>
+  <Label className="text-sm">State</Label>
+  <Input
+    className={inputClass}
+    value={form.state}
+    onChange={(e) => handleChange("state", e.target.value)}
+  />
+</div>
+
+<div>
+  <Label className="text-sm">Country</Label>
+  <Input
+    className={inputClass}
+    value={form.country}
+    onChange={(e) => handleChange("country", e.target.value)}
+  />
+</div>
+
+</div>
 
 </div>
 
