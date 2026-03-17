@@ -11,8 +11,8 @@ type BankDetails = {
 };
 
 type Props = {
-  bankDetails: BankDetails;
-  setBankDetails: React.Dispatch<React.SetStateAction<BankDetails>>;
+  bankDetails: BankDetails[];
+  setBankDetails: React.Dispatch<React.SetStateAction<BankDetails[]>>;
 };
 
 const BankDetailsManager = ({
@@ -20,10 +20,29 @@ const BankDetailsManager = ({
   setBankDetails,
 }: Props) => {
 
-  const updateField = (key: keyof BankDetails, value: any) => {
-    setBankDetails(prev => ({ ...prev, [key]: value }));
-  };
+  const updateField = (index: number, key: keyof BankDetails, value: any) => {
+  setBankDetails(prev =>
+    prev.map((b, i) => (i === index ? { ...b, [key]: value } : b))
+  );
+};
 
+const addBank = () => {
+  setBankDetails(prev => [
+    ...prev,
+    {
+      account_holder: "",
+      bank_name: "",
+      account_number: "",
+      ifsc: "",
+      branch: "",
+      cancelled_cheque: null,
+    },
+  ]);
+};
+
+const removeBank = (index: number) => {
+  setBankDetails(prev => prev.filter((_, i) => i !== index));
+};
   return (
     <div className="space-y-12">
 
@@ -37,97 +56,72 @@ const BankDetailsManager = ({
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+     {bankDetails.map((bank, index) => (
+  <div key={index} className="border p-6 rounded-xl space-y-6">
 
-        {/* ACCOUNT HOLDER */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold">
-            Account Holder Name *
-          </label>
-          <Input
-            value={bankDetails.account_holder}
-            onChange={(e) =>
-              updateField("account_holder", e.target.value)
-            }
-            placeholder="Enter account holder name"
-          />
-        </div>
+    <h3 className="font-semibold">Bank {index + 1}</h3>
 
-        {/* BANK NAME */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold">
-            Bank Name *
-          </label>
-          <Input
-            value={bankDetails.bank_name}
-            onChange={(e) =>
-              updateField("bank_name", e.target.value)
-            }
-            placeholder="Enter bank name"
-          />
-        </div>
+    <div className="grid md:grid-cols-3 gap-6">
 
-        {/* ACCOUNT NUMBER */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold">
-            Account Number *
-          </label>
-          <Input
-            value={bankDetails.account_number}
-            onChange={(e) =>
-              updateField("account_number", e.target.value)
-            }
-            placeholder="Enter account number"
-          />
-        </div>
+      <Input
+        value={bank.account_holder}
+        onChange={(e) =>
+          updateField(index, "account_holder", e.target.value)
+        }
+        placeholder="Account Holder"
+      />
 
-        {/* IFSC */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold">
-            IFSC Code *
-          </label>
-          <Input
-            value={bankDetails.ifsc}
-            onChange={(e) =>
-              updateField("ifsc", e.target.value.toUpperCase())
-            }
-            placeholder="e.g. SBIN0001234"
-          />
-        </div>
+      <Input
+        value={bank.bank_name}
+        onChange={(e) =>
+          updateField(index, "bank_name", e.target.value)
+        }
+        placeholder="Bank Name"
+      />
 
-        {/* BRANCH */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold">
-            Branch
-          </label>
-          <Input
-            value={bankDetails.branch}
-            onChange={(e) =>
-              updateField("branch", e.target.value)
-            }
-            placeholder="Enter branch name"
-          />
-        </div>
+      <Input
+        value={bank.account_number}
+        onChange={(e) =>
+          updateField(index, "account_number", e.target.value)
+        }
+        placeholder="Account Number"
+      />
 
-        {/* CANCELLED CHEQUE UPLOAD */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold">
-            Upload Cancelled Cheque *
-          </label>
-          <Input
-            type="file"
-            accept="image/*,application/pdf"
-            onChange={(e: any) =>
-              updateField(
-                "cancelled_cheque",
-                e.target.files?.[0] || null
-              )
-            }
-          />
-        </div>
+      <Input
+        value={bank.ifsc}
+        onChange={(e) =>
+          updateField(index, "ifsc", e.target.value)
+        }
+        placeholder="IFSC"
+      />
 
-      </div>
+      <Input
+        value={bank.branch}
+        onChange={(e) =>
+          updateField(index, "branch", e.target.value)
+        }
+        placeholder="Branch"
+      />
 
+      <Input
+        type="file"
+        onChange={(e: any) =>
+          updateField(index, "cancelled_cheque", e.target.files?.[0])
+        }
+      />
+
+    </div>
+
+    {index > 0 && (
+      <Button variant="destructive" onClick={() => removeBank(index)}>
+        Remove
+      </Button>
+    )}
+
+  </div>
+))}
+
+<Button onClick={addBank}>+ Add Another Bank</Button>
     </div>
   );
 };

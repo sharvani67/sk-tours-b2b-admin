@@ -23,6 +23,10 @@ type Room = {
   max_adults: string;
   max_children: string;
   rackRate: string;
+
+  validFrom: string;   // ✅ NEW
+  validTo: string;     // ✅ NEW
+
   ratePlans: RatePlan[];
 };
 
@@ -127,18 +131,22 @@ const PricingManager = ({ rooms, setRooms , onNext }: Props) => {
     );
   };
 
-  const addRoom = () => {
-    setRooms(prev => [
-      ...prev,
-      {
-        type: "",
-        max_adults: "",
-        max_children: "",
-        rackRate: "",
-        ratePlans: defaultPlans(),
-      },
-    ]);
-  };
+ const addRoom = () => {
+  setRooms(prev => [
+    ...prev,
+    {
+      type: "",
+      max_adults: "",
+      max_children: "",
+      rackRate: "",
+
+      validFrom: "",   // ✅ NEW
+      validTo: "",     // ✅ NEW
+
+      ratePlans: defaultPlans(),
+    },
+  ]);
+};
 
   return (
     <div className="bg-white border rounded-3xl shadow-xl p-8 md:p-12 space-y-12">
@@ -162,7 +170,7 @@ const PricingManager = ({ rooms, setRooms , onNext }: Props) => {
               Room {roomIndex + 1}
             </h3>
 
-            <div className="grid md:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-6 gap-6">
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">
@@ -220,6 +228,34 @@ const PricingManager = ({ rooms, setRooms , onNext }: Props) => {
                   }
                 />
               </div>
+
+              {/* VALIDITY FROM */}
+<div className="space-y-2">
+  <label className="text-sm font-medium">
+    Valid From
+  </label>
+  <Input
+    type="date"
+    value={room.validFrom}
+    onChange={e =>
+      updateRoom(roomIndex, "validFrom", e.target.value)
+    }
+  />
+</div>
+
+{/* VALIDITY TO */}
+<div className="space-y-2">
+  <label className="text-sm font-medium">
+    Valid To
+  </label>
+  <Input
+    type="date"
+    value={room.validTo}
+    onChange={e =>
+      updateRoom(roomIndex, "validTo", e.target.value)
+    }
+  />
+</div>
             </div>
           </div>
 

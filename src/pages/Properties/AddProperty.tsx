@@ -113,14 +113,25 @@ const closePopup = () => {
 
   const [certificate, setCertificate] = useState<File | null>(null);
 
-  const [bankDetails, setBankDetails] = useState<any>({
+   type BankDetails = {
+  account_holder: string;
+  bank_name: string;
+  account_number: string;
+  ifsc: string;
+  branch: string;
+  cancelled_cheque: File | null;
+};
+
+ const [bankDetails, setBankDetails] = useState<BankDetails[]>([
+  {
     account_holder: "",
     bank_name: "",
     account_number: "",
     ifsc: "",
     branch: "",
     cancelled_cheque: null,
-  });
+  },
+]);
 
 const loadDraft = async () => {
 
@@ -265,21 +276,13 @@ const saveDraft = async () => {
         if (member.photo) formData.append("staffPhotos", member.photo);
       });
 
-      formData.append(
-        "bank_details",
-        JSON.stringify({
-          account_holder: bankDetails.account_holder,
-          bank_name: bankDetails.bank_name,
-          account_number: bankDetails.account_number,
-          ifsc: bankDetails.ifsc,
-          branch: bankDetails.branch,
-        })
-      );
+    formData.append("bank_details", JSON.stringify(bankDetails));
 
-      if (bankDetails.cancelled_cheque) {
-        formData.append("cancelledCheque", bankDetails.cancelled_cheque);
-      }
-
+     bankDetails.forEach((bank) => {
+  if (bank.cancelled_cheque) {
+    formData.append("cancelledCheque", bank.cancelled_cheque);
+  }
+});
       const res = await fetch(
         `${API_URL}/api/properties/add-property`,
         { method: "POST", body: formData }
