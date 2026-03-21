@@ -3,6 +3,7 @@ import {
   Users,
   Handshake,
   Settings,
+  MapPin,
   LogOut,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
@@ -27,6 +28,8 @@ const mainNav = [
   { title: "Properties", url: "/properties", icon: Settings },
   // { title: "Deals", url: "/deals", icon: Handshake },
   { title: "Categories", url: "/categories", icon: Handshake },
+   // ✅ NEW
+  { title: "States", url: "/states", icon: MapPin },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 

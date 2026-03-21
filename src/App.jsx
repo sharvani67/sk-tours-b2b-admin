@@ -14,6 +14,7 @@ export default function App() {
         <Route path="/users" element={<UsersPage />} />
         <Route path="/users/:id" element={<UserDetails />} />
         <Route path="/admin/properties/:id" element={<AdminPropertyDetails />} />
+     
       </Routes>
     </BrowserRouter>
   );
