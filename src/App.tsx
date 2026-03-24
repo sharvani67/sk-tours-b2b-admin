@@ -19,7 +19,7 @@ import UserDetails from "./pages/UserDetails";
 import UsersPage from "./pages/UsersPage";
 import AdminAddProperty from "./pages/Properties/AddProperty";
 import StateTable from "./pages//StateTable";
-
+import Videos from "./pages/Videos";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -52,6 +52,7 @@ const App = () => (
           <Route path="/deals" element={<DealsPage />} />
           <Route path="/categories" element={<CategoryTable/>} />
              <Route path="/states" element={<StateTable />} />
+             <Route path="/videos" element={<Videos />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/user-form" element={<UserForm/>} />
           <Route path="/user-form/:id" element={<UserForm/>} />

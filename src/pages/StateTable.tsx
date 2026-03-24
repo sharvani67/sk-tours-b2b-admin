@@ -180,6 +180,7 @@ const toggleStatus = async (id: number, current: number) => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b text-left uppercase">
+                      <th className="py-3">SL No</th>
                       <th                      
                         className="cursor-pointer py-3">State Name</th>                                                                                    
                       <th className="cursor-pointer py-3">Created</th>                                                                                                         
@@ -189,9 +190,11 @@ const toggleStatus = async (id: number, current: number) => {
                   </thead>
 
                   <tbody>
-                    {rows.map((s) => (
+                    {rows.map((s, index) => (
                       <tr key={s.id} className="border-b hover:bg-muted/40">
-
+                        <td className="py-3">
+                          {(page - 1) * pageSize + index + 1}
+                        </td>
                         <td className="py-3 font-medium">{s.state_name}</td>
 
                         <td>

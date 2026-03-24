@@ -20,7 +20,7 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-
+import { Video } from "lucide-react";
 const mainNav = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Users", url: "/users", icon: Users },
@@ -28,8 +28,10 @@ const mainNav = [
   { title: "Properties", url: "/properties", icon: Settings },
   // { title: "Deals", url: "/deals", icon: Handshake },
   { title: "Categories", url: "/categories", icon: Handshake },
+  
    // ✅ NEW
   { title: "States", url: "/states", icon: MapPin },
+   { title: "Videos", url: "/videos", icon: Video },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
