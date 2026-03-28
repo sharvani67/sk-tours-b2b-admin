@@ -17,7 +17,11 @@ type RatePlan = {
   childWithBed: string;
   childWithoutBed: string;
 };
-
+type Meal = {
+  name: string;
+  price: string;
+  available: boolean;
+};
 type Room = {
   type: string;
   max_adults: string;
@@ -28,6 +32,7 @@ type Room = {
   validTo: string;     // ✅ NEW
 
   ratePlans: RatePlan[];
+  meals: Meal[];
 };
 
 type Props = {
@@ -144,6 +149,10 @@ const PricingManager = ({ rooms, setRooms , onNext }: Props) => {
       validTo: "",     // ✅ NEW
 
       ratePlans: defaultPlans(),
+      meals: [
+        { name: "Buffet Lunch", price: "", available: true },
+        { name: "Buffet Dinner", price: "", available: true }
+      ]
     },
   ]);
 };
@@ -261,7 +270,46 @@ const PricingManager = ({ rooms, setRooms , onNext }: Props) => {
 
           {/* MEAL PLANS */}
           <div className="space-y-10">
+<div className="mt-6">
+  <h4 className="font-semibold mb-3">Meals</h4>
 
+  {room.meals.map((meal, mealIndex) => (
+    <div key={mealIndex} className="grid md:grid-cols-3 gap-4 mb-3">
+
+      <Input
+        value={meal.name}
+        readOnly
+      />
+
+    <Input
+  type="number"
+  placeholder="Price"
+  value={meal.price}
+  onChange={(e) => {
+    const updatedMeals = room.meals.map((m, i) =>
+      i === mealIndex ? { ...m, price: e.target.value } : m
+    );
+    updateRoom(roomIndex, "meals", updatedMeals);
+  }}
+/>
+
+      <label className="flex items-center gap-2">
+        <input
+  type="checkbox"
+  checked={meal.available}
+  onChange={(e) => {
+    const updatedMeals = room.meals.map((m, i) =>
+      i === mealIndex ? { ...m, available: e.target.checked } : m
+    );
+    updateRoom(roomIndex, "meals", updatedMeals);
+  }}
+/>
+        Available
+      </label>
+
+    </div>
+  ))}
+</div>
             {room.ratePlans.map((plan, planIndex) => (
 
               <div key={plan.plan} className="border rounded-xl p-6 bg-white">

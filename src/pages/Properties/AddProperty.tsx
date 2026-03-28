@@ -60,6 +60,7 @@ const [propertyDraftId, setPropertyDraftId] = useState<number | null>(null);
   const [form, setForm] = useState({
     name: "",
     category: "",
+    state: "",
     city: "",
     area: "",
     pincode: "",
@@ -71,7 +72,18 @@ const [propertyDraftId, setPropertyDraftId] = useState<number | null>(null);
     hotel_remarks: ""
   });
 
-
+const attachMealsToRooms = (rooms: any[], meals: any[]) => {
+  return rooms.map(room => ({
+    ...room,
+    meals: meals
+      .filter(m => m.room_id === room.id)
+      .map(m => ({
+        name: m.meal_name,
+        price: String(m.price),
+        available: m.is_available === 1
+      }))
+  }));
+};
   useEffect(() => {
 
     if (supplierId) {
@@ -139,13 +151,14 @@ const loadDraft = async () => {
 
     const res = await fetch(`${API_URL}/api/properties/get-draft/${supplierId}`);
     const data = await res.json();
+    const updatedRooms = attachMealsToRooms(data.rooms, data.meals || []);
 
     if (!data) return;
 
     setPropertyDraftId(data.id);
 
     setForm(data.form ? JSON.parse(data.form) : form);
-    setRooms(data.rooms ? JSON.parse(data.rooms) : []);
+    setRooms(updatedRooms);
     setStaff(data.staff ? JSON.parse(data.staff) : []);
     setAmenities(data.amenities ? JSON.parse(data.amenities) : []);
     setSightSeeing(data.sightseeing ? JSON.parse(data.sightseeing) : []);
@@ -204,8 +217,8 @@ const saveDraft = async () => {
     formData.append("checkin_data", JSON.stringify(checkinData));
     formData.append("bank_details", JSON.stringify(bankDetails));
 
-    // formData.append("contacts", JSON.stringify(form.contacts));
-    // formData.append("emails", JSON.stringify(form.emails));
+    formData.append("contacts", JSON.stringify(form.contacts));
+    formData.append("emails", JSON.stringify(form.emails));
 
     if (propertyDraftId) {
       formData.append("property_id", String(propertyDraftId));
@@ -298,7 +311,7 @@ const saveDraft = async () => {
       toast.success("Property created successfully 🎉");
 
       setTimeout(() => {
-        navigate("/admin/properties");
+        navigate("/properties");
       }, 1200);
 
     } catch (err) {

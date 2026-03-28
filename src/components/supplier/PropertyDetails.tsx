@@ -7,6 +7,7 @@ const PropertyDetails = ({ form, handleChange, setCertificate }: any) => {
 
   const [allow24Hr, setAllow24Hr] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
+  const [states, setStates] = useState<any[]>([]);
   const addContact = () => {
     handleChange("contacts", [...form.contacts, ""]);
   };
@@ -53,6 +54,20 @@ const PropertyDetails = ({ form, handleChange, setCertificate }: any) => {
   
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+  const fetchStates = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/states`);
+      const data = await res.json();
+      setStates(data);
+    } catch (error) {
+      console.error("Failed to fetch states");
+    }
+  };
+
+  fetchStates();
+}, []);
 
 useEffect(() => {
 
@@ -129,6 +144,28 @@ return (
         />
       </div>
 
+       <div className="space-y-2">
+  <label className="text-sm font-semibold">
+    State *
+  </label>
+
+  <select
+    value={form.state || ""}
+    onChange={e => handleChange("state", e.target.value)}
+    className="h-12 w-full rounded-xl border px-4 bg-background"
+  >
+    <option value="">Select State</option>
+
+    {states
+      .filter((s) => s.status === 1) // optional (only active states)
+      .map((state) => (
+        <option key={state.name} value={state.name}>
+          {state.state_name}
+        </option>
+      ))}
+  </select>
+</div>
+
       {/* CITY */}
       <div className="space-y-2">
         <label className="text-sm font-semibold">
@@ -178,7 +215,7 @@ return (
       </div>
 
       {/* CONTACT */}
-      <div className="space-y-2">
+      <div className="space-y-2 md:col-span-2">
 <label className="text-sm font-semibold">Contact Numbers</label>
 
 {form.contacts.map((phone:string,index:number)=>(
