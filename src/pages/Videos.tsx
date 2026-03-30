@@ -17,12 +17,14 @@ type VideoType = {
   id: number;
   title: string;
   video_url: string;
+  language: string;
   status: number;
   created_at: string;
 };
 
 export default function Videos() {
   const [videos, setVideos] = useState<VideoType[]>([]);
+  
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -165,6 +167,7 @@ export default function Videos() {
                     <tr className="border-b uppercase text-left">
                       <th className="py-3">SL No</th>
                       <th className="py-3">Title</th>
+                      <th className="py-3">Language</th>
                       <th className="py-3">Preview</th>
                       <th className="py-3">Created</th>
                       <th className="py-3">Status</th>
@@ -180,6 +183,7 @@ export default function Videos() {
                         </td>
 
                         <td className="font-medium">{v.title}</td>
+                        <td>{v.language}</td>
 
                         <td>
                           <video

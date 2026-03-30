@@ -14,12 +14,16 @@ type Props = {
 export default function VideoForm({ refresh, onClose, editData }: Props) {
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
+const LANGUAGES = ["english", "kannada", "marathi", "bengali"];
 
+const [language, setLanguage] = useState("");
+const [isCustom, setIsCustom] = useState(false);
   // ✅ Prefill for edit
   useEffect(() => {
     if (editData) {
-      setTitle(editData.title);
-    }
+  setTitle(editData.title);
+  setLanguage(editData.language);
+}
   }, [editData]);
 
   const handleSubmit = async (e: any) => {
@@ -33,6 +37,7 @@ export default function VideoForm({ refresh, onClose, editData }: Props) {
     // ✅ Use FormData for file upload
     const formData = new FormData();
     formData.append("title", title);
+    formData.append("language", language);
 
     if (file) {
       formData.append("video", file);
@@ -51,7 +56,10 @@ export default function VideoForm({ refresh, onClose, editData }: Props) {
           toast.error("Please select a video ❌");
           return;
         }
-
+if (!language) {
+  toast.error("Language required ❌");
+  return;
+}
         await fetch(`${API_URL}/api/videos`, {
           method: "POST",
           body: formData, // ✅ no headers
@@ -78,11 +86,73 @@ export default function VideoForm({ refresh, onClose, editData }: Props) {
         <form onSubmit={handleSubmit} className="space-y-4">
 
           {/* TITLE */}
-          <Input
-            placeholder="Video Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+  {/* TITLE */}
+  <div className="space-y-1">
+    <label className="text-sm font-medium text-gray-700">
+      Video Title
+    </label>
+    <Input
+      placeholder="Enter video title"
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+    />
+  </div>
+
+  {/* LANGUAGE */}
+  <div className="space-y-1">
+    <label className="text-sm font-medium text-gray-700">
+      Language
+    </label>
+
+    {!isCustom ? (
+      <select
+        value={language}
+        onChange={(e) => {
+          if (e.target.value === "__custom__") {
+            setIsCustom(true);
+            setLanguage("");
+          } else {
+            setLanguage(e.target.value);
+          }
+        }}
+        className="w-full border rounded-lg p-2"
+      >
+        <option value="">Select Language</option>
+
+        {LANGUAGES.map((lang) => (
+          <option key={lang} value={lang}>
+            {lang.charAt(0).toUpperCase() + lang.slice(1)}
+          </option>
+        ))}
+
+        <option value="__custom__">+ Add New Language</option>
+      </select>
+    ) : (
+      <div className="flex gap-2">
+        <Input
+          placeholder="Enter new language"
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+        />
+
+        <button
+          type="button"
+          onClick={() => {
+            setIsCustom(false);
+            setLanguage("");
+          }}
+          className="text-sm text-red-500"
+        >
+          Cancel
+        </button>
+      </div>
+    )}
+  </div>
+
+</div>
+
 
           {/* FILE INPUT */}
           <div className="space-y-2">
