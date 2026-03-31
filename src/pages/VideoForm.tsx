@@ -14,16 +14,18 @@ type Props = {
 export default function VideoForm({ refresh, onClose, editData }: Props) {
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
-const LANGUAGES = ["english", "kannada", "marathi", "bengali"];
+  const [language, setLanguage] = useState("");
+  const [isCustom, setIsCustom] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-const [language, setLanguage] = useState("");
-const [isCustom, setIsCustom] = useState(false);
-  // ✅ Prefill for edit
+  const LANGUAGES = ["english", "kannada", "marathi", "bengali"];
+
+  // ✅ Prefill edit
   useEffect(() => {
     if (editData) {
-  setTitle(editData.title);
-  setLanguage(editData.language);
-}
+      setTitle(editData.title);
+      setLanguage(editData.language);
+    }
   }, [editData]);
 
   const handleSubmit = async (e: any) => {
@@ -34,45 +36,48 @@ const [isCustom, setIsCustom] = useState(false);
       return;
     }
 
-    // ✅ Use FormData for file upload
+    if (!editData && !file) {
+      toast.error("Please select a video ❌");
+      return;
+    }
+
+    if (!language) {
+      toast.error("Language required ❌");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("language", language);
-
-    if (file) {
-      formData.append("video", file);
-    }
+    if (file) formData.append("video", file);
 
     try {
-      if (editData) {
-        await fetch(`${API_URL}/api/videos/${editData.id}`, {
-          method: "PUT",
-          body: formData, // ✅ no headers
-        });
+      setLoading(true);
 
-        toast.success("Video updated ✅");
-      } else {
-        if (!file) {
-          toast.error("Please select a video ❌");
-          return;
-        }
-if (!language) {
-  toast.error("Language required ❌");
-  return;
-}
-        await fetch(`${API_URL}/api/videos`, {
-          method: "POST",
-          body: formData, // ✅ no headers
-        });
+      const url = editData
+        ? `${API_URL}/api/videos/${editData.id}`
+        : `${API_URL}/api/videos`;
 
-        toast.success("Video uploaded 🎬");
-      }
+      const method = editData ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      toast.success(
+        editData ? "Video updated ✅" : "Video uploaded 🎬"
+      );
 
       refresh();
       onClose();
-
-    } catch {
-      toast.error("Error ❌");
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong ❌");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,134 +89,134 @@ if (!language) {
 
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          
+          {/* TITLE + LANGUAGE */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            {/* TITLE */}
+            <div>
+              <label className="text-sm font-medium">Video Title</label>
+              <Input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter video title"
+              />
+            </div>
 
-          {/* TITLE */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* LANGUAGE */}
+            <div>
+              <label className="text-sm font-medium">Language</label>
 
-  {/* TITLE */}
-  <div className="space-y-1">
-    <label className="text-sm font-medium text-gray-700">
-      Video Title
-    </label>
-    <Input
-      placeholder="Enter video title"
-      value={title}
-      onChange={(e) => setTitle(e.target.value)}
-    />
-  </div>
+              {!isCustom ? (
+                <select
+                  value={language}
+                  onChange={(e) => {
+                    if (e.target.value === "__custom__") {
+                      setIsCustom(true);
+                      setLanguage("");
+                    } else {
+                      setLanguage(e.target.value);
+                    }
+                  }}
+                  className="w-full border rounded-lg p-2"
+                >
+                  <option value="">Select Language</option>
 
-  {/* LANGUAGE */}
-  <div className="space-y-1">
-    <label className="text-sm font-medium text-gray-700">
-      Language
-    </label>
+                  {LANGUAGES.map((lang) => (
+                    <option key={lang} value={lang}>
+                      {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                    </option>
+                  ))}
 
-    {!isCustom ? (
-      <select
-        value={language}
-        onChange={(e) => {
-          if (e.target.value === "__custom__") {
-            setIsCustom(true);
-            setLanguage("");
-          } else {
-            setLanguage(e.target.value);
-          }
-        }}
-        className="w-full border rounded-lg p-2"
-      >
-        <option value="">Select Language</option>
+                  <option value="__custom__">+ Add New</option>
+                </select>
+              ) : (
+                <div className="flex gap-2">
+                  <Input
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    placeholder="Enter language"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustom(false);
+                      setLanguage("");
+                    }}
+                    className="text-red-500 text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
 
-        {LANGUAGES.map((lang) => (
-          <option key={lang} value={lang}>
-            {lang.charAt(0).toUpperCase() + lang.slice(1)}
-          </option>
-        ))}
+          {/* FILE UPLOAD */}
+          <div>
+            <label className="text-sm font-medium">Upload Video</label>
 
-        <option value="__custom__">+ Add New Language</option>
-      </select>
-    ) : (
-      <div className="flex gap-2">
-        <Input
-          placeholder="Enter new language"
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-        />
+            <div className="relative border-2 border-dashed rounded-xl p-6 text-center bg-gray-50 hover:border-blue-500">
+              <input
+                type="file"
+                accept="video/*"
+                onChange={(e) =>
+                  setFile(e.target.files?.[0] || null)
+                }
+                className="absolute inset-0 opacity-0 cursor-pointer"
+              />
 
-        <button
-          type="button"
-          onClick={() => {
-            setIsCustom(false);
-            setLanguage("");
-          }}
-          className="text-sm text-red-500"
-        >
-          Cancel
-        </button>
-      </div>
-    )}
-  </div>
+              <p className="text-sm text-gray-600">
+                <span className="text-blue-600 font-medium">browse</span>
+              </p>
 
-</div>
+              <p className="text-xs text-gray-400">
+                MP4, MOV, AVI (Max 200MB)
+              </p>
+            </div>
 
+            {/* FILE PREVIEW */}
+            {file && (
+              <div className="flex justify-between mt-2 bg-green-50 border rounded-lg p-2">
+                <div>
+                  <p className="text-sm text-green-700">
+                    {file.name}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
 
-          {/* FILE INPUT */}
-          <div className="space-y-2">
-  <label className="text-sm font-medium text-gray-700">
-    Upload Video
-  </label>
-
-  <div className="relative flex items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-blue-500 transition cursor-pointer bg-gray-50">
-    
-    <input
-      type="file"
-      accept="video/*"
-      onChange={(e) => setFile(e.target.files?.[0] || null)}
-      className="absolute inset-0 opacity-0 cursor-pointer"
-    />
-
-    <div className="text-center space-y-2">
-      <p className="text-sm text-gray-600">
-        <span className="text-blue-600 font-medium">browse</span>
-      </p>
-
-      <p className="text-xs text-gray-400">
-        MP4, MOV, AVI (Max 50MB)
-      </p>
-    </div>
-  </div>
-
-  {/* FILE NAME PREVIEW */}
-  {file && (
-    <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-      <span className="text-sm text-green-700 truncate">
-        {file.name}
-         <p className="text-xs text-gray-400">
-            {(file.size / 1024 / 1024).toFixed(2)} MB
-        </p>
-      </span>
-     
-      <button
-        type="button"
-        onClick={() => setFile(null)}
-        className="text-red-500 text-xs hover:underline"
-      >
-        Remove
-      </button>
-    </div>
-  )}
-</div>
+                <button
+                  type="button"
+                  onClick={() => setFile(null)}
+                  className="text-red-500 text-xs"
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* BUTTONS */}
           <div className="flex gap-3">
-            <Button type="submit">
-              {editData ? "Update" : "Upload"}
+            <Button type="submit" disabled={loading}>
+              {loading
+                ? "Uploading..."
+                : editData
+                ? "Update"
+                : "Upload"}
             </Button>
 
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={loading}
+            >
               Cancel
             </Button>
           </div>
-
         </form>
       </CardContent>
     </Card>
