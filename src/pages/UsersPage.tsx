@@ -7,6 +7,8 @@ import { Input } from "../components/ui/input";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
+import * as XLSX from "xlsx";
+
 import {
   Select,
   SelectContent,
@@ -25,7 +27,16 @@ import {
 } from "lucide-react";
 import { API_URL } from "@/config/api";
 import "../index.css"
+const normalizeKey = (obj: any) => {
+  const newObj: any = {};
+  Object.keys(obj).forEach((key) => {
+    newObj[key.trim().toLowerCase()] = obj[key];
+  });
+  return newObj;
+};
 
+const isEmpty = (val: any) =>
+  !val || String(val).trim() === "";
 /* ================= TYPES ================= */
 type User = {
   id: number;
@@ -56,13 +67,27 @@ const [searchInput, setSearchInput] = useState("");
 
 const [roleFilter, setRoleFilter] = useState("all");
 const [roleInput, setRoleInput] = useState("all");
-
+const [previewData, setPreviewData] = useState<any[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("created_at");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const pageSize = 8;
+const handleFileUpload = async (e: any) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
+  const buffer = await file.arrayBuffer();
+  const workbook = XLSX.read(buffer);
+
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+// ✅ normalize keys here
+const cleaned = jsonData.map((row: any) => normalizeKey(row));
+
+setPreviewData(cleaned);
+};
   /* ================= FETCH ================= */
   useEffect(() => {
     fetch(`${API_URL}/api/admin/users`)
@@ -72,20 +97,107 @@ const [roleInput, setRoleInput] = useState("all");
         setLoading(false);
       });
   }, []);
+const isValidMobile = (val: any) => {
+  return /^[0-9]{10,}$/.test(String(val).trim());
+};
 
+const transformRow = (r: any) => {
+  let mobile = String(r["contact no"] || "").trim();
+
+  // ❌ If mobile is invalid (like address), ignore it
+  if (!isValidMobile(mobile)) {
+    mobile = "";
+  }
+
+  return {
+    role: "agent",
+    company_name: r["company name"],
+    contact_person: r["name"],
+  email: r["email id"]?.trim() || "",
+    mobiles: mobile ? [mobile] : [],
+    area: r["address"],
+    city: "",
+    state: "",
+    agent_type: "Domestic",
+    gst_applicable: "no",
+    allow_duplicate: true,
+  };
+};
+const validateRow = (r: any) => {
+  if (isEmpty(r["company name"])) return "Company missing";
+  if (isEmpty(r["name"])) return "Name missing";
+  if (isEmpty(r["email id"])) return "Email missing";
+
+  const mobile = String(r["contact no"] || "").trim();
+
+  if (!/^[0-9]{10,}$/.test(mobile)) {
+    return "Invalid mobile";
+  }
+
+  return null;
+};
+const handleImport = async () => {
+
+  const errors: any[] = [];
+
+  const validRows = previewData.filter((r, index) => {
+    const err = validateRow(r);
+    if (err) {
+      errors.push({ row: index + 1, error: err });
+      return false;
+    }
+    return true;
+  });
+
+  // ❌ show errors but DON'T block import
+  if (errors.length) {
+    console.table(errors);
+    toast.error(`${errors.length} invalid rows skipped`);
+  }
+
+  if (validRows.length === 0) {
+    toast.error("No valid rows to import");
+    return;
+  }
+
+  const formatted = validRows.map(transformRow);
+
+  const res = await fetch(`${API_URL}/api/admin/import-users`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ users: formatted }),
+  });
+
+  const data = await res.json();
+
+  toast.success(`Imported ${data.success}`);
+
+  if (data.failed.length) {
+    toast.error(`${data.failed.length} rows failed`);
+    console.table(data.failed);
+  }
+};
   /* ================= FILTER + SORT ================= */
 const processed = useMemo(() => {
   let data = [...users];
 
-  if (search) {
-    data = data.filter(
-      (u) =>
-        u.company_name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email?.split(",").some(e =>
-  e.toLowerCase().includes(search.toLowerCase())
-)
+if (search) {
+  const searchVal = search.toLowerCase();
+
+  data = data.filter((u) => {
+    const nameToSearch =
+      u.role === "supplier"
+        ? u.company_name
+        : u.contact_person;
+
+    return (
+      nameToSearch?.toLowerCase().includes(searchVal) ||
+      u.company_name?.toLowerCase().includes(searchVal) || // optional
+      u.contact_person?.toLowerCase().includes(searchVal) || // optional
+      u.email?.toLowerCase().includes(searchVal)
     );
-  }
+  });
+}
 
  if (roleFilter !== "all") {
   data = data.filter((u) => u.role === roleFilter as "agent" | "supplier");
@@ -235,9 +347,81 @@ onChange={(e) => setSearchInput(e.target.value)}
 >
   Clear
 </Button>
+<input
+  type="file"
+  accept=".xlsx, .xls"
+  onChange={handleFileUpload}
+  className="hidden"
+  id="excelUpload"
+/>
+
+<Button onClick={() => document.getElementById("excelUpload")?.click()}>
+  Import Excel
+</Button>
           </CardHeader>
 
           <CardContent>
+{previewData.length > 0 && (
+  <div className="mt-4 border rounded-lg shadow-sm bg-white">
+
+    {/* HEADER */}
+    <div className="flex justify-between items-center p-3 border-b">
+      <h3 className="font-semibold text-lg">Preview</h3>
+      <span className="text-sm text-muted-foreground">
+        {previewData.length} rows found
+      </span>
+    </div>
+
+    {/* SCROLLABLE TABLE */}
+    <div className="max-h-[350px] overflow-auto">
+
+      <table className="w-full text-sm border-collapse">
+
+        {/* TABLE HEADER */}
+        <thead className="sticky top-0 bg-gray-100 z-10">
+          <tr>
+            {Object.keys(previewData[0]).map((key) => (
+              <th
+                key={key}
+                className="px-3 py-2 text-left font-semibold border-b whitespace-nowrap"
+              >
+                {key}
+              </th>
+            ))}
+          </tr>
+        </thead>
+
+        {/* TABLE BODY */}
+        <tbody>
+          {previewData.map((row, i) => (
+            <tr
+              key={i}
+              className="hover:bg-gray-50 border-b"
+            >
+              {Object.values(row).map((val: any, j) => (
+                <td
+                  key={j}
+                  className="px-3 py-2 whitespace-nowrap"
+                >
+                  {val || "-"}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+
+      </table>
+    </div>
+
+    {/* FOOTER */}
+    <div className="flex justify-end p-3 border-t">
+      <Button onClick={handleImport}>
+        Confirm Import
+      </Button>
+    </div>
+
+  </div>
+)}
             {loading ? (
               <p className="text-center py-10">Loading...</p>
             ) : (
