@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
@@ -6,7 +7,7 @@ type Rule = {
   from_days: number;
   to_days: number;
   charge_type: "percentage" | "fixed";
-  charge_value: string;
+  charge_value: number;
 };
 
 type Props = {
@@ -23,7 +24,7 @@ const CancellationPoliciesManager = ({ rules, setRules }: Props) => {
         from_days: 0,
         to_days: 0,
         charge_type: "percentage",
-        charge_value: "",
+        charge_value: 0,
       }
     ]);
   };
@@ -44,24 +45,24 @@ const CancellationPoliciesManager = ({ rules, setRules }: Props) => {
     );
   };
 
+  // ✅ AUTO ADD FIRST ROW
+  useEffect(() => {
+    if (rules.length === 0) {
+      addRule();
+    }
+  }, []);
+
   return (
     <div className="space-y-12">
 
-      {/* HEADER */}
       <div>
         <h2 className="text-3xl font-bold">
           Cancellation Policy Rules
         </h2>
-        <p className="text-muted-foreground mt-2">
-          Define cancellation charges based on days before check-in.
-        </p>
       </div>
 
       {rules.map((rule, index) => (
-        <div
-          key={index}
-          className="border rounded-2xl p-8 bg-muted/10 space-y-6"
-        >
+        <div key={index} className="border rounded-2xl p-8 space-y-6">
 
           <div className="flex justify-between items-center">
             <h3 className="font-semibold text-lg">
@@ -80,77 +81,48 @@ const CancellationPoliciesManager = ({ rules, setRules }: Props) => {
 
           <div className="grid md:grid-cols-2 gap-6">
 
-            {/* FROM DAYS */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                From (Days Before Check-in)
-              </label>
-              <Input
-                type="number"
-                min="0"
-                value={rule.from_days}
-                onChange={(e) =>
-                  updateRule(index, "from_days", Number(e.target.value))
-                }
-              />
-            </div>
+            <Input
+              type="number"
+              value={rule.from_days}
+              onChange={(e) =>
+                updateRule(index, "from_days", Number(e.target.value))
+              }
+            />
 
-            {/* TO DAYS */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                To (Days Before Check-in)
-              </label>
-              <Input
-                type="number"
-                min="0"
-                value={rule.to_days}
-                onChange={(e) =>
-                  updateRule(index, "to_days", Number(e.target.value))
-                }
-              />
-            </div>
+            <Input
+              type="number"
+              value={rule.to_days}
+              onChange={(e) =>
+                updateRule(index, "to_days", Number(e.target.value))
+              }
+            />
 
-            {/* CHARGE TYPE */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Charge Type
-              </label>
-              <select
-                className="w-full border rounded-xl h-10 px-3"
-                value={rule.charge_type}
-                onChange={(e) =>
-                  updateRule(index, "charge_type", e.target.value)
-                }
-              >
-                <option value="percentage">Percentage (%)</option>
-                <option value="fixed">Fixed Amount (₹)</option>
-              </select>
-            </div>
+            <select
+              value={rule.charge_type}
+              onChange={(e) =>
+                updateRule(index, "charge_type", e.target.value)
+              }
+            >
+              <option value="percentage">Percentage</option>
+              <option value="fixed">Fixed</option>
+            </select>
 
-            {/* CHARGE VALUE */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Charge Value
-              </label>
-              <Input
-                type="number"
-                min="0"
-                placeholder="Enter value"
-                value={rule.charge_value}
-                onChange={(e) =>
-                  updateRule(index, "charge_value", e.target.value)
-                }
-              />
-            </div>
+            <Input
+              type="number"
+              value={rule.charge_value}
+              onChange={(e) =>
+                updateRule(index, "charge_value", Number(e.target.value))
+              }
+            />
 
           </div>
 
         </div>
       ))}
 
-      <Button variant="outline" onClick={addRule}>
+      <Button onClick={addRule}>
         <Plus className="w-4 h-4 mr-2" />
-        Add Cancellation Rule
+        Add Rule
       </Button>
 
     </div>

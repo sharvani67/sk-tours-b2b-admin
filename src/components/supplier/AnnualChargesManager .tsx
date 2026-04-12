@@ -1,20 +1,14 @@
-import { useState } from "react";
+import React from "react";
 
-const AnnualChargesManager = () => {
+type Props = {
+  charges: any;
+  setCharges: React.Dispatch<React.SetStateAction<any>>;
+};
 
-  const [charges, setCharges] = useState({
-    maintenance_amount: "",
-    maintenance_note: "",
-    service_amount: "",
-    service_note: "",
-    gst_amount: "",
-    gst_note: "",
-    extra_amount: "",
-    extra_note: "",
-  });
+const AnnualChargesManager = ({ charges, setCharges }: Props) => {
 
   const handleChange = (key: string, value: string) => {
-    setCharges((prev) => ({ ...prev, [key]: value }));
+    setCharges((prev: any) => ({ ...prev, [key]: value }));
   };
 
   return (
@@ -66,7 +60,7 @@ const AnnualChargesManager = () => {
 
               {/* AMOUNT */}
               <input
-                value={(charges as any)[item.amountKey]}
+                value={charges[item.amountKey] || ""}
                 onChange={(e) =>
                   handleChange(item.amountKey, e.target.value)
                 }
@@ -74,9 +68,9 @@ const AnnualChargesManager = () => {
                 className="bg-[#FFDADA] px-3 py-1 border border-black rounded-md w-full"
               />
 
-              {/* REMARK / NOTE */}
+              {/* NOTE */}
               <input
-                value={(charges as any)[item.noteKey]}
+                value={charges[item.noteKey] || ""}
                 onChange={(e) =>
                   handleChange(item.noteKey, e.target.value)
                 }
@@ -91,6 +85,7 @@ const AnnualChargesManager = () => {
           <div className="mt-4 border-t pt-3">
 
             <div className="grid grid-cols-[200px_150px_1fr] gap-2 items-center">
+
               <div className="bg-[#002060] text-white px-3 py-1 rounded-md font-semibold">
                 Total
               </div>
@@ -116,8 +111,6 @@ const AnnualChargesManager = () => {
           </div>
 
         </div>
-
-        
 
       </div>
 

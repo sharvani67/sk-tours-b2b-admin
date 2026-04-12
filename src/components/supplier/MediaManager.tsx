@@ -1,6 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Trash2, Upload, Star } from "lucide-react";
+import { useEffect } from "react";
 
 type Props = {
   images: File[];
@@ -33,14 +34,26 @@ const MediaManager = ({
   };
 
   const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-    if (coverIndex === index) setCoverIndex(null);
-  };
+  setImages(prev => prev.filter((_, i) => i !== index));
+
+  setCoverIndex(prev => {
+    if (prev === null) return null;
+
+    if (prev === index) return 0; // fallback to first
+    if (prev > index) return prev - 1;
+
+    return prev;
+  });
+};
 
   const removeVideo = (index: number) => {
     setVideos(prev => prev.filter((_, i) => i !== index));
   };
-
+useEffect(() => {
+  if (images.length > 0 && coverIndex === null) {
+    setCoverIndex(0);
+  }
+}, [images]);
 
     return (
   <div>

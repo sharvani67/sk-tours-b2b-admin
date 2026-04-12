@@ -13,6 +13,11 @@ type Staff = {
   email2: string;
   landline: string;
   photo: File | null;
+
+  is_active: boolean;
+  show_phones: boolean;
+  show_emails: boolean;
+  show_photo: boolean;
 };
 
 type Props = {
@@ -37,6 +42,10 @@ const StaffManager = ({ staff, setStaff }: Props) => {
       email2: "",
       landline: "",
       photo: null,
+       is_active: true,
+  show_phones: true,
+  show_emails: true,
+  show_photo: true
     },
   ]);
 };
@@ -214,14 +223,23 @@ useEffect(() => {
       />
 
       {/* ACTIVE */}
-      <button className="bg-[#FFFF00] py-1 border border-black rounded-md">
-        Active
-      </button>
+      <button
+  onClick={() => update(i, "is_active", true)}
+  className={`py-1 border border-black rounded-md ${
+    s.is_active ? "bg-green-400" : "bg-gray-300"
+  }`}
+>
+  Active
+</button>
 
-      {/* HIDE */}
-      <button className="bg-[#FFC000] py-1 border border-black rounded-md">
-        Hide
-      </button>
+<button
+  onClick={() => update(i, "is_active", false)}
+  className={`py-1 border border-black rounded-md ${
+    !s.is_active ? "bg-yellow-400" : "bg-gray-300"
+  }`}
+>
+  Hide
+</button>
 
     </div>
   ))}

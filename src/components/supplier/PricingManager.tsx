@@ -4,8 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
 
+type Props = {
+  rooms: any[];
+  setRooms: any;
+  pricingData: any;
+  setPricingData: any;
+};
+const PricingManager = ({
+  rooms,
+  setRooms,
+  pricingData,
+  setPricingData
+}: Props) => {
 
-const PricingManager = ({ rooms, setRooms }: any) => {
 const addRow = () => {
     setRooms([
       ...rooms,
@@ -21,6 +32,7 @@ const addRow = () => {
       },
     ]);
   };
+ 
 const deleteRow = () => {
   if (rooms.length === 0) return;
 
@@ -33,6 +45,7 @@ const deleteRow = () => {
     updated[index][key] = value;
     setRooms(updated);
   };
+
 useEffect(() => {
   if (rooms.length === 0) {
     addRow();
@@ -60,18 +73,34 @@ useEffect(() => {
 
   <div className="bg-orange-600 FFC000 p-2 col-span-2">Valid From</div>
   <div className="col-span-2">
-    <input
-      type="date"
-      className="w-full h-full bg-[#e6c0b8] text-black p-2 border"
-    />
+<input
+className="w-full h-full bg-[#e6c0b8] text-black p-2 border"
+  type="date"
+  value={pricingData.validFrom}
+  onChange={(e) =>
+    setPricingData({
+      ...pricingData,
+      validFrom: e.target.value
+    })
+  }
+/>
+
+
   </div>
 
   <div className="bg-orange-600 p-2 col-span-2">Valid Till</div>
   <div className="col-span-2">
-    <input
-      type="date"
-      className="w-full h-full bg-[#e6c0b8] text-black p-2 border"
-    />
+<input
+className="w-full h-full bg-[#e6c0b8] text-black p-2 border"
+  type="date"
+  value={pricingData.validTo}
+  onChange={(e) =>
+    setPricingData({
+      ...pricingData,
+      validTo: e.target.value
+    })
+  }
+/>
   </div>
 
 </div>
@@ -197,14 +226,60 @@ useEffect(() => {
         <div className="bg-[#0c2d67] text-white p-2 border border-black text-center">
           Extra Lunch
         </div>
-        <input className="border border-black bg-[#66FFFF]" />
-        <input className="border border-black  bg-[#66FFFF]" />
+        <input className="border border-black bg-[#66FFFF]" 
+         value={pricingData.meals.lunchAdult}
+  onChange={(e) =>
+    setPricingData({
+      ...pricingData,
+      meals: {
+        ...pricingData.meals,
+        lunchAdult: e.target.value
+      }
+    })
+  }/>
+        <input
+  className="border border-black bg-[#66FFFF]"
+  value={pricingData.meals.lunchChild}
+  onChange={(e) =>
+    setPricingData({
+      ...pricingData,
+      meals: {
+        ...pricingData.meals,
+        lunchChild: e.target.value
+      }
+    })
+  }
+/>
 
         <div className="bg-[#0c2d67] text-white p-2 border border-black text-center">
           Extra Dinner
         </div>
-        <input className="border border-black  bg-[#66FFFF]" />
-        <input className="border border-black  bg-[#66FFFF]" />
+        <input
+  className="border border-black bg-[#66FFFF]"
+  value={pricingData.meals.dinnerAdult}
+  onChange={(e) =>
+    setPricingData({
+      ...pricingData,
+      meals: {
+        ...pricingData.meals,
+        dinnerAdult: e.target.value
+      }
+    })
+  }
+/>
+      <input
+  className="border border-black bg-[#66FFFF]"
+  value={pricingData.meals.dinnerChild}
+  onChange={(e) =>
+    setPricingData({
+      ...pricingData,
+      meals: {
+        ...pricingData.meals,
+        dinnerChild: e.target.value
+      }
+    })
+  }
+/>
 
       </div>
 

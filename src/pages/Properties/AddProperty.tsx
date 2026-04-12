@@ -74,6 +74,16 @@ const [amenities, setAmenities] = useState<string[]>([]);
     total_rooms: "",
     hotel_remarks: ""
   });
+const [pricingData, setPricingData] = useState({
+  validFrom: "",
+  validTo: "",
+  meals: {
+    lunchAdult: "",
+    lunchChild: "",
+    dinnerAdult: "",
+    dinnerChild: ""
+  }
+});
 
 const attachMealsToRooms = (rooms: any[], meals: any[]) => {
   return rooms.map(room => ({
@@ -122,7 +132,13 @@ const closePopup = () => {
 
   const [sightseeing, setSightSeeing] = useState<any[]>([]);
   const [faqs, setFaqs] = useState<any[]>([]);
-  const [policies, setPolicies] = useState<any>({});
+  const [policies, setPolicies] = useState({
+  booking_policy: "",
+  cancellation_policy: "",
+  child_policy: "",
+  pet_policy: "",
+  terms: ""
+});
   const [cancellationRules, setCancellationRules] = useState<any[]>([]);
   const [checkinData, setCheckinData] = useState<any>({});
 
@@ -147,7 +163,16 @@ const closePopup = () => {
     cancelled_cheque: null,
   },
 ]);
-
+const [annualCharges, setAnnualCharges] = useState({
+  maintenance_amount: "",
+  maintenance_note: "",
+  service_amount: "",
+  service_note: "",
+  gst_amount: "",
+  gst_note: "",
+  extra_amount: "",
+  extra_note: "",
+});
 const loadDraft = async () => {
 
   try {
@@ -169,7 +194,7 @@ const loadDraft = async () => {
     setPolicies(data.policies ? JSON.parse(data.policies) : {});
     setCancellationRules(data.cancellation_rules ? JSON.parse(data.cancellation_rules) : []);
     setCheckinData(data.checkin_data ? JSON.parse(data.checkin_data) : {});
-    setBankDetails(data.bank_details ? JSON.parse(data.bank_details) : {});
+    setBankDetails(data.bank_details ? JSON.parse(data.bank_details) : []);
 
   } catch (err) {
 
@@ -219,7 +244,7 @@ const saveDraft = async () => {
     formData.append("cancellation_rules", JSON.stringify(cancellationRules));
     formData.append("checkin_data", JSON.stringify(checkinData));
     formData.append("bank_details", JSON.stringify(bankDetails));
-
+    formData.append("annual_charges", JSON.stringify(annualCharges));
     formData.append("contacts", JSON.stringify(form.contacts));
     formData.append("emails", JSON.stringify(form.emails));
 
@@ -283,6 +308,10 @@ const saveDraft = async () => {
       formData.append("checkin_data", JSON.stringify(checkinData));
       formData.append("contacts", JSON.stringify(form.contacts));
       formData.append("emails", JSON.stringify(form.emails));
+      formData.append("valid_from", pricingData.validFrom);
+formData.append("valid_to", pricingData.validTo);
+formData.append("meals", JSON.stringify(pricingData.meals));
+formData.append("annual_charges", JSON.stringify(annualCharges));
       if (certificate) formData.append("certificate", certificate);
 
       images.forEach(img => formData.append("images", img));
@@ -299,6 +328,7 @@ const saveDraft = async () => {
     formData.append("cancelledCheque", bank.cancelled_cheque);
   }
 });
+
       const res = await fetch(
         `${API_URL}/api/properties/add-property`,
         { method: "POST", body: formData }
@@ -458,11 +488,12 @@ useEffect(() => {
 )}
 
 {activeTab === 2 && (
-  <PricingManager
-    rooms={rooms}
-    setRooms={setRooms}
-    onNext={() => setActiveTab(3)}
-  />
+ <PricingManager
+  rooms={rooms}
+  setRooms={setRooms}
+  pricingData={pricingData}
+  setPricingData={setPricingData}
+/>
 )}
 
 {activeTab === 3 && (
@@ -498,7 +529,12 @@ useEffect(() => {
   />
 )}
 
-{activeTab === 8 && <AnnualChargesManager />}
+{activeTab === 8 && (
+  <AnnualChargesManager
+    charges={annualCharges}
+    setCharges={setAnnualCharges}
+  />
+)}
 
           {/* BUTTONS */}
 
