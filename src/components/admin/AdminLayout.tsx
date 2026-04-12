@@ -1,24 +1,26 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 
-interface AdminLayoutProps {
-  children: React.ReactNode;
-}
-
-const AdminLayout = ({ children }: AdminLayoutProps) => {
+const AdminLayout = ({ children }) => {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AdminSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
-          <AdminHeader />
-          <main className="flex-1 p-6 overflow-auto">
-            {children}
-          </main>
-        </div>
-      </div>
-    </SidebarProvider>
+   <div className="flex h-screen w-full overflow-hidden">
+
+  {/* SIDEBAR */}
+  <div className="w-60 shrink-0">
+    <AdminSidebar />
+  </div>
+
+  {/* RIGHT SIDE */}
+  <div className="flex-1 flex flex-col min-w-0">
+
+    <AdminHeader />
+
+    <main className="flex-1 bg-[#f5f6fa] p-6 overflow-auto">
+      {children}
+    </main>
+
+  </div>
+</div>
   );
 };
 

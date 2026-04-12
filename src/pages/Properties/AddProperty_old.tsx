@@ -5,19 +5,17 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
-import PropertyDetails, { AmenitiesManager } from "@/components/supplier/PropertyDetails";
+import PropertyDetails from "@/components/supplier/PropertyDetails";
 import StaffManager from "@/components/supplier/StaffManager";
 import PricingManager from "@/components/supplier/PricingManager";
 import MediaManager from "@/components/supplier/MediaManager";
-// import AmenitiesManager from "@/components/supplier/AmenitiesManager";
+import AmenitiesManager from "@/components/supplier/AmenitiesManager";
 import SightSeeingManager from "@/components/supplier/SightSeeingManager";
 import QAManager from "@/components/supplier/QAManager";
 import BookingPoliciesManager from "@/components/supplier/BookingPoliciesManager";
 import CancellationPoliciesManager from "@/components/supplier/CancellationPoliciesManager";
 import CheckinManager from "@/components/supplier/CheckinManager";
 import BankDetailsManager from "@/components/supplier/BankDetailsManager";
-import AddressManager from "@/components/supplier/AddressManager";
-import AnnualChargesManager  from "@/components/supplier/AnnualChargesManager ";
 
 import {
   Building2,
@@ -36,18 +34,18 @@ import {
 /* ===================== TABS ===================== */
 
 const TABS = [
-  "Property Details",
-  "Address",
-  "Rooms Rates",
-  "Staff Details",
-  "Question & Answers",
-  "Booking & Cancellation Policy",
-  "Bank Details",
-  "Media",
-  "Annual Charges",
+  { label: "Property Details", icon: Building2 },
+  { label: "Staff Details", icon: Users },
+  { label: "Price", icon: IndianRupee },
+  { label: "Photos & Videos", icon: Image },
+  { label: "Amenities", icon: Sparkles },
+  { label: "Sight Seeing", icon: Map },
+  { label: "Q & A", icon: HelpCircle },
+  { label: "Booking Policies", icon: FileText },
+  { label: "Cancellation Policies", icon: Ban },
+  { label: "Check In / Check Out", icon: Clock },
+  { label: "Bank Details", icon: Landmark },
 ];
-
-
 
 export default function AdminAddProperty() {
 
@@ -57,7 +55,6 @@ export default function AdminAddProperty() {
   const [submitting, setSubmitting] = useState(false);
 const [showCancelPopup, setShowCancelPopup] = useState(false);
 const [propertyDraftId, setPropertyDraftId] = useState<number | null>(null);
-const [amenities, setAmenities] = useState<string[]>([]);
   /* ================= BASIC DETAILS ================= */
 
   const [form, setForm] = useState({
@@ -119,7 +116,7 @@ const closePopup = () => {
   const [coverIndex, setCoverIndex] = useState<number | null>(null);
 
   const [staff, setStaff] = useState<any[]>([]);
-
+  const [amenities, setAmenities] = useState<string[]>([]);
   const [sightseeing, setSightSeeing] = useState<any[]>([]);
   const [faqs, setFaqs] = useState<any[]>([]);
   const [policies, setPolicies] = useState<any>({});
@@ -409,114 +406,158 @@ useEffect(() => {
 
         {/* CARD */}
 
-     
+        <div className="bg-white rounded-3xl shadow-xl p-10">
 
           {/* TABS */}
 
-<div className="flex w-full bg-[#66FFFF] justify-between">
+          <div className="relative mb-10">
 
-  {TABS.map((tab, index) => (
-    <button
-      key={tab}
-      onClick={() => setActiveTab(index)}
-      className={`px-4 py-1 text-sm font-medium border-2 border-black transition rounded-md
-        ${
-          activeTab === index
-            ? "bg-[#002060] text-white"
-            : "bg-[#66FFFF] text-black hover:bg-[#66FFFF]"
-        }
-      `}
-    >
-      {tab}
-    </button>
-  ))}
+            <div className="absolute top-5 left-0 w-full h-1 bg-gray-200 rounded"></div>
 
-</div>
+            <div
+              className="absolute top-5 left-0 h-1 bg-[#bd9828] rounded transition-all duration-500"
+              style={{
+                width: `${(activeTab / (TABS.length - 1)) * 100}%`
+              }}
+            />
+
+            <div className="flex justify-between items-start mx-2">
+
+              {TABS.map((tab, index) => {
+                const Icon = tab.icon;
+
+                return (
+                  <button
+                    key={tab.label}
+                    onClick={() => setActiveTab(index)}
+                    className="flex flex-col items-center relative z-10 group"
+                  >
+
+                    <div
+                      className={`w-11 h-11 flex items-center justify-center rounded-2xl border
+                      ${activeTab >= index
+                          ? "bg-[#bd9828] text-white border-[#bd9828]"
+                          : "bg-gray-200"}
+                    `}
+                    >
+                      <Icon size={18} />
+                    </div>
+
+                    <span
+                      className={`text-xs mt-2 text-center font-medium
+                      ${activeTab === index ? "text-[#bd9828]" : ""}
+                    `}
+                    >
+                      {tab.label}
+                    </span>
+
+                  </button>
+                );
+              })}
+            </div>
+
+          </div>
 
           {/* TAB CONTENT */}
 
-         {activeTab === 0 && (
-  <>
-    <PropertyDetails
-      form={form}
-      handleChange={handleChange}
-      setCertificate={setCertificate}
-    />
-    <AmenitiesManager
-      amenities={amenities}
-      setAmenities={setAmenities}
-    />
-  </>
-)}
+          {activeTab === 0 && (
+            <PropertyDetails
+              form={form}
+              handleChange={handleChange}
+              setCertificate={setCertificate}
+            />
+          )}
 
-{activeTab === 1 && (
-  <AddressManager form={form} handleChange={handleChange} />
-)}
+          {activeTab === 1 && (
+            <StaffManager staff={staff} setStaff={setStaff} />
+          )}
 
-{activeTab === 2 && (
-  <PricingManager
-    rooms={rooms}
-    setRooms={setRooms}
-    onNext={() => setActiveTab(3)}
-  />
-)}
+          {activeTab === 2 && (
+            <PricingManager
+              rooms={rooms}
+              setRooms={setRooms}
+              onNext={() => setActiveTab(3)}
+            />
+          )}
 
-{activeTab === 3 && (
-  <StaffManager staff={staff} setStaff={setStaff} />
-)}
+          {activeTab === 3 && (
+            <MediaManager
+              images={images}
+              setImages={setImages}
+              coverIndex={coverIndex}
+              setCoverIndex={setCoverIndex}
+              videos={videos}
+              setVideos={setVideos}
+            />
+          )}
 
-{activeTab === 4 && (
-  <QAManager faqs={faqs} setFaqs={setFaqs} />
-)}
+          {activeTab === 4 && (
+            <AmenitiesManager
+              amenities={amenities}
+              setAmenities={setAmenities}
+            />
+          )}
 
-{activeTab === 5 && (
-  <BookingPoliciesManager
-    policies={policies}
-    setPolicies={setPolicies}
-  />
-)}
+          {activeTab === 5 && (
+            <SightSeeingManager
+              sightseeing={sightseeing}
+              setSightSeeing={setSightSeeing}
+            />
+          )}
 
-{activeTab === 6 && (
-  <BankDetailsManager
-    bankDetails={bankDetails}
-    setBankDetails={setBankDetails}
-  />
-)}
+          {activeTab === 6 && (
+            <QAManager faqs={faqs} setFaqs={setFaqs} />
+          )}
 
-{activeTab === 7 && (
-  <MediaManager
-    images={images}
-    setImages={setImages}
-    coverIndex={coverIndex}
-    setCoverIndex={setCoverIndex}
-    videos={videos}
-    setVideos={setVideos}
-  />
-)}
+          {activeTab === 7 && (
+            <BookingPoliciesManager
+              policies={policies}
+              setPolicies={setPolicies}
+            />
+          )}
 
-{activeTab === 8 && <AnnualChargesManager />}
+          {activeTab === 8 && (
+            <CancellationPoliciesManager
+              rules={cancellationRules}
+              setRules={setCancellationRules}
+            />
+          )}
+
+          {activeTab === 9 && (
+            <CheckinManager
+              checkinData={checkinData}
+              setCheckinData={setCheckinData}
+            />
+          )}
+
+          {activeTab === 10 && (
+            <BankDetailsManager
+              bankDetails={bankDetails}
+              setBankDetails={setBankDetails}
+            />
+          )}
 
           {/* BUTTONS */}
 
           <div className="mt-10 flex justify-between">
 
             {activeTab > 0 && (
-              <Button onClick={prevTab}
-              className="bg-[#FF0000] hover:bg-red-600 text-white px-6 py-2 font-semibold">
+              <Button onClick={prevTab}>
                 ← Previous
               </Button>
             )}
-          <div className="flex gap-3">
+<div className="flex gap-3">
             {/* SAVE ONLY */}
-            <Button onClick={saveDraft}
-            className="bg-[#FF0000] hover:bg-red-600 text-white px-6 py-2 font-semibold">
+            <Button
+             
+              onClick={saveDraft}
+            >
               Save as Draft
             </Button>
 
             {/* SAVE AND CONTINUE */}
     {activeTab < TABS.length - 1 && (
-      <Button onClick={saveAndContinue}
-      className="bg-[#FF0000] hover:bg-red-600 text-white px-6 py-2 font-semibold">
+      <Button onClick={saveAndContinue}>
         Save & Continue →
       </Button>
     )}
@@ -532,7 +573,7 @@ useEffect(() => {
 </div>
           </div>
 
-     
+        </div>
 
       </div>
 

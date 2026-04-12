@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
+import { useEffect } from "react";
 
 type FAQ = {
   question: string;
@@ -12,157 +13,115 @@ type Props = {
   faqs: FAQ[];
   setFaqs: React.Dispatch<React.SetStateAction<FAQ[]>>;
 };
-const COMMON_FAQS = [
-  "How far is the Airport from the hotel?",
-  "How far is the Railway Station from the hotel?",
-  "How far is the City Center from the hotel?",
-  "How far is the Bus Stand from the hotel?",
-];
+
 const QAManager = ({ faqs, setFaqs }: Props) => {
 
   const addFAQ = () => {
-    setFaqs(prev => [
-      ...prev,
-      {
-        question: "",
-        answer: "",
-      }
-    ]);
+    setFaqs(prev => [...prev, { question: "", answer: "" }]);
   };
 
   const removeFAQ = (index: number) => {
     setFaqs(prev => prev.filter((_, i) => i !== index));
   };
 
-  const updateFAQ = (
-    index: number,
-    key: keyof FAQ,
-    value: string
-  ) => {
+  const updateFAQ = (index: number, key: keyof FAQ, value: string) => {
     setFaqs(prev =>
       prev.map((faq, i) =>
         i === index ? { ...faq, [key]: value } : faq
       )
     );
   };
+useEffect(() => {
+  if (faqs.length === 0) {
+    setFaqs([{ question: "", answer: "" }]);
+  }
+}, []);
+  return (
+    <div className="bg-[#f4f4f4]">
 
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-3">
+        <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
+          Question and Answers
+        </div>
+      </div>
 
-return (
-  <div className="space-y-10">
+      {/* FAQ LIST */}
+      <div className="space-y-2">
 
-    {/* HEADER */}
-
-{/* HEADER */}
-<div className="flex justify-between items-start gap-6">
-
-  <div>
-    <h2 className="text-3xl font-bold">
-      Frequently Asked Questions (Q&A)
-    </h2>
-    <p className="text-muted-foreground mt-2">
-      Add common guest questions to reduce booking confusion.
-    </p>
-  </div>
-
-  <div className="flex gap-3">
-
-    {/* COMMON QUESTIONS DROPDOWN */}
-    <select
-      className="border rounded-lg px-3 py-2"
-      onChange={(e) => {
-        if (!e.target.value) return;
-
-        setFaqs(prev => [
-          ...prev,
-          {
-            question: e.target.value,
-            answer: "",
-          }
-        ]);
-
-        e.target.value = "";
-      }}
-    >
-      <option value="">Common Questions</option>
-      {COMMON_FAQS.map((q) => (
-        <option key={q} value={q}>
-          {q}
-        </option>
-      ))}
-    </select>
-
-    {/* ADD QUESTION BUTTON */}
-    <Button variant="outline" onClick={addFAQ}>
-      <Plus className="w-4 h-4 mr-2" />
-      Add Question
-    </Button>
-
-  </div>
-
-</div>
-
-
-
-    {/* FAQ LIST */}
-    {faqs.map((faq, index) => (
-      <div
-        key={index}
-        className="border rounded-2xl p-8 space-y-6 bg-muted/10"
-      >
-
-        {/* QUESTION HEADER */}
-        <div className="flex items-center gap-4">
-
-          <Button
-            variant="destructive"
-            size="icon"
-            onClick={() => removeFAQ(index)}
+        {faqs.map((faq, index) => (
+          <div
+            key={index}
+            className="rounded-lg overflow-hidden border border-[#0c2d67] relative"
           >
-            <Trash2 className="w-4 h-4" />
-          </Button>
 
-          <h3 className="text-lg font-semibold">
-            Question {index + 1}
-          </h3>
+            {/* DELETE BUTTON */}
+            <button
+              onClick={() => removeFAQ(index)}
+              className="absolute top-2 right-2 bg-[#FF0000] text-white p-1 rounded"
+            >
+              <Trash2 size={14} />
+            </button>
 
-        </div>
+            {/* QUESTION */}
+            <div className="bg-[#0c2d67] text-white p-3">
+              <label className="block text-sm mb-1">Question</label>
 
-        {/* QUESTION */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">
-            Question *
-          </label>
-          <Input
-            placeholder="e.g. Is early check-in available?"
-            value={faq.question}
-            onChange={(e) =>
-              updateFAQ(index, "question", e.target.value)
-            }
-          />
-        </div>
+              <Input
+                placeholder="Enter question"
+                value={faq.question}
+                onChange={(e) =>
+                  updateFAQ(index, "question", e.target.value)
+                }
+                className="bg-[#FFDADA] text-black border-none"
+              />
+            </div>
 
-        {/* ANSWER */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">
-            Answer *
-          </label>
-          <Textarea
-            className="min-h-[120px]"
-            placeholder="Provide detailed answer..."
-            value={faq.answer}
-            onChange={(e) =>
-              updateFAQ(index, "answer", e.target.value)
-            }
-          />
-        </div>
+            {/* ANSWER */}
+            <div className="bg-[#69bcbc] p-3">
+              <label className="block text-sm mb-1 text-black">
+                Answer
+              </label>
+
+              <Textarea
+                placeholder="Enter Answer"
+                value={faq.answer}
+                onChange={(e) =>
+                  updateFAQ(index, "answer", e.target.value)
+                }
+                className="bg-[#FFDADA] text-black border-none min-h-[30px]"
+              />
+            </div>
+
+          </div>
+        ))}
 
       </div>
-    ))}
+{/* ADD BUTTON (BOTTOM) */}
+<div className="flex justify-end mt-4">
+  <Button
+    onClick={addFAQ}
+    className="bg-[#0c2d67] text-white px-6"
+  >
+    <Plus className="w-4 h-4 mr-1" />
+    Add
+  </Button>
+</div>
+      {/* BUTTONS */}
+      {/* <div className="flex justify-end gap-4 mt-8">
 
-  </div>
-);
+        <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 font-semibold">
+          BACK
+        </button>
 
+        <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 font-semibold">
+          SAVE
+        </button>
 
+      </div> */}
+
+    </div>
+  );
 };
 
 export default QAManager;

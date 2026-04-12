@@ -4,92 +4,66 @@ import {
   Handshake,
   Settings,
   MapPin,
-  LogOut,
 } from "lucide-react";
-import { NavLink } from "@/components/NavLink";
-import { useNavigate } from "react-router-dom";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarFooter,
-  SidebarHeader,
-} from "@/components/ui/sidebar";
 import { Video } from "lucide-react";
-const mainNav = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Users", url: "/users", icon: Users },
-  { title: "Bookings", url: "/bookings", icon: Handshake },
-  { title: "Properties", url: "/properties", icon: Settings },
-  // { title: "Deals", url: "/deals", icon: Handshake },
-  { title: "Categories", url: "/categories", icon: Handshake },
-  
-   // ✅ NEW
-  { title: "States", url: "/states", icon: MapPin },
-   { title: "Videos", url: "/videos", icon: Video },
-  { title: "Settings", url: "/settings", icon: Settings },
+import { NavLink } from "react-router-dom";
+
+const menu = [
+  { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { name: "Users", path: "/users", icon: Users },
+  { name: "Bookings", path: "/bookings", icon: Handshake },
+  { name: "Properties", path: "/properties", icon: Settings },
+  { name: "Categories", path: "/categories", icon: Handshake },
+  { name: "States", path: "/states", icon: MapPin },
+  { name: "Videos", path: "/videos", icon: Video },
+  { name: "Settings", path: "/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {
-
-  const navigate = useNavigate();
   return (
-    <Sidebar className="border-r border-sidebar-border bg-sidebar">
+    <div className="w-60 h-screen bg-[#0b2c5f] text-white flex flex-col">
 
-      {/* HEADER */}
-      <SidebarHeader className="px-6 py-5 border-b border-sidebar-border" style={{backgroundColor: "#4763A8" }}>
-        <div className="flex items-center justify-center">
-          <img
-            src="/b2blogo.png"
-            alt="B2B Partners Logo"
-            className="h-18 w-auto object-contain"
-          />
+      {/* LOGO */}
+      <div className="h-16 flex items-center justify-center bg-[#0b2c5f] shadow-inner">
+  <img
+    src="/b2blogo.png"
+    className="h-16 mt-1 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
+  />
+</div>
+
+      {/* MENU */}
+      <div className="flex-1 px-4 py-8 mt-5">
+
+        <p className="text-[11px] text-white/60 mb-3 tracking-widest">
+          MAIN NAVIGATION
+        </p>
+
+        <div className="flex flex-col gap-3">
+
+          {menu.map((item, i) => {
+            const Icon = item.icon;
+
+            return (
+              <NavLink
+                key={i}
+                to={item.path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2 text-sm transition
+                  ${
+                    isActive
+                      ? "bg-white/10 text-white"
+                      : "text-white/80 hover:bg-white/5"
+                  }`
+                }
+              >
+                <Icon size={18} />
+                {item.name}
+              </NavLink>
+            );
+          })}
+
         </div>
-      </SidebarHeader>
-
-      {/* CONTENT */}
-      <SidebarContent className="px-3 py-6" style={{backgroundColor: "#4763A8" }}>
-
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-[11px] uppercase tracking-widest px-3 mb-3">
-            Main Navigation
-          </SidebarGroupLabel>
-
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-1.5">
-
-              {mainNav.map((item) => (
-                <SidebarMenuItem key={item.title}>
-
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.url}
-                      end={item.url === "/"}
-                      className="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                      
-                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
-                    >
-                      <item.icon className="w-4 h-4 shrink-0 transition-colors group-hover:scale-105" />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-
-                </SidebarMenuItem>
-              ))}
-
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-      </SidebarContent>
-
-     
-
-    </Sidebar>
+      </div>
+    </div>
   );
 }

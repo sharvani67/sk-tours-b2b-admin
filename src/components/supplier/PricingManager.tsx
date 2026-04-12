@@ -1,514 +1,250 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
-type RatePlan = {
-  plan: "EP" | "CP" | "MAP" | "AP";
-  enabled: boolean;
-  weekday: string;
-  weekend: string;
-  longWeekend: string;
 
-  longWeekendFrom: string;
-  longWeekendTo: string;
 
-  extraAdult: string;
-  childWithBed: string;
-  childWithoutBed: string;
-};
-type Meal = {
-  name: string;
-  price: string;
-  available: boolean;
-};
-type Room = {
-  type: string;
-  max_adults: string;
-  max_children: string;
-  rackRate: string;
-
-  validFrom: string;   // ✅ NEW
-  validTo: string;     // ✅ NEW
-
-  ratePlans: RatePlan[];
-  meals: Meal[];
-};
-
-type Props = {
-  rooms: Room[];
-  setRooms: React.Dispatch<React.SetStateAction<Room[]>>;
-  onNext: () => void;
-};
-
-const defaultPlans = (): RatePlan[] => [
-  {
-    plan: "EP",
-    enabled: true,
-    weekday: "",
-    weekend: "",
-    longWeekend: "",
-     longWeekendFrom: "",
-    longWeekendTo: "",
-    extraAdult: "",
-    childWithBed: "",
-    childWithoutBed: "",
-  },
-  {
-    plan: "CP",
-    enabled: true,
-    weekday: "",
-    weekend: "",
-    longWeekend: "",
-     longWeekendFrom: "",
-    longWeekendTo: "",
-    extraAdult: "",
-    childWithBed: "",
-    childWithoutBed: "",
-  },
-  {
-    plan: "MAP",
-    enabled: true,
-    weekday: "",
-    weekend: "",
-    longWeekend: "",
-     longWeekendFrom: "",
-    longWeekendTo: "",
-    extraAdult: "",
-    childWithBed: "",
-    childWithoutBed: "",
-  },
-  {
-    plan: "AP",
-    enabled: true,
-    weekday: "",
-    weekend: "",
-    longWeekend: "",
-     longWeekendFrom: "",
-    longWeekendTo: "",
-    extraAdult: "",
-    childWithBed: "",
-    childWithoutBed: "",
-  },
-];
-const PLAN_LABELS: Record<string, string> = {
-  EP: "EP Rate ( Economy Plan Room Only )",
-  CP: "CP Rate ( Continental Plan with Breakfast )",
-  MAP: "MAP Rate ( Modified American Plan BF with Lunch or Dinner )",
-  AP: "AP Rate ( American Plan BF Lunch & Dinner )",
-};
-const PricingManager = ({ rooms, setRooms , onNext }: Props) => {
-
-  useEffect(() => {
-    if (rooms.length === 0) addRoom();
-  }, []);
-
-  const updateRoom = (
-    roomIndex: number,
-    key: keyof Room,
-    value: any
-  ) => {
-    setRooms(prev =>
-      prev.map((room, i) =>
-        i === roomIndex ? { ...room, [key]: value } : room
-      )
-    );
+const PricingManager = ({ rooms, setRooms }: any) => {
+const addRow = () => {
+    setRooms([
+      ...rooms,
+      {
+        type: "",
+        rooms: "",
+        single: "",
+        cpai: "",
+        mapai: "",
+        extraAdult: "",
+        childBed: "",
+        childNoBed: "",
+      },
+    ]);
   };
+const deleteRow = () => {
+  if (rooms.length === 0) return;
 
-  const updatePlan = (
-    roomIndex: number,
-    planIndex: number,
-    key: keyof RatePlan,
-    value: any
-  ) => {
-    setRooms(prev =>
-      prev.map((room, i) => {
-        if (i !== roomIndex) return room;
-
-        const updatedPlans = room.ratePlans.map((plan, pIndex) =>
-          pIndex === planIndex
-            ? { ...plan, [key]: value }
-            : plan
-        );
-
-        return { ...room, ratePlans: updatedPlans };
-      })
-    );
-  };
-
- const addRoom = () => {
-  setRooms(prev => [
-    ...prev,
-    {
-      type: "",
-      max_adults: "",
-      max_children: "",
-      rackRate: "",
-
-      validFrom: "",   // ✅ NEW
-      validTo: "",     // ✅ NEW
-
-      ratePlans: defaultPlans(),
-      meals: [
-        { name: "Buffet Lunch", price: "", available: true },
-        { name: "Buffet Dinner", price: "", available: true }
-      ]
-    },
-  ]);
+  const updated = [...rooms];
+  updated.pop(); // removes last row
+  setRooms(updated);
 };
+  const updateRoom = (index: number, key: string, value: string) => {
+    const updated = [...rooms];
+    updated[index][key] = value;
+    setRooms(updated);
+  };
+useEffect(() => {
+  if (rooms.length === 0) {
+    addRow();
+  }
+}, []);
 
   return (
-    <div className="bg-white border rounded-3xl shadow-xl p-8 md:p-12 space-y-12">
-
-      {/* HEADER */}
-      <div>
-        <h2 className="text-3xl font-bold">
-          Room & Rate Configuration
-        </h2>
-        <p className="text-muted-foreground mt-2">
-          Configure rack rate and meal plan pricing.
-        </p>
+    <div>
+ {/* TITLE */}
+      <div className="flex justify-between items-center mb-2">
+        <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
+              Room Rates
+        </div>
       </div>
 
-      {rooms.map((room, roomIndex) => (
-        <div key={roomIndex} className="border rounded-2xl p-8 space-y-10 bg-muted/10">
+       <div className="bg-[#66FFFF] p-4 rounded-xl border border-black rounded-md">
+           <div className="bg-white p-4 rounded-xl rounded-md">
+      {/* TOP RATE HEADERS */}
+<div className="grid grid-cols-8 text-center font-semibold text-white">
 
-          {/* ROOM DETAILS */}
-          <div>
-            <h3 className="text-xl font-semibold mb-6">
-              Room {roomIndex + 1}
-            </h3>
+  <div className="bg-[#1b3b6f] p-2 col-span-2">Normal Rate</div>
+  <div className="bg-[#FF0000] p-2 col-span-2">Public Holiday</div>
+  <div className="bg-[#1b3b6f] p-2 col-span-2">Festival Rates</div>
+  <div className="bg-[#FF0000] p-2 col-span-2">Banquet Rate</div>
 
-            <div className="grid md:grid-cols-6 gap-6">
+  <div className="bg-orange-600 FFC000 p-2 col-span-2">Valid From</div>
+  <div className="col-span-2">
+    <input
+      type="date"
+      className="w-full h-full bg-[#e6c0b8] text-black p-2 border"
+    />
+  </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Room Type *
-                </label>
-                <Input
-                  placeholder="Deluxe / Suite"
-                  value={room.type}
-                  onChange={e =>
-                    updateRoom(roomIndex, "type", e.target.value)
-                  }
-                />
-              </div>
+  <div className="bg-orange-600 p-2 col-span-2">Valid Till</div>
+  <div className="col-span-2">
+    <input
+      type="date"
+      className="w-full h-full bg-[#e6c0b8] text-black p-2 border"
+    />
+  </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Max Adults *
-                </label>
-                <Input
-                  type="number"
-                  min="0"
-                  value={room.max_adults}
-                  onChange={e =>
-                    updateRoom(roomIndex, "max_adults", e.target.value)
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Max Children *
-                </label>
-                <Input
-                  type="number"
-                  min="0"
-                  value={room.max_children}
-                  onChange={e =>
-                    updateRoom(roomIndex, "max_children", e.target.value)
-                  }
-                />
-              </div>
-
-              {/* RACK RATE */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Rack Rate (Bar Rate) ₹
-                </label>
-                <Input
-                  type="number"
-                  min="0"
-                  placeholder="Enter rack rate"
-                  value={room.rackRate}
-                  onChange={e =>
-                    updateRoom(roomIndex, "rackRate", e.target.value)
-                  }
-                />
-              </div>
-
-              {/* VALIDITY FROM */}
-<div className="space-y-2">
-  <label className="text-sm font-medium">
-    Valid From
-  </label>
-  <Input
-    type="date"
-    value={room.validFrom}
-    onChange={e =>
-      updateRoom(roomIndex, "validFrom", e.target.value)
-    }
-  />
 </div>
 
-{/* VALIDITY TO */}
-<div className="space-y-2">
-  <label className="text-sm font-medium">
-    Valid To
-  </label>
-  <Input
-    type="date"
-    value={room.validTo}
-    onChange={e =>
-      updateRoom(roomIndex, "validTo", e.target.value)
-    }
-  />
-</div>
-            </div>
-          </div>
+      {/* ROOM TABLE */}
+  <div>
 
-          {/* MEAL PLANS */}
-          <div className="space-y-10">
-<div className="mt-6">
-  <h4 className="font-semibold mb-3">Meals</h4>
+  {/* HEADER */}
+  <div className="grid grid-cols-8 bg-[#0c2d67] text-white text-center text-sm font-semibold">
+    {[
+      "Room Category",
+      "Rooms",
+      "Single",
+      "CPAI",
+      "MAPAI",
+      "Ex Adult",
+      "Chd with Bed",
+      "Chd no Bed",
+    ].map((item) => (
+  <div key={item} className="p-2 border border-black">{item}</div>
+))}
+  </div>
 
-  {room.meals.map((meal, mealIndex) => (
-    <div key={mealIndex} className="grid md:grid-cols-3 gap-4 mb-3">
+  {/* ROWS */}
+  {rooms.map((room: any, index: number) => (
+    <div key={index} className="grid grid-cols-8">
 
-      <Input
-        value={meal.name}
-        readOnly
+      <input
+        type="text"
+        className="border border-black p-2 bg-[#66FFFF] outline-none"
+        value={room.type || ""}
+        onChange={(e) => updateRoom(index, "type", e.target.value)}
       />
 
-    <Input
-  type="number"
-  placeholder="Price"
-  value={meal.price}
-  onChange={(e) => {
-    const updatedMeals = room.meals.map((m, i) =>
-      i === mealIndex ? { ...m, price: e.target.value } : m
-    );
-    updateRoom(roomIndex, "meals", updatedMeals);
-  }}
-/>
+      <input
+        type="text"
+        className="border border-black p-2 bg-[#66FFFF] outline-none"
+        value={room.rooms || ""}
+        onChange={(e) => updateRoom(index, "rooms", e.target.value)}
+      />
 
-      <label className="flex items-center gap-2">
-        <input
-  type="checkbox"
-  checked={meal.available}
-  onChange={(e) => {
-    const updatedMeals = room.meals.map((m, i) =>
-      i === mealIndex ? { ...m, available: e.target.checked } : m
-    );
-    updateRoom(roomIndex, "meals", updatedMeals);
-  }}
-/>
-        Available
-      </label>
+      <input
+        type="text"
+        className="border border-black p-2 bg-[#66FFFF] outline-none"
+        value={room.single || ""}
+        onChange={(e) => updateRoom(index, "single", e.target.value)}
+      />
 
+      <input
+        type="text"
+        className="border border-black p-2 bg-[#66FFFF] outline-none"
+        value={room.cpai || ""}
+        onChange={(e) => updateRoom(index, "cpai", e.target.value)}
+      />
+
+      <input
+        type="text"
+        className="border border-black p-2 bg-[#66FFFF] outline-none"
+        value={room.mapai || ""}
+        onChange={(e) => updateRoom(index, "mapai", e.target.value)}
+      />
+
+      <input
+        type="text"
+        className="border border-black p-2 bg-[#66FFFF] outline-none"
+        value={room.extraAdult || ""}
+        onChange={(e) => updateRoom(index, "extraAdult", e.target.value)}
+      />
+
+      <input
+        type="text"
+        className="border border-black p-2 bg-[#66FFFF] outline-none"
+        value={room.childBed || ""}
+        onChange={(e) => updateRoom(index, "childBed", e.target.value)}
+      />
+
+      <input
+        type="text"
+        className="border border-black p-2 bg-[#66FFFF] outline-none"
+        value={room.childNoBed || ""}
+        onChange={(e) => updateRoom(index, "childNoBed", e.target.value)}
+      />
     </div>
   ))}
-</div>
-            {room.ratePlans.map((plan, planIndex) => (
 
-              <div key={plan.plan} className="border rounded-xl p-6 bg-white">
+  {/* ADD / DELETE */}
+<div className="grid grid-cols-8">
 
-                {/* PLAN HEADER */}
-       <div className="flex items-center justify-between mb-6">
-  <h4 className="font-semibold text-lg">
-    {PLAN_LABELS[plan.plan]}
-  </h4>
+  {/* EMPTY CELLS (span 6 columns) */}
+  <div className="col-span-6"></div>
 
-  <label className="flex items-center gap-2 text-sm">
-    <input
-      type="checkbox"
-      checked={plan.enabled}
-      onChange={e =>
-        updatePlan(
-          roomIndex,
-          planIndex,
-          "enabled",
-          e.target.checked
-        )
-      }
-    />
-    Enable
-  </label>
-</div>
+  {/* ADD BUTTON */}
+  <button
+    onClick={addRow}
+    className="border border-black bg-[#FF0000] text-white"
+  >
+    Add
+  </button>
 
-       {plan.enabled && (
-
-<div className="space-y-6">
-
-  {/* WEEKDAY & WEEKEND */}
-  <div className="grid md:grid-cols-2 gap-6">
-
-    {/* WEEKDAY */}
-    <div className="space-y-2">
-      <label className="text-sm font-medium">
-        Weekday Price (₹)
-      </label>
-      <Input
-        type="number"
-        min="0"
-        placeholder="Enter amount"
-        value={plan.weekday}
-        onChange={e =>
-          updatePlan(roomIndex, planIndex, "weekday", e.target.value)
-        }
-      />
-    </div>
-
-    {/* WEEKEND */}
-    <div className="space-y-2">
-      <label className="text-sm font-medium">
-        Weekend Price (₹)
-      </label>
-      <Input
-        type="number"
-        min="0"
-        placeholder="Enter amount"
-        value={plan.weekend}
-        onChange={e =>
-          updatePlan(roomIndex, planIndex, "weekend", e.target.value)
-        }
-      />
-    </div>
-
-  </div>
-
-
-  {/* LONG WEEKEND */}
-  <div className="space-y-2">
-
-    <label className="text-sm font-medium">
-      Long Weekend Price (₹)
-    </label>
-
-    <div className="grid md:grid-cols-3 gap-3 items-end">
-
-      {/* PRICE */}
-      <Input
-        type="number"
-        min="0"
-        placeholder="Amount"
-        value={plan.longWeekend}
-        onChange={e =>
-          updatePlan(roomIndex, planIndex, "longWeekend", e.target.value)
-        }
-      />
-
-      {/* FROM DATE */}
-      <div className="relative">
-        <span className="absolute left-3 top-1 text-xs text-muted-foreground">
-          From
-        </span>
-
-        <Input
-          type="date"
-          className="pt-5"
-          value={plan.longWeekendFrom}
-          onChange={e =>
-            updatePlan(roomIndex, planIndex, "longWeekendFrom", e.target.value)
-          }
-        />
-      </div>
-
-      {/* TO DATE */}
-      <div className="relative">
-        <span className="absolute left-3 top-1 text-xs text-muted-foreground">
-          To
-        </span>
-
-        <Input
-          type="date"
-          className="pt-5"
-          value={plan.longWeekendTo}
-          onChange={e =>
-            updatePlan(roomIndex, planIndex, "longWeekendTo", e.target.value)
-          }
-        />
-      </div>
-
-    </div>
-
-  </div>
-
-
-  {/* EXTRA PRICING */}
-  <div className="grid md:grid-cols-3 gap-6">
-
-    {/* EXTRA ADULT */}
-    <div className="space-y-2">
-      <label className="text-sm font-medium">
-        Extra Adult Price (₹)
-      </label>
-      <Input
-        type="number"
-        min="0"
-        placeholder="Enter amount"
-        value={plan.extraAdult}
-        onChange={e =>
-          updatePlan(roomIndex, planIndex, "extraAdult", e.target.value)
-        }
-      />
-    </div>
-
-    {/* CHILD WITH BED */}
-    <div className="space-y-2">
-      <label className="text-sm font-medium">
-        Child With Bed Price (₹)
-      </label>
-      <Input
-        type="number"
-        min="0"
-        placeholder="Enter amount"
-        value={plan.childWithBed}
-        onChange={e =>
-          updatePlan(roomIndex, planIndex, "childWithBed", e.target.value)
-        }
-      />
-    </div>
-
-    {/* CHILD WITHOUT BED */}
-    <div className="space-y-2">
-      <label className="text-sm font-medium">
-        Child Without Bed Price (₹)
-      </label>
-      <Input
-        type="number"
-        min="0"
-        placeholder="Enter amount"
-        value={plan.childWithoutBed}
-        onChange={e =>
-          updatePlan(roomIndex, planIndex, "childWithoutBed", e.target.value)
-        }
-      />
-    </div>
-
-  </div>
+  {/* DELETE BUTTON */}
+ <button
+  onClick={deleteRow}
+  className="border border-black bg-[#FFFF00]"
+>
+  Delete
+</button>
 
 </div>
 
-)}
+      {/* MEALS SECTION */}
+      <div className="grid grid-cols-3 w-[600px] mt-3 mb-3">
 
-              </div>
-
-            ))}
-
-          </div>
-
+        <div className="bg-[#0c2d67] text-white p-2 text-center border border-black">
+          Meals
         </div>
-      ))}
+        <div className="bg-[#0c2d67] text-white p-2 text-center border border-black">
+          Adult
+        </div>
+        <div className="bg-[#0c2d67] text-white p-2 text-center border border-black">
+          Child
+        </div>
 
-      <Button variant="outline" onClick={addRoom}>
-        <Plus className="w-4 h-4 mr-2" />
-        Add Another Room
-      </Button>
+        <div className="bg-[#0c2d67] text-white p-2 border border-black text-center">
+          Extra Lunch
+        </div>
+        <input className="border border-black bg-[#66FFFF]" />
+        <input className="border border-black  bg-[#66FFFF]" />
 
-     
+        <div className="bg-[#0c2d67] text-white p-2 border border-black text-center">
+          Extra Dinner
+        </div>
+        <input className="border border-black  bg-[#66FFFF]" />
+        <input className="border border-black  bg-[#66FFFF]" />
 
+      </div>
+
+      {/* 24 CHECK-IN */}
+      <div className="mb-3">
+        <div className="bg-[#0c2d67] text-white p-2 w-[407px] text-center mb-1">
+          24 Check in
+        </div>
+
+        <div className="flex gap-2">
+          <button className="bg-[#66FFFF] px-4 py-2 w-[200px] border border-black">
+            Available
+          </button>
+          <button className="bg-[#66FFFF] px-4 py-2 w-[200px] border border-black">
+            Not Available
+          </button>
+        </div>
+      </div>
+
+      {/* CHECKIN CHECKOUT */}
+      <div className="w-[700px]">
+        <div className="bg-[#0c2d67] text-white p-2 text-center mb-1">
+          Check in / Check out Details
+        </div>
+
+        <div className="grid grid-cols-4">
+          <div className="bg-[#0c2d67] text-white text-center p-2 border border-black">
+            Check in
+          </div>
+          <input className="border border-black bg-[#66FFFF]" />
+
+          <div className="bg-[#0c2d67] text-white text-center p-2 border border-black">
+            Check out
+          </div>
+          <input className="border border-black bg-[#66FFFF]" />
+        </div>
+      </div>
+</div>
+</div>
+</div>
     </div>
   );
 };

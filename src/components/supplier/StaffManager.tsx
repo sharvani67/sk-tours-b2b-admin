@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { User } from "lucide-react";
+import { useEffect } from "react";
 
 type Staff = {
-  name: string;
-  designation: string;
-  phones: string[]; 
-  emails: string[];
+  firstName: string;
+  lastName: string;
+  post: string;
+  cell1: string;
+  cell2: string;
+  landmark: string;
+  email1: string;
+  email2: string;
+  landline: string;
   photo: File | null;
 };
 
@@ -18,329 +22,230 @@ type Props = {
 
 const StaffManager = ({ staff, setStaff }: Props) => {
 
+
   const addStaff = () => {
-    setStaff(prev => [
-      ...prev,
-      {
-        name: "",
-        designation: "",
-        phones: [""],
-        emails: [""],
-        photo: null,
-      }
-    ]);
+  setStaff([
+    ...staff,
+    {
+      firstName: "",
+      lastName: "",
+      post: "",
+      cell1: "",
+      cell2: "",
+      landmark: "",
+      email1: "",
+      email2: "",
+      landline: "",
+      photo: null,
+    },
+  ]);
+};
+
+  const update = (i: number, key: string, value: any) => {
+    const updated = [...staff];
+    updated[i][key] = value;
+    setStaff(updated);
   };
 
-  const removeStaff = (index: number) => {
-    setStaff(prev => prev.filter((_, i) => i !== index));
+  const remove = (i: number) => {
+    setStaff(staff.filter((_, index) => index !== i));
   };
-
-  const updateStaff = (
-    index: number,
-    key: keyof Staff,
-    value: any
-  ) => {
-    setStaff(prev =>
-      prev.map((member, i) =>
-        i === index ? { ...member, [key]: value } : member
-      )
-    );
-  };
-const addPhone = (staffIndex: number) => {
-  setStaff(prev =>
-    prev.map((member, i) =>
-      i === staffIndex
-        ? { ...member, phones: [...member.phones, ""] }
-        : member
-    )
-  );
-};
-
-const removePhone = (staffIndex: number, phoneIndex: number) => {
-  setStaff(prev =>
-    prev.map((member, i) =>
-      i === staffIndex
-        ? {
-            ...member,
-            phones: member.phones.filter((_, p) => p !== phoneIndex)
-          }
-        : member
-    )
-  );
-};
-
-const updatePhone = (
-  staffIndex: number,
-  phoneIndex: number,
-  value: string
-) => {
-  setStaff(prev =>
-    prev.map((member, i) => {
-      if (i !== staffIndex) return member;
-
-      const updatedPhones = member.phones.map((phone, p) =>
-        p === phoneIndex ? value : phone
-      );
-
-      return { ...member, phones: updatedPhones };
-    })
-  );
-};
-const addEmail = (staffIndex: number) => {
-  setStaff(prev =>
-    prev.map((member, i) =>
-      i === staffIndex
-        ? { ...member, emails: [...member.emails, ""] }
-        : member
-    )
-  );
-};
-
-const removeEmail = (staffIndex: number, emailIndex: number) => {
-  setStaff(prev =>
-    prev.map((member, i) =>
-      i === staffIndex
-        ? {
-            ...member,
-            emails: member.emails.filter((_, e) => e !== emailIndex)
-          }
-        : member
-    )
-  );
-};
-
-const updateEmail = (
-  staffIndex: number,
-  emailIndex: number,
-  value: string
-) => {
-  setStaff(prev =>
-    prev.map((member, i) => {
-      if (i !== staffIndex) return member;
-
-      const updatedEmails = member.emails.map((email, e) =>
-        e === emailIndex ? value : email
-      );
-
-      return { ...member, emails: updatedEmails };
-    })
-  );
-};
-
-return (
-  <div className="space-y-8">
-
-    {/* HEADER */}
-    <div>
-      <h2 className="text-3xl font-bold">
-        Staff Details
-      </h2>
-      <p className="text-muted-foreground mt-2">
-        Add property staff members for contact & management.
-      </p>
-    </div>
-
-    {/* STAFF LIST */}
-    {staff.map((member, index) => (
-
-      <div
-        key={index}
-        className="border rounded-2xl p-6 space-y-6 bg-muted/10"
-      >
-
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">
-            Staff {index + 1}
-          </h3>
-
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => removeStaff(index)}
-          >
-            <Trash2 className="w-4 h-4 mr-1" />
-            Remove
-          </Button>
+useEffect(() => {
+  if (staff.length === 0) {
+    addStaff();
+  }
+}, []);
+  return (
+<div>
+       <div className="flex justify-between items-center mb-2">
+        <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
+               Staff Contact Details
         </div>
+      </div>
+    <div className="bg-[#66FFFF] p-4 rounded-xl border border-black rounded-md">
 
-        {/* BASIC STAFF DETAILS */}
-        <div className="grid md:grid-cols-3 gap-4 items-end">
+      {/* TITLE */}
+  
+   
 
-          {/* NAME */}
-          <div className="space-y-1">
-            <label className="text-sm font-semibold">
-              Name *
-            </label>
-            <Input
-            className="h-12 rounded-xl"
-              value={member.name}
-              onChange={(e) =>
-                updateStaff(index, "name", e.target.value)
-              }
-            />
-          </div>
+      {/* HEADER BAR */}
+     <div className="grid grid-cols-5 mb-4 overflow-hidden rounded-md gap-1">
 
-          {/* DESIGNATION */}
-          <div className="space-y-1">
-            <label className="text-sm font-semibold">
-              Designation *
-            </label>
-            <Input
-            className="h-12 rounded-xl"
-              value={member.designation}
-              onChange={(e) =>
-                updateStaff(index, "designation", e.target.value)
-              }
-            />
-          </div>
+  {/* LABEL */}
+  <div className="bg-[#0c2d67] text-white p-2 text-center flex items-center justify-center rounded-md">
+    Reservation Type
+  </div>
 
-          {/* EMAIL */}
-          {/* <div className="space-y-1">
-            <label className="text-sm font-semibold">
-              Email
-            </label>
-            <Input
-            className="h-12 rounded-xl"
-              type="email"
-              value={member.email}
-              onChange={(e) =>
-                updateStaff(index, "email", e.target.value)
-              }
-            />
-          </div> */}
+  {/* INPUT */}
+  <input
+    type="text"
+    placeholder="Enter type"
+    className="bg-[#FFDADA] p-2 outline-none border border-black rounded-md"
+  />
 
-          {/* PHOTO */}
-          <div className="space-y-1">
-            <label className="text-sm font-semibold">
-              Photo
-            </label>
-            <Input
-              type="file"
-              accept="image/*"
-              className="h-12 rounded-xl"
-              onChange={(e:any) =>
-                updateStaff(
-                  index,
-                  "photo",
-                  e.target.files?.[0] || null
-                )
-              }
-            />
-          </div>
+  {/* LABEL */}
+  <div className="bg-[#0c2d67] text-white p-2 text-center flex items-center justify-center rounded-md">
+    City
+  </div>
 
-        </div>
+  {/* INPUT + BUTTON */}
+  <div className="bg-[#FFDADA] flex items-center justify-between px-2 rounded-md border border-black">
+    <input
+      type="text"
+      placeholder="Enter city"
+      className="bg-transparent outline-none flex-1 p-2"
+    />
 
-        {/* PHONE NUMBERS (SEPARATE ROW BUT NOT FULL WIDTH) */}
-        <div className="grid md:grid-cols-4 gap-4">
+    
+  </div>
+<button className="bg-[#FF0000] text-white px-4 py-1 rounded-md border border-black">
+      Add
+    </button>
+</div>
 
-          <div className="space-y-2 md:col-span-2">
-            <label className="text-sm font-semibold">
-              Phone
-            </label>
+      {/* STAFF LIST */}
+      {staff.map((s, i) => (
+        <div key={i} className="mb-6">
 
-            {member.phones.map((phone, phoneIndex) => (
-              <div key={phoneIndex} className="flex gap-2">
+          <div className="flex gap-4">
 
-                <Input
-                  type="mobile"
-                  className="h-12 rounded-xl"
-                  value={phone}
-                  onChange={(e) =>
-                    updatePhone(index, phoneIndex, e.target.value)
-                  }
-                />
+            {/* IMAGE */}
+           <div className="w-[180px]">
 
-                {phoneIndex === member.phones.length - 1 && (
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="outline"
-                    onClick={() => addPhone(index)}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                )}
-
-                {member.phones.length > 1 && (
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="destructive"
-                    onClick={() => removePhone(index, phoneIndex)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                )}
-
-              </div>
-            ))}
-          </div>
-       {/* EMAILS */}
+  {/* IMAGE PREVIEW */}
 
 
-  <div className="space-y-2 md:col-span-2">
-    <label className="text-sm font-semibold">
-      Email
+ {s.photo ? (
+  <img
+    src={URL.createObjectURL(s.photo)}
+    alt="staff"
+    className="w-full h-[190px] object-cover border border-black rounded-md"
+  />
+) : (
+  <div className="w-full h-[190px] flex items-center justify-center border border-black rounded-md bg-gray-200">
+    <User className="w-12 h-12 text-gray-500" />
+  </div>
+)}
+
+
+  {/* BUTTONS */}
+  <div className="flex gap-2 mt-2">
+
+    {/* UPLOAD */}
+    <label className="bg-[#FF0000] text-white px-3 py-1 text-sm cursor-pointer rounded-md">
+      Upload
+    <input
+  type="file"
+  accept="image/*"
+  className="hidden"
+  onChange={(e) =>
+    update(i, "photo", e.target.files?.[0] || null)
+  }
+/>
     </label>
 
-    {member.emails.map((email, emailIndex) => (
-      <div key={emailIndex} className="flex gap-2">
-
-        <Input
-          type="email"
-          className="h-12 rounded-xl"
-          value={email}
-          onChange={(e) =>
-            updateEmail(index, emailIndex, e.target.value)
-          }
-        />
-
-        {emailIndex === member.emails.length - 1 && (
-          <Button
-            type="button"
-            size="icon"
-            variant="outline"
-            onClick={() => addEmail(index)}
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
-        )}
-
-        {member.emails.length > 1 && (
-          <Button
-            type="button"
-            size="icon"
-            variant="destructive"
-            onClick={() => removeEmail(index, emailIndex)}
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        )}
-
-      </div>
-    ))}
-
-
-</div>
-        </div>
-
- 
-
-      </div>
-    ))}
-
-    {/* ADD STAFF */}
-    <Button variant="outline" onClick={addStaff}>
-      <Plus className="w-4 h-4 mr-2" />
-      Add Staff Member
-    </Button>
+    {/* DELETE */}
+    <button
+      onClick={() => update(i, "photo", null)}
+      className="bg-[#FF0000] text-white px-3 py-1 text-sm rounded-md"
+    >
+      Delete
+    </button>
 
   </div>
-);
+
+</div>
+
+            {/* FORM */}
+<div className="flex-1 space-y-1">
+
+  {/* NAME ROW */}
+  <div className="grid grid-cols-[120px_1fr_120px_120px] items-center gap-1">
+
+    {/* LABEL */}
+    <div className="bg-[#0c2d67] text-white px-3 py-1 text-md rounded-md">
+      Name
+    </div>
+
+    {/* TWO INPUTS */}
+<div className="flex gap-2">
+  <input
+    value={s.firstName || ""}
+    onChange={(e) => update(i, "firstName", e.target.value)}
+    placeholder="Name"
+    className="bg-[#FFDADA] px-3 py-1 border border-black w-[245px] rounded-md"
+  />
+  <input
+    value={s.lastName || ""}
+    onChange={(e) => update(i, "lastName", e.target.value)}
+    placeholder="SurName"
+    className="bg-[#FFDADA] px-3 py-1 border border-black w-[245px] rounded-md"
+  />
+</div>
 
 
+  </div>
 
+  {/* OTHER FIELDS */}
+  {[
+    { label: "Post", key: "post" },
+    { label: "Cell 1", key: "cell1" },
+    { label: "Cell 2", key: "cell2" },
+    { label: "Landmark", key: "landmark" },
+    { label: "Email 1", key: "email1" },
+    { label: "Email 2", key: "email2" },
+    { label: "Landline", key: "landline" },
+  ].map((field) => (
+    <div
+      key={field.key}
+       className="grid grid-cols-[120px_500px_120px_120px] items-center gap-1"
+    >
 
+      {/* LABEL */}
+      <div className="bg-[#0c2d67] text-white px-3 py-1 text-md border border-black rounded-md">
+        {field.label}
+      </div>
+
+      {/* INPUT */}
+      <input
+        value={s[field.key] || ""}
+        onChange={(e) => update(i, field.key, e.target.value)}
+        className="bg-[#FFDADA] px-3 py-1 border border-black rounded-md w-[500px]"
+      />
+
+      {/* ACTIVE */}
+      <button className="bg-[#FFFF00] py-1 border border-black rounded-md">
+        Active
+      </button>
+
+      {/* HIDE */}
+      <button className="bg-[#FFC000] py-1 border border-black rounded-md">
+        Hide
+      </button>
+
+    </div>
+  ))}
+
+  {/* ADD BUTTON */}
+  <div className="text-center mt-2">
+    <button
+      onClick={addStaff}
+      className="bg-[#FF0000] text-white px-6 py-1 rounded-md"
+    >
+      Add
+    </button>
+  </div>
+
+</div>
+
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+    </div>
+  );
 };
 
 export default StaffManager;

@@ -1,131 +1,61 @@
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-
-type Policies = {
-  booking_policy: string;
-  cancellation_policy: string;
-  child_policy: string;
-  pet_policy: string;
-  terms: string;
-};
+import { useState } from "react";
 
 type Props = {
-  policies: Policies;
-  setPolicies: React.Dispatch<React.SetStateAction<Policies>>;
-  onNext?: () => void;
+  policies: any;
+  setPolicies: React.Dispatch<React.SetStateAction<any>>;
 };
 
-const BookingPoliciesManager = ({
-  policies,
-  setPolicies,
-  onNext,
-}: Props) => {
-  const updateField = (key: keyof Policies, value: any) => {
-    setPolicies(prev => ({ ...prev, [key]: value }));
-  };
+const BookingPoliciesManager = ({ policies, setPolicies }: Props) => {
+
+  const [booking, setBooking] = useState(`1. The above-mentioned booking price is applicable for two passengers traveling together. Any change in the number of travellers may result in a revision of the tour price. We recommend contacting us at the time of booking to confirm the final and accurate cost. Please note that credit card payments may attract additional charges, as applicable under the payment gateway and bank regulations.`);
+
+  const [cancellation, setCancellation] = useState(`1. All cancellation charges are calculated on a per-person basis for bookings with a minimum of two passengers. For bookings involving more than two passengers, cancellation charges may vary as per airline, hotel, and supplier policies, and guests are advised to confirm applicable charges before requesting cancellation. Cancellations will be processed only upon receipt of a duly completed and signed Cancellation Request Form. Cancellation policies may vary depending on the destination. All cancellation and refund requests must be submitted strictly in writing using the official Cancellation Request Form issued by our office. Submission of the form confirms the guest’s acceptance of all applicable cancellation, refund, and service charge terms. In case of no-show or late cancellation, 100% of the tour cost shall be forfeited, with no refund or credit applicable. In exceptional cases such as death or serious medical emergencies involving an immediate family member, we may assist in requesting a refund from the respective suppliers, subject to submission of valid supporting documents. Any refund or future credit is entirely subject to supplier approval, and no refund is guaranteed unless received by us from the service providers. Refunds, if applicable, will be processed after receipt from suppliers and may take one week or longer. All refunds are subject to applicable service charges, administrative fees, and non-recoverable amounts.`);
 
   return (
-    <div className="space-y-12">
 
-      {/* HEADER */}
-      <div>
-        <h2 className="text-3xl font-bold">
-          Booking & Cancellation Policies
-        </h2>
-        <p className="text-muted-foreground mt-2">
-          Define clear property rules to avoid guest disputes.
-        </p>
+    <div>
+       <div className="flex justify-between items-center mb-2">
+        <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
+             Booking and Cancellation Policy
+        </div>
+      </div>
+    <div className="bg-[#66FFFF] p-4 rounded-xl border border-black space-y-6">
+
+   
+
+      {/* TWO BOXES */}
+      <div className="grid md:grid-cols-2 gap-4 bg-white p-4 rounded-xl">
+
+        {/* BOOKING */}
+        <div className="border border-black rounded-xl overflow-hidden">
+          <div className="bg-[#FF0000] text-white text-center py-2 font-semibold">
+            Booking Policy
+          </div>
+
+          <textarea
+            value={booking}
+            onChange={(e) => setBooking(e.target.value)}
+            className="w-full h-[300px] p-3 outline-none bg-[#FFDADA] resize-none"
+          />
+        </div>
+
+        {/* CANCELLATION */}
+        <div className="border border-black rounded-xl overflow-hidden">
+          <div className="bg-[#FF0000] text-white text-center py-2 font-semibold">
+            Cancellation Policy
+          </div>
+
+          <textarea
+            value={cancellation}
+            onChange={(e) => setCancellation(e.target.value)}
+            className="w-full h-[300px] p-3 outline-none bg-[#FFDADA] resize-none"
+          />
+        </div>
+
       </div>
 
-<div className="grid md:grid-cols-2 gap-6">
-
-  {/* BOOKING POLICY */}
-  <div className="space-y-1">
-    <label className="font-semibold text-sm">
-      Booking Policy *
-    </label>
-    <Textarea
-      className="min-h-[90px]"
-      placeholder="Advance payment required..."
-      value={policies.booking_policy}
-      onChange={(e) =>
-        updateField("booking_policy", e.target.value)
-      }
-    />
-  </div>
-
-  {/* CANCELLATION POLICY */}
-  <div className="space-y-1">
-    <label className="font-semibold text-sm">
-      Cancellation Policy *
-    </label>
-    <Textarea
-      className="min-h-[90px]"
-      placeholder="Free cancellation before 48 hours..."
-      value={policies.cancellation_policy}
-      onChange={(e) =>
-        updateField("cancellation_policy", e.target.value)
-      }
-    />
-  </div>
-
-  {/* CHILD POLICY */}
-  <div className="space-y-1">
-    <label className="font-semibold text-sm">
-      Child Policy
-    </label>
-    <Textarea
-      className="min-h-[80px]"
-      placeholder="Children below 5 stay free..."
-      value={policies.child_policy}
-      onChange={(e) =>
-        updateField("child_policy", e.target.value)
-      }
-    />
-  </div>
-
-  {/* PET POLICY */}
-  <div className="space-y-1">
-    <label className="font-semibold text-sm">
-      Pet Policy
-    </label>
-    <Textarea
-      className="min-h-[80px]"
-      placeholder="Pets allowed / not allowed"
-      value={policies.pet_policy}
-      onChange={(e) =>
-        updateField("pet_policy", e.target.value)
-      }
-    />
-  </div>
-
-  {/* TERMS */}
-  <div className="space-y-1 md:col-span-2">
-    <label className="font-semibold text-sm">
-      Terms & Conditions *
-    </label>
-    <Textarea
-      className="min-h-[90px]"
-      placeholder="General property rules..."
-      value={policies.terms}
-      onChange={(e) =>
-        updateField("terms", e.target.value)
-      }
-    />
-  </div>
-
-</div>
-
-      {onNext && (
-        <Button
-          onClick={onNext}
-          className="w-full h-12 text-lg"
-        >
-          Save & Continue →
-        </Button>
-      )}
     </div>
+       </div>
   );
 };
 
