@@ -450,7 +450,11 @@ useEffect(() => {
 )}
 
 {activeTab === 1 && (
-  <AddressManager form={form} handleChange={handleChange} />
+  <AddressManager 
+    form={form} 
+    handleChange={handleChange} 
+    supplierId={supplierId} 
+  />
 )}
 
 {activeTab === 2 && (
