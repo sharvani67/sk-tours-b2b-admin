@@ -128,10 +128,10 @@ useEffect(() => {
   <img
     src={URL.createObjectURL(s.photo)}
     alt="staff"
-    className="w-full h-[190px] object-cover border border-black rounded-md"
+    className="w-full h-[300px] object-cover border border-black rounded-md"
   />
 ) : (
-  <div className="w-full h-[190px] flex items-center justify-center border border-black rounded-md bg-gray-200">
+  <div className="w-full h-[300px] flex items-center justify-center border border-black rounded-md bg-gray-200">
     <User className="w-12 h-12 text-gray-500" />
   </div>
 )}
@@ -245,14 +245,8 @@ useEffect(() => {
   ))}
 
   {/* ADD BUTTON */}
-  <div className="text-center mt-2">
-    <button
-      onClick={addStaff}
-      className="bg-[#FF0000] text-white px-6 py-1 rounded-md"
-    >
-      Add
-    </button>
-  </div>
+  <div className="flex justify-center gap-3 mt-2"> <button onClick={addStaff} className="bg-[#FF0000] text-white px-6 py-1 rounded-md" > Add </button> <button onClick={() => remove(i)} className="bg-[#FF0000] text-white px-6 py-1 rounded-md" > Remove </button> </div>
+
 
 </div>
 

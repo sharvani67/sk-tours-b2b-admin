@@ -36,7 +36,7 @@ import {
 /* ===================== TABS ===================== */
 
 const TABS = [
-  "Property Details",
+  "Overview",
   "Address",
   "Rooms Rates",
   "Staff Details",
@@ -437,29 +437,64 @@ useEffect(() => {
   </div>
 )}
 
-        {/* CARD */}
+   {/* TOP INFO BAR */}
+
+<div className="w-full bg-[#66FFFF] rounded-md px-4 py-3 flex flex-wrap gap-4 items-center">
+
+  {/* Company Name */}
+  <div className="flex items-center gap-2">
+    <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
+      Company Name
+    </span>
+    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[290px] text-sm border-2 border-black">
+      {form.name || "N/A"}
+    </div>
+  </div>
+
+  {/* Type of Company */}
+  <div className="flex items-center gap-2">
+    <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
+      Type of Company
+    </span>
+    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[280px] text-sm border-2 border-black">
+      {form.category || "N/A"}
+    </div>
+  </div>
+
+  {/* City */}
+  <div className="flex items-center gap-2">
+    <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
+      City
+    </span>
+    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[280px] text-sm border-2 border-black">
+      {form.city || "N/A"}
+    </div>
+  </div>
+
+</div>
 
      
 
           {/* TABS */}
 
-<div className="flex w-full bg-[#66FFFF] justify-between">
+<div className="flex w-full bg-[#66FFFF] overflow-hidden rounded-md border-2 border-black">
 
-  {TABS.map((tab, index) => (
-    <button
-      key={tab}
-      onClick={() => setActiveTab(index)}
-      className={`px-4 py-1 text-sm font-medium border-2 border-black transition rounded-md
-        ${
-          activeTab === index
-            ? "bg-[#002060] text-white"
-            : "bg-[#66FFFF] text-black hover:bg-[#66FFFF]"
-        }
-      `}
-    >
-      {tab}
-    </button>
-  ))}
+ {TABS.map((tab, index) => (
+  <button
+    key={tab}
+    onClick={() => setActiveTab(index)}
+    className={` px-5 py-1 text-sm font-medium transition
+      ${index !== 0 ? "border-l-2 border-black" : ""}
+      ${
+        activeTab === index
+          ? "bg-[#002060] text-white"
+          : "bg-[#66FFFF] text-black"
+      }
+    `}
+  >
+    {tab}
+  </button>
+))}
 
 </div>
 
