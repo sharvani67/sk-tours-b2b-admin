@@ -380,7 +380,7 @@ useEffect(() => {
   return (
     <AdminLayout>
 
-      <div className="space-y-6">
+      <div className="space-y-2">
 
         {/* PAGE HEADER */}
 
@@ -437,16 +437,25 @@ useEffect(() => {
   </div>
 )}
 
+<div className="w-full bg-[#66FFFF] rounded-md px-4 py-1 flex gap-4 items-center mb-0">
+  {/* Company Name */}
+  <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
+    <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
+      Category:   {form.category || "N/A"}
+    </span>
+  </div>
+</div>
+
    {/* TOP INFO BAR */}
 
-<div className="w-full bg-[#66FFFF] rounded-md px-4 py-3 flex flex-wrap gap-4 items-center">
+<div className="w-full bg-[#66FFFF] rounded-md px-4 py-1 flex gap-4 items-center mb-0">
 
   {/* Company Name */}
   <div className="flex items-center gap-2">
     <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
       Company Name
     </span>
-    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[290px] text-sm border-2 border-black">
+    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[250px] text-sm border-2 border-black">
       {form.name || "N/A"}
     </div>
   </div>
@@ -456,7 +465,7 @@ useEffect(() => {
     <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
       Type of Company
     </span>
-    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[280px] text-sm border-2 border-black">
+    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[250px] text-sm border-2 border-black">
       {form.category || "N/A"}
     </div>
   </div>
@@ -466,7 +475,7 @@ useEffect(() => {
     <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
       City
     </span>
-    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[280px] text-sm border-2 border-black">
+    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[250px] text-sm border-2 border-black">
       {form.city || "N/A"}
     </div>
   </div>
