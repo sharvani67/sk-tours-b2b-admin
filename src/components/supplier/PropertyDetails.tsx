@@ -88,256 +88,202 @@ const PropertyDetails = ({ form, handleChange, setCertificate }: any) => {
 
 
   return (
-    <div className="bg-[#f4f4f4]">
+  <div className="bg-[#f4f4f4] p-4">
 
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-2">
-        <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
-          Property Information
-        </div>
-      </div>
+    {/* OUTER BORDER */}
+    <div className="bg-[#0c2d67] p-3 rounded-2xl">
 
-      {/* MAIN GRID */}
-      <div className="space-y-2">
-        <div className="bg-[#0c2d67] text-white p-3 rounded-md">
-          <div className="grid md:grid-cols-4 gap-4">
+      {/* INNER BORDER */}
+      <div className="bg-[#b9d3ea] p-2 rounded-xl">
 
-            {/* PROPERTY NAME */}
-            <div className="space-y-2 md:col-span-1 bg-[#0c2d67] text-white">
+        {/* CONTENT BACKGROUND */}
+        <div className="bg-[#e6cfcf] rounded-xl p-6">
+          {/* FORM */}
+          <div className="space-y-4">
 
-              <label className="text-sm font-semibold">
-                Property Name *
-              </label>
-              <Input
-                value={form.name}
-                readOnly
-                className="h-12 rounded-xl bg-[#FFDADA] text-black border-none"
-              />
-            </div>
+            <div className="grid md:grid-cols-4 gap-4">
 
-            {/* CATEGORY */}
-            <div className="space-y-2 md:col-span-1">
-              <label className="text-sm font-semibold">
-                Category *
-              </label>
-              <select
-                value={form.category}
-                onChange={e => handleChange("category", e.target.value)}
-                className="h-12 w-full rounded-xl border px-4 bg-[#FFDADA] text-black border-none"
-              >
-                <option value="">Select Category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.category_name}>
-                    {cat.category_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+              {/* PROPERTY NAME */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">
+                  Property Name *
+                </label>
+                <Input
+                  value={form.name}
+                  readOnly
+                  className="h-12 rounded-xl bg-white text-black border border-gray-300"
+                />
+              </div>
 
-            {/* TOTAL ROOMS */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">
-                Total No. of Rooms
-              </label>
-              <Input
-                type="number"
-                min="0"
-                value={form.total_rooms ?? ""}
-                onChange={e =>
-                  handleChange(
-                    "total_rooms",
-                    e.target.value === "" ? "" : Number(e.target.value)
-                  )
-                }
-                className="h-12 rounded-xl bg-[#FFDADA] text-black border-none caret-black"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">
-                State *
-              </label>
-
-              <select
-                value={form.state || ""}
-                onChange={e => handleChange("state", e.target.value)}
-                className="h-12 w-full rounded-xl border px-4 bg-[#FFDADA] text-black border-none caret-black"
-              >
-                <option value="">Select State</option>
-
-                {states
-                  .filter((s) => s.status === 1) // optional (only active states)
-                  .map((state) => (
-                    <option key={state.name} value={state.name}>
-                      {state.state_name}
+              {/* CATEGORY */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">
+                  Category *
+                </label>
+                <select
+                  value={form.category}
+                  onChange={(e) => handleChange("category", e.target.value)}
+                  className="h-12 w-full rounded-xl border px-4 bg-white text-black border-gray-300"
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.category_name}>
+                      {cat.category_name}
                     </option>
                   ))}
-              </select>
+                </select>
+              </div>
+
+              {/* TOTAL ROOMS */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">
+                  Total No. of Rooms
+                </label>
+                <Input
+                  type="number"
+                  value={form.total_rooms ?? ""}
+                  onChange={(e) =>
+                    handleChange(
+                      "total_rooms",
+                      e.target.value === "" ? "" : Number(e.target.value)
+                    )
+                  }
+                  className="h-12 rounded-xl bg-white text-black border border-gray-300"
+                />
+              </div>
+
+              {/* STATE */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">State *</label>
+                <select
+                  value={form.state || ""}
+                  onChange={(e) => handleChange("state", e.target.value)}
+                  className="h-12 w-full rounded-xl border px-4 bg-white text-black border-gray-300"
+                >
+                  <option value="">Select State</option>
+                  {states
+                    .filter((s) => s.status === 1)
+                    .map((state) => (
+                      <option key={state.name} value={state.name}>
+                        {state.state_name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* CITY */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">City *</label>
+                <Input
+                  value={form.city}
+                  onChange={(e) => handleChange("city", e.target.value)}
+                  className="h-12 rounded-xl bg-white border border-gray-300"
+                />
+              </div>
+
+              {/* AREA */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Area</label>
+                <Input
+                  value={form.area}
+                  onChange={(e) => handleChange("area", e.target.value)}
+                  className="h-12 rounded-xl bg-white border border-gray-300"
+                />
+              </div>
+
+              {/* PINCODE */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Pincode</label>
+                <Input
+                  value={form.pincode}
+                  onChange={(e) => handleChange("pincode", e.target.value)}
+                  className="h-12 rounded-xl bg-white border border-gray-300"
+                />
+              </div>
+
+              {/* LANDMARK */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Landmark</label>
+                <Input
+                  value={form.landmark}
+                  onChange={(e) => handleChange("landmark", e.target.value)}
+                  className="h-12 rounded-xl bg-white border border-gray-300"
+                />
+              </div>
+
+              {/* CONTACT */}
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-semibold">
+                  Contact Numbers
+                </label>
+
+                {form.contacts.map((phone: string, index: number) => (
+                  <div key={index} className="flex gap-2">
+                    <Input
+                      value={phone}
+                      onChange={(e) => updateContact(index, e.target.value)}
+                      className="h-12 rounded-xl bg-white border border-gray-300"
+                    />
+                    <button onClick={addContact} className="px-3 bg-green-500 text-white rounded">+</button>
+                    {form.contacts.length > 1 && (
+                      <button onClick={() => removeContact(index)} className="px-3 bg-red-500 text-white rounded">-</button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* EMAIL */}
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-semibold">
+                  Email Addresses
+                </label>
+
+                {form.emails.map((email: string, index: number) => (
+                  <div key={index} className="flex gap-2">
+                    <Input
+                      value={email}
+                      onChange={(e) => updateEmail(index, e.target.value)}
+                      className="h-12 rounded-xl bg-white border border-gray-300"
+                    />
+                    <button onClick={addEmail} className="px-3 bg-green-500 text-white rounded">+</button>
+                    {form.emails.length > 1 && (
+                      <button onClick={() => removeEmail(index)} className="px-3 bg-red-500 text-white rounded">-</button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* FILE */}
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-semibold">
+                  Property Registration Certificate
+                </label>
+                <Input
+                  type="file"
+                  className="h-12 rounded-xl bg-white border border-gray-300"
+                />
+              </div>
+
+              {/* TEXTAREA */}
+              <div className="md:col-span-4 space-y-2">
+                <label className="text-sm font-semibold">
+                  Full Overview
+                </label>
+                <textarea
+                  value={form.address}
+                  onChange={(e) => handleChange("address", e.target.value)}
+                  className="w-full rounded-xl min-h-[100px] bg-white border border-gray-300 p-3"
+                />
+              </div>
+
             </div>
-
-            {/* CITY */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">
-                City *
-              </label>
-              <Input
-                value={form.city}
-                onChange={e => handleChange("city", e.target.value)}
-                className="h-12 rounded-xl bg-[#FFDADA] text-black border-none caret-black"
-              />
-            </div>
-
-            {/* AREA */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">
-                Area
-              </label>
-              <Input
-                value={form.area}
-                onChange={e => handleChange("area", e.target.value)}
-                className="h-12 rounded-xl bg-[#FFDADA] text-black border-none caret-black"
-              />
-            </div>
-
-            {/* PINCODE */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">
-                Pincode
-              </label>
-              <Input
-                value={form.pincode}
-                onChange={e => handleChange("pincode", e.target.value)}
-                className="h-12 rounded-xl bg-[#FFDADA] text-black border-none caret-black"
-              />
-            </div>
-
-            {/* LANDMARK */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">
-                Landmark
-              </label>
-              <Input
-                value={form.landmark}
-                onChange={e => handleChange("landmark", e.target.value)}
-                className="h-12 rounded-xl bg-[#FFDADA] text-black border-none caret-black"
-              />
-            </div>
-
-            {/* CONTACT */}
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-semibold">Contact Numbers</label>
-
-              {form.contacts.map((phone: string, index: number) => (
-                <div key={index} className="flex gap-2">
-
-                  <Input
-                    value={phone}
-                    onChange={e => updateContact(index, e.target.value)}
-                    className="h-12 rounded-xl bg-[#FFDADA] text-black border-none caret-black"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={addContact}
-                    className="px-3 bg-green-500 text-white rounded"
-                  >
-                    +
-                  </button>
-
-                  {form.contacts.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeContact(index)}
-                      className="px-3 bg-red-500 text-white rounded"
-                    >
-                      -
-                    </button>
-                  )}
-
-                </div>
-              ))}
-            </div>
-
-            {/* EMAIL */}
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-semibold">Email Addresses</label>
-
-              {form.emails.map((email: string, index: number) => (
-                <div key={index} className="flex gap-2">
-
-                  <Input
-                    value={email}
-                    onChange={e => updateEmail(index, e.target.value)}
-                    className="h-12 rounded-xl bg-[#FFDADA] text-black border-none caret-black"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={addEmail}
-                    className="px-3 bg-green-500 text-white rounded"
-                  >
-                    +
-                  </button>
-
-                  {form.emails.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeEmail(index)}
-                      className="px-3 bg-red-500 text-white rounded"
-                    >
-                      -
-                    </button>
-                  )}
-
-                </div>
-              ))}
-            </div>
-
-            {/* REGISTRATION CERTIFICATE */}
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-semibold">
-                Property Registration Certificate
-              </label>
-              <Input
-                type="file"
-                accept="application/pdf,image/*"
-                className="h-12 rounded-xl bg-[#FFDADA] text-black border-none caret-black"
-                onChange={(e) => setCertificate(e.target.files?.[0])}
-              />
-            </div>
-            <div></div>
-            {/* ADDRESS */}
-            <div className="md:col-span-3 space-y-2">
-              <label className="text-sm font-semibold">
-                Full Overview
-              </label>
-              <Textarea
-                value={form.address}
-                onChange={e => handleChange("address", e.target.value)}
-                className="rounded-xl min-h-[100px] bg-[#FFDADA] text-black border-none caret-black"
-              />
-            </div>
-
-            {/* HOTEL REMARKS */}
-            {/* <div className="md:col-span-3 space-y-2">
-        <label className="text-sm font-semibold">
-          Hotel Remarks
-        </label>
-        <Textarea
-          value={form.hotel_remarks}
-          onChange={e => handleChange("hotel_remarks", e.target.value)}
-          placeholder="Special notes, property highlights..."
-          className="rounded-xl min-h-[100px] bg-[#FFDADA] text-black border-none caret-black"
-        />
-      </div> */}
-
-
-
           </div>
+
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 
 
 };
