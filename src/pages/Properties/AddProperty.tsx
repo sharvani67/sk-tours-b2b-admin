@@ -453,7 +453,7 @@ useEffect(() => {
   {/* Company Name */}
   <div className="flex items-center gap-2">
     <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
-      Company Name
+      Property Name
     </span>
     <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[250px] text-sm border-2 border-black">
       {form.name || "N/A"}

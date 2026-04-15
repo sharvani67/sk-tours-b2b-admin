@@ -42,8 +42,6 @@
 //             </div>
 //           ))}
 
-     
-
 //         </div>
 
 //         {/* RIGHT CARD */}
@@ -76,8 +74,6 @@
 //             </div>
 //           ))}
 
-         
-
 //         </div>
 
 //       </div>
@@ -86,8 +82,6 @@
 //   );
 // };
 // export default AddressManager;
-
-
 
 import { useEffect, useState } from "react";
 import { API_URL } from "@/config/api";
@@ -99,7 +93,6 @@ type Props = {
 };
 
 const AddressManager = ({ form, handleChange, supplierId }: Props) => {
-
   const [supplierData, setSupplierData] = useState<any>({});
 
   /* ================= FETCH SUPPLIER ================= */
@@ -149,7 +142,6 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
 
   return (
     <div>
-
       {/* TITLE */}
       <div className="flex justify-between items-center mb-2">
         <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
@@ -159,42 +151,38 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
 
       {/* GRID */}
       <div className="grid md:grid-cols-2 gap-6">
-
-        {/* ================= LEFT CARD (READ ONLY) ================= */}
-        <div className="bg-[#66FFFF] p-4 rounded-lg border border-black">
-
+        {/* ================= LEFT CARD ================= */}
+        <div className="bg-[#66FFFF] p-3 w-full max-w-2xl rounded-md">
           {[
-            { label: "Address Type", key: "address_type" },
-            { label: "Address", key: "address1" },
-            { label: "Address", key: "address2" },
-            { label: "Area", key: "area" },
-            { label: "Landmark", key: "landmark" },
-            { label: "Pincode", key: "pincode" },
-            { label: "City", key: "city" },
-            { label: "State", key: "state" },
-            { label: "Country", key: "country" },
-          ].map((item) => (
-            <div key={item.key} className="flex mb-2 rounded-md">
-
+            { label: "Address Type", value: "Hotel Address(Static)" },
+            { label: "Address", value: "Jyoti Nagar" },
+            { label: "Address", value: "Chandramet" },
+            { label: "Area", value: "Jubilee Hills(Fetch)" },
+            { label: "Landmark", value: "Opp Jubilee Hills(Fetch)" },
+            { label: "Pincode", value: "505102(Fetch)" },
+            { label: "City", value: "Jubilee Hills(Fetch)" },
+            { label: "State", value: "Jubilee Hills(Fetch)" },
+            { label: "Country", value: "India(Fetch)" },
+          ].map((item, index) => (
+            <div key={index} className="flex mt-[1px]">
               {/* LABEL */}
-              <div className="bg-[#FF0000] text-white px-3 py-2 w-40 text-sm rounded-md border border-black">
+              <div className="bg-[#e11900] text-white text-xs font-bold px-2 py-1 w-32 rounded-[5px] border-2 border-gray-700">
                 {item.label}
               </div>
 
-              {/* READ-ONLY INPUT */}
-              <input
-                value={getSupplierValue(item.key)}
-                readOnly
-                className="flex-1 px-3 py-2 bg-gray-300 text-black border border-black outline-none rounded-md cursor-not-allowed"
-              />
+              {/* VALUE */}
+              <div
+                className={`flex-1 px-2 py-1 text-xs rounded-[5px] border-2 border-l-0 border-gray-700
+        ${index >= 3 ? "bg-[rgb(255,218,215)]" : "bg-white"}`}
+              >
+                {item.value}
+              </div>
             </div>
           ))}
-
         </div>
 
-        {/* ================= RIGHT CARD (EDITABLE) ================= */}
-        <div className="bg-[#66FFFF] p-4 rounded-lg border border-black">
-
+        {/* ================= RIGHT CARD ================= */}
+        <div className="bg-[#66FFFF] p-3 rounded-md">
           {[
             { label: "Address Type", key: "hotel_address_type" },
             { label: "Address", key: "hotel_address1" },
@@ -206,45 +194,43 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
             { label: "State", key: "hotel_state" },
             { label: "Country", key: "hotel_country" },
           ].map((item) => (
-            <div key={item.key} className="flex mb-2 rounded-md">
-
+            <div key={item.key} className="flex mt-[1px]">
               {/* LABEL */}
-              <div className="bg-[#FF0000] text-white px-3 py-2 w-40 text-sm rounded-md border border-black">
+              <div className="bg-[#FF0000] text-white text-xs font-bold rounded-[5px] px-2 py-1 w-32 border-2 border-gray-700">
                 {item.label}
               </div>
 
-              {/* EDITABLE INPUT */}
+              {/* INPUT */}
               <input
                 value={form[item.key] || ""}
                 onChange={(e) => handleChange(item.key, e.target.value)}
-                className="flex-1 px-3 py-2 bg-[#FFDADA] text-black border border-black outline-none rounded-md"
+                className={`flex-1 px-2 py-1 text-xs border-2 rounded-[5px] border-l-0 border-gray-700 outline-none 
+          ${item.key === "hotel_country" ? "bg-[#FFDADA]" : "bg-white"}`}
               />
             </div>
           ))}
 
-          {/* OPTIONAL COPY BUTTON */}
-          <div className="mt-4 flex justify-end">
-            <button
-              type="button"
-              onClick={() => {
-                handleChange("hotel_address1", supplierData.area || "");
-                handleChange("hotel_area", supplierData.area || "");
-                handleChange("hotel_landmark", supplierData.landmark || "");
-                handleChange("hotel_city", supplierData.city || "");
-                handleChange("hotel_state", supplierData.state || "");
-                handleChange("hotel_pincode", supplierData.pincode || "");
-                handleChange("hotel_country", supplierData.country || "");
-              }}
-              className="bg-[#002060] text-white px-4 py-2 rounded-md text-sm"
-            >
-              Copy Supplier Address →
-            </button>
-          </div>
-
+          {/* BUTTON */}
+          {/* <div className="mt-2 flex justify-end">
+      <button
+        type="button"
+        onClick={() => {
+          handleChange("hotel_address1", supplierData.address1 || "");
+          handleChange("hotel_address2", supplierData.address2 || "");
+          handleChange("hotel_area", supplierData.area || "");
+          handleChange("hotel_landmark", supplierData.landmark || "");
+          handleChange("hotel_city", supplierData.city || "");
+          handleChange("hotel_state", supplierData.state || "");
+          handleChange("hotel_pincode", supplierData.pincode || "");
+          handleChange("hotel_country", supplierData.country || "");
+        }}
+        className="bg-[#002060] text-white px-3 py-1 text-xs rounded-md"
+      >
+        Copy Supplier Address →
+      </button>
+    </div> */}
         </div>
-
       </div>
-
     </div>
   );
 };

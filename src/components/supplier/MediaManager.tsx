@@ -1,7 +1,4 @@
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Trash2, Upload, Star } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   images: File[];
@@ -20,204 +17,225 @@ const MediaManager = ({
   coverIndex,
   setCoverIndex,
 }: Props) => {
+  // ================= TAB STATE =================
+  const [activeTab, setActiveTab] = useState<"normal" | "holiday">("normal");
 
-  // IMAGE UPLOAD
+  // ================= HOLIDAY STATE =================
+  const [holidayImages, setHolidayImages] = useState<File[]>([]);
+  const [holidayVideos, setHolidayVideos] = useState<File[]>([]);
+  const [holidayCoverIndex, setHolidayCoverIndex] = useState<number | null>(
+    null,
+  );
+
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  // ================= DYNAMIC SWITCH =================
+  const currentImages = activeTab === "normal" ? images : holidayImages;
+  const setCurrentImages =
+    activeTab === "normal" ? setImages : setHolidayImages;
+
+  const currentVideos = activeTab === "normal" ? videos : holidayVideos;
+  const setCurrentVideos =
+    activeTab === "normal" ? setVideos : setHolidayVideos;
+
+  const currentCoverIndex =
+    activeTab === "normal" ? coverIndex : holidayCoverIndex;
+
+  const setCurrentCoverIndex =
+    activeTab === "normal" ? setCoverIndex : setHolidayCoverIndex;
+
+  // ================= IMAGE UPLOAD =================
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    setImages(prev => [...prev, ...Array.from(e.target.files)]);
+    setCurrentImages((prev) => [...prev, ...Array.from(e.target.files)]);
   };
 
-  // VIDEO UPLOAD
+  // ================= VIDEO UPLOAD =================
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    setVideos(prev => [...prev, ...Array.from(e.target.files)]);
+    setCurrentVideos((prev) => [...prev, ...Array.from(e.target.files)]);
   };
 
+  // ================= REMOVE IMAGE =================
   const removeImage = (index: number) => {
-  setImages(prev => prev.filter((_, i) => i !== index));
+    setCurrentImages((prev) => prev.filter((_, i) => i !== index));
 
-  setCoverIndex(prev => {
-    if (prev === null) return null;
-
-    if (prev === index) return 0; // fallback to first
-    if (prev > index) return prev - 1;
-
-    return prev;
-  });
-};
-
-  const removeVideo = (index: number) => {
-    setVideos(prev => prev.filter((_, i) => i !== index));
+    setCurrentCoverIndex((prev) => {
+      if (prev === null) return null;
+      if (prev === index) return 0;
+      if (prev > index) return prev - 1;
+      return prev;
+    });
   };
-useEffect(() => {
-  if (images.length > 0 && coverIndex === null) {
-    setCoverIndex(0);
-  }
-}, [images]);
 
-    return (
-  <div>
-<div className="flex justify-between items-center mb-2">
-        <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
-                Media
-        </div>
-      </div>
+  // ================= REMOVE VIDEO =================
+  const removeVideo = (index: number) => {
+    setCurrentVideos((prev) => prev.filter((_, i) => i !== index));
+  };
 
+  // ================= AUTO COVER =================
+  useEffect(() => {
+    if (currentImages.length > 0 && currentCoverIndex === null) {
+      setCurrentCoverIndex(0);
+    }
+  }, [currentImages]);
 
-    <div className="bg-[#66FFFF] p-4 rounded-xl border border-black">
-      <div className="bg-white p-6 rounded-xl">
+  return (
+    <div>
+      {/* ================= MAIN BOX ================= */}
+      <div className="bg-[#66FFFF] p-4 rounded-xl border border-black">
+        <div className="bg-white p-6 rounded-xl">
+          {/* ================= TABS ================= */}
+          <div className="flex gap-2 mb-4">
+            <button
+              onClick={() => setActiveTab("normal")}
+              className={`px-6 py-2 border rounded-md text-sm font-semibold ${
+                activeTab === "normal"
+                  ? "bg-[#0c2d67] text-white"
+                  : "bg-white text-black border-gray-400"
+              }`}
+            >
+              Normal Rate
+            </button>
 
-        <div className="grid grid-cols-2 gap-10">
+            <button
+              onClick={() => setActiveTab("holiday")}
+              className={`px-6 py-2 border rounded-md text-sm font-semibold ${
+                activeTab === "holiday"
+                  ? "bg-[#0c2d67] text-white"
+                  : "bg-white text-black border-gray-400"
+              }`}
+            >
+              Public Holiday
+            </button>
+          </div>
 
-          {/* ================= PHOTOS ================= */}
-          <div>
+          <div className="grid grid-cols-2 gap-10">
+            {/* ================= PHOTOS ================= */}
+            <div className="grid grid-cols-2 gap-6">
+              {/* LEFT PREVIEW */}
+              <div>
+                <div className="w-full h-[300px] bg-[#d9d9d9] rounded-xl overflow-hidden border border-gray-400">
+                  {currentImages.length > 0 ? (
+                    <img
+                      src={URL.createObjectURL(
+                        currentImages[currentCoverIndex || 0],
+                      )}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-gray-500">
+                      Preview
+                    </div>
+                  )}
+                </div>
 
-            {/* BOX */}
-            <div className="w-full h-[250px] bg-[#e6cccc] border border-black rounded-md flex items-center justify-center text-gray-700">
-              PHOTOS
+                {/* BUTTONS */}
+                <div className="flex gap-4 mt-3">
+                  <label className="bg-yellow-300 w-24 text-center py-1 text-xs border border-black rounded-md cursor-pointer">
+                    Upload
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+
+                  <button
+                    onClick={() => {
+                      setCurrentImages([]);
+                      setCurrentCoverIndex(null);
+                    }}
+                    className="bg-yellow-400 w-24 py-1 text-xs border border-black rounded-md"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* BUTTONS */}
-            <div className="flex justify-between mt-3">
+            <div className="grid grid-cols-2 gap-4">
+              {currentImages.length > 0
+                ? currentImages.map((file, index) => {
+                    const preview = URL.createObjectURL(file);
 
-              {/* UPLOAD */}
-              <label className="bg-[#FFFF00] px-4 py-1 border border-black rounded-md cursor-pointer">
-                Upload
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                />
-              </label>
-
-              {/* DELETE ALL */}
-              <button
-                onClick={() => {
-                  setImages([]);
-                  setCoverIndex(null);
-                }}
-                className="bg-[#FFC000] px-4 py-1 border border-black rounded-md"
-              >
-                Delete
-              </button>
-
-            </div>
-
-            {/* PREVIEW GRID */}
-            {images.length > 0 && (
-              <div className="grid grid-cols-3 gap-3 mt-4">
-                {images.map((file, index) => {
-                  const preview = URL.createObjectURL(file);
-
-                  return (
-                    <div key={index} className="relative">
-                      <img
-                        src={preview}
-                        className="h-24 w-full object-cover border border-black"
-                      />
-
-                      {/* COVER */}
-                      <button
-                        onClick={() => setCoverIndex(index)}
-                        className="absolute bottom-1 left-1 bg-white p-1"
+                    return (
+                      <div
+                        key={index}
+                        className="relative group cursor-pointer rounded-xl overflow-hidden"
+                        onClick={() => setSelectedIndex(index)}
                       >
-                        <Star
-                          size={14}
-                          className={
-                            coverIndex === index
-                              ? "text-yellow-500"
-                              : "text-gray-400"
-                          }
+                        <img
+                          src={preview}
+                          className="w-full h-[140px] object-cover transition-transform duration-200 group-hover:scale-105"
                         />
-                      </button>
 
-                      {/* DELETE SINGLE */}
-                      <button
-                        onClick={() => removeImage(index)}
-                        className="absolute top-1 right-1 bg-red-600 text-white px-1 text-xs"
-                      >
-                        X
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-          </div>
-
-          {/* ================= VIDEOS ================= */}
-          <div>
-
-            {/* BOX */}
-            <div className="w-full h-[250px] bg-[#e6cccc] border border-black rounded-md flex items-center justify-center text-gray-700">
-              VIDEOS
+                        {/* DELETE */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeImage(index);
+                          }}
+                          className="absolute top-1 right-1 bg-red-600 text-white px-2 text-xs rounded opacity-0 group-hover:opacity-100 transition"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    );
+                  })
+                : [...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-full h-[140px] bg-[#d9d9d9] rounded-xl"
+                    />
+                  ))}
             </div>
-
-            {/* BUTTONS */}
-            <div className="flex justify-between mt-3">
-
-              {/* UPLOAD */}
-              <label className="bg-[#FFFF00] px-4 py-1 border border-black rounded-md cursor-pointer">
-                Upload
-                <input
-                  type="file"
-                  multiple
-                  accept="video/*"
-                  className="hidden"
-                  onChange={handleVideoUpload}
-                />
-              </label>
-
-              {/* DELETE ALL */}
-              <button
-                onClick={() => setVideos([])}
-                className="bg-[#FFC000] px-4 py-1 border border-black rounded-md"
-              >
-                Delete
-              </button>
-
-            </div>
-
-            {/* PREVIEW GRID */}
-            {videos.length > 0 && (
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                {videos.map((file, index) => {
-                  const preview = URL.createObjectURL(file);
-
-                  return (
-                    <div key={index} className="relative">
-                      <video
-                        src={preview}
-                        className="h-24 w-full object-cover border border-black"
-                        controls
-                      />
-
-                      {/* DELETE SINGLE */}
-                      <button
-                        onClick={() => removeVideo(index)}
-                        className="absolute top-1 right-1 bg-red-600 text-white px-1 text-xs"
-                      >
-                        X
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
           </div>
-
         </div>
-
-
       </div>
-    </div>
 
-  </div>
-);
+      {/* ================= MODAL ================= */}
+      {selectedIndex !== null && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+          <button
+            onClick={() => setSelectedIndex(null)}
+            className="absolute top-5 right-5 text-white text-3xl"
+          >
+            ✕
+          </button>
+
+          <img
+            src={URL.createObjectURL(currentImages[selectedIndex])}
+            className="max-h-[85%] max-w-[85%] object-contain"
+          />
+
+          <button
+            onClick={() =>
+              setSelectedIndex((prev) =>
+                prev === 0 ? currentImages.length - 1 : (prev as number) - 1,
+              )
+            }
+            className="absolute left-5 text-white text-5xl"
+          >
+            ‹
+          </button>
+
+          <button
+            onClick={() =>
+              setSelectedIndex((prev) =>
+                prev === currentImages.length - 1 ? 0 : (prev as number) + 1,
+              )
+            }
+            className="absolute right-5 text-white text-5xl"
+          >
+            ›
+          </button>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default MediaManager;
