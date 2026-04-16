@@ -86,203 +86,212 @@ const PropertyDetails = ({ form, handleChange, setCertificate }: any) => {
   }, []);
 
 
-
-  return (
-  <div className="bg-[#f4f4f4] p-4">
-
-    {/* OUTER BORDER */}
-    <div className="bg-[#0c2d67] p-3 rounded-2xl">
-
-      {/* INNER BORDER */}
-      <div className="bg-[#b9d3ea] p-2 rounded-xl">
-
-        {/* CONTENT BACKGROUND */}
-        <div className="bg-[#e6cfcf] rounded-xl p-6">
-          {/* FORM */}
-          <div className="space-y-4">
-
-            <div className="grid md:grid-cols-4 gap-4">
-
-              {/* PROPERTY NAME */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">
-                  Property Name *
-                </label>
-                <Input
-                  value={form.name}
-                  readOnly
-                  className="h-12 rounded-xl bg-white text-black border border-gray-300"
-                />
-              </div>
-
-              {/* CATEGORY */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">
-                  Category *
-                </label>
-                <select
-                  value={form.category}
-                  onChange={(e) => handleChange("category", e.target.value)}
-                  className="h-12 w-full rounded-xl border px-4 bg-white text-black border-gray-300"
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.category_name}>
-                      {cat.category_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* TOTAL ROOMS */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">
-                  Total No. of Rooms
-                </label>
-                <Input
-                  type="number"
-                  value={form.total_rooms ?? ""}
-                  onChange={(e) =>
-                    handleChange(
-                      "total_rooms",
-                      e.target.value === "" ? "" : Number(e.target.value)
-                    )
-                  }
-                  className="h-12 rounded-xl bg-white text-black border border-gray-300"
-                />
-              </div>
-
-              {/* STATE */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">State *</label>
-                <select
-                  value={form.state || ""}
-                  onChange={(e) => handleChange("state", e.target.value)}
-                  className="h-12 w-full rounded-xl border px-4 bg-white text-black border-gray-300"
-                >
-                  <option value="">Select State</option>
-                  {states
-                    .filter((s) => s.status === 1)
-                    .map((state) => (
-                      <option key={state.name} value={state.name}>
-                        {state.state_name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-
-              {/* CITY */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">City *</label>
-                <Input
-                  value={form.city}
-                  onChange={(e) => handleChange("city", e.target.value)}
-                  className="h-12 rounded-xl bg-white border border-gray-300"
-                />
-              </div>
-
-              {/* AREA */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Area</label>
-                <Input
-                  value={form.area}
-                  onChange={(e) => handleChange("area", e.target.value)}
-                  className="h-12 rounded-xl bg-white border border-gray-300"
-                />
-              </div>
-
-              {/* PINCODE */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Pincode</label>
-                <Input
-                  value={form.pincode}
-                  onChange={(e) => handleChange("pincode", e.target.value)}
-                  className="h-12 rounded-xl bg-white border border-gray-300"
-                />
-              </div>
-
-              {/* LANDMARK */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Landmark</label>
-                <Input
-                  value={form.landmark}
-                  onChange={(e) => handleChange("landmark", e.target.value)}
-                  className="h-12 rounded-xl bg-white border border-gray-300"
-                />
-              </div>
-
-              {/* CONTACT */}
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-semibold">
-                  Contact Numbers
-                </label>
-
-                {form.contacts.map((phone: string, index: number) => (
-                  <div key={index} className="flex gap-2">
-                    <Input
-                      value={phone}
-                      onChange={(e) => updateContact(index, e.target.value)}
-                      className="h-12 rounded-xl bg-white border border-gray-300"
-                    />
-                    <button onClick={addContact} className="px-3 bg-green-500 text-white rounded">+</button>
-                    {form.contacts.length > 1 && (
-                      <button onClick={() => removeContact(index)} className="px-3 bg-red-500 text-white rounded">-</button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* EMAIL */}
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-semibold">
-                  Email Addresses
-                </label>
-
-                {form.emails.map((email: string, index: number) => (
-                  <div key={index} className="flex gap-2">
-                    <Input
-                      value={email}
-                      onChange={(e) => updateEmail(index, e.target.value)}
-                      className="h-12 rounded-xl bg-white border border-gray-300"
-                    />
-                    <button onClick={addEmail} className="px-3 bg-green-500 text-white rounded">+</button>
-                    {form.emails.length > 1 && (
-                      <button onClick={() => removeEmail(index)} className="px-3 bg-red-500 text-white rounded">-</button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* FILE */}
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-semibold">
-                  Property Registration Certificate
-                </label>
-                <Input
-                  type="file"
-                  className="h-12 rounded-xl bg-white border border-gray-300"
-                />
-              </div>
-
-              {/* TEXTAREA */}
-              <div className="md:col-span-4 space-y-2">
-                <label className="text-sm font-semibold">
-                  Full Overview
-                </label>
-                <textarea
-                  value={form.address}
-                  onChange={(e) => handleChange("address", e.target.value)}
-                  className="w-full rounded-xl min-h-[100px] bg-white border border-gray-300 p-3"
-                />
-              </div>
-
-            </div>
-          </div>
-
-        </div>
+//change by navya
+return (
+  <>
+    {/* OVERVIEW HEADER */}
+    <div className="flex justify-between items-center mb-4">
+      <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
+        Overview
       </div>
     </div>
-  </div>
+
+    <div className="bg-[#0c2d67] p-4 rounded-2xl">
+      
+      {/* INNER BORDER */}
+      <div className="bg-[#b9d3ea] p-3 rounded-2xl">
+
+        {/* INNER BORDER */}
+        {/* <div className="bg-[#b9d3ea] p-2 rounded-xl"> */}
+
+          {/* CONTENT BACKGROUND */}
+          <div className="bg-[#66FFFF] rounded-xl p-6">
+            {/* FORM */}
+            <div className="space-y-4">
+
+              <div className="grid md:grid-cols-4 gap-4">
+
+                {/* PROPERTY NAME */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">
+                    Property Name *
+                  </label>
+                  <Input
+                    value={form.name}
+                    readOnly
+                    className="h-12 rounded-xl bg-white text-black border border-gray-300"
+                  />
+                </div>
+
+                {/* CATEGORY */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">
+                    Category *
+                  </label>
+                  <select
+                    value={form.category}
+                    onChange={(e) => handleChange("category", e.target.value)}
+                    className="h-12 w-full rounded-xl border px-4 bg-white text-black border-gray-300"
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.category_name}>
+                        {cat.category_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* TOTAL ROOMS */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">
+                    Total No. of Rooms
+                  </label>
+                  <Input
+                    type="number"
+                    value={form.total_rooms ?? ""}
+                    onChange={(e) =>
+                      handleChange(
+                        "total_rooms",
+                        e.target.value === "" ? "" : Number(e.target.value)
+                      )
+                    }
+                    className="h-12 rounded-xl bg-white text-black border border-gray-300"
+                  />
+                </div>
+
+                {/* STATE */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">State *</label>
+                  <select
+                    value={form.state || ""}
+                    onChange={(e) => handleChange("state", e.target.value)}
+                    className="h-12 w-full rounded-xl border px-4 bg-white text-black border-gray-300"
+                  >
+                    <option value="">Select State</option>
+                    {states
+                      .filter((s) => s.status === 1)
+                      .map((state) => (
+                        <option key={state.name} value={state.name}>
+                          {state.state_name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
+                {/* CITY */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">City *</label>
+                  <Input
+                    value={form.city}
+                    onChange={(e) => handleChange("city", e.target.value)}
+                    className="h-12 rounded-xl bg-white border border-gray-300"
+                  />
+                </div>
+
+                {/* AREA */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">Area</label>
+                  <Input
+                    value={form.area}
+                    onChange={(e) => handleChange("area", e.target.value)}
+                    className="h-12 rounded-xl bg-white border border-gray-300"
+                  />
+                </div>
+
+                {/* PINCODE */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">Pincode</label>
+                  <Input
+                    value={form.pincode}
+                    onChange={(e) => handleChange("pincode", e.target.value)}
+                    className="h-12 rounded-xl bg-white border border-gray-300"
+                  />
+                </div>
+
+                {/* LANDMARK */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">Landmark</label>
+                  <Input
+                    value={form.landmark}
+                    onChange={(e) => handleChange("landmark", e.target.value)}
+                    className="h-12 rounded-xl bg-white border border-gray-300"
+                  />
+                </div>
+
+                {/* CONTACT */}
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-semibold">
+                    Contact Numbers
+                  </label>
+
+                  {form.contacts.map((phone: string, index: number) => (
+                    <div key={index} className="flex gap-2">
+                      <Input
+                        value={phone}
+                        onChange={(e) => updateContact(index, e.target.value)}
+                        className="h-12 rounded-xl bg-white border border-gray-300"
+                      />
+                      <button onClick={addContact} className="px-3 bg-green-500 text-white rounded">+</button>
+                      {form.contacts.length > 1 && (
+                        <button onClick={() => removeContact(index)} className="px-3 bg-red-500 text-white rounded">-</button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* EMAIL */}
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-semibold">
+                    Email Addresses
+                  </label>
+
+                  {form.emails.map((email: string, index: number) => (
+                    <div key={index} className="flex gap-2">
+                      <Input
+                        value={email}
+                        onChange={(e) => updateEmail(index, e.target.value)}
+                        className="h-12 rounded-xl bg-white border border-gray-300"
+                      />
+                      <button onClick={addEmail} className="px-3 bg-green-500 text-white rounded">+</button>
+                      {form.emails.length > 1 && (
+                        <button onClick={() => removeEmail(index)} className="px-3 bg-red-500 text-white rounded">-</button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* FILE */}
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-semibold">
+                    Property Registration Certificate
+                  </label>
+                  <Input
+                    type="file"
+                    className="h-12 rounded-xl bg-white border border-gray-300"
+                  />
+                </div>
+
+                {/* TEXTAREA */}
+                <div className="md:col-span-4 space-y-2">
+                  <label className="text-sm font-semibold">
+                    Full Overview
+                  </label>
+                  <textarea
+                    value={form.address}
+                    onChange={(e) => handleChange("address", e.target.value)}
+                    className="w-full rounded-xl min-h-[100px] bg-white border border-gray-300 p-3"
+                  />
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        {/* </div> */}
+      </div>
+    </div>
+  </>
 );
 
 
@@ -340,7 +349,10 @@ const AmenitiesManager = ({ amenities, setAmenities }: Props) => {
     setAmenities(prev => prev.filter(a => a !== amenity));
   };
 
-  return (
+return (
+  //  <div className="bg-[#0c2d67] p-4 rounded-2xl">
+
+    // <div className="bg-[#b9d3ea] p-3 rounded-2xl">
     <div className="bg-[#f4f4f4]">
 
       {/* HEADER */}
@@ -357,9 +369,10 @@ const AmenitiesManager = ({ amenities, setAmenities }: Props) => {
           Property Amenities
         </div>
       </div>
-
+    <div className="bg-[#0c2d67] p-4 rounded-2xl">
+       <div className="bg-[#b9d3ea] p-3 rounded-2xl">
       {/* MASTER AMENITIES GRID */}
-      <div className="bg-[#0c2d67] text-white p-3 rounded-md">
+      <div className="bg-[#66FFFF] text-black p-3 rounded-md">
         <div className="grid md:grid-cols-4 lg:grid-cols-5 gap-3">
 
           {MASTER_AMENITIES.map((amenity) => (
@@ -371,6 +384,7 @@ const AmenitiesManager = ({ amenities, setAmenities }: Props) => {
                 type="checkbox"
                 checked={amenities.includes(amenity)}
                 onChange={() => toggleAmenity(amenity)}
+                className="bg-white border border-black rounded"
               />
               <span className="text-sm font-medium">
                 {amenity}
@@ -437,7 +451,9 @@ const AmenitiesManager = ({ amenities, setAmenities }: Props) => {
           </div>
         )}
 
-      </div>
+       </div>
+     </div>
+    </div>
     </div>
   );
 };
