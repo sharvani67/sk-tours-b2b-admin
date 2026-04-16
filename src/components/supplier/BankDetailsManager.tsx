@@ -195,7 +195,7 @@ const BankDetailsManager = ({ bankDetails, setBankDetails }: Props) => {
                   onChange={(e) =>
                     handleChange(bankIndex, item.key, e.target.value)
                   }
-                  className="flex-1 h-7 px-2 py-1 text-xs bg-[#dcdcdc] border-2 border-gray-700 rounded-[5px] outline-none"
+                  className="flex-1 h-7 px-2 py-1 text-xs bg-[#fff] border-2 border-gray-700 rounded-[5px] outline-none"
                 />
 
               </div>
@@ -261,7 +261,7 @@ const BankDetailsManager = ({ bankDetails, setBankDetails }: Props) => {
             onChange={(e) =>
               setGpay({ ...gpay, number: e.target.value })
             }
-            className="flex-1 h-7 px-2 text-xs bg-[#dcdcdc] border-2 border-gray-700 rounded-[5px] outline-none"
+            className="flex-1 h-7 px-2 text-xs bg-[#fff] border-2 border-gray-700 rounded-[5px] outline-none"
           />
 
         </div>
@@ -278,7 +278,7 @@ const BankDetailsManager = ({ bankDetails, setBankDetails }: Props) => {
             onChange={(e) =>
               setGpay({ ...gpay, name: e.target.value })
             }
-            className="flex-1 h-7 px-2 text-xs bg-[#dcdcdc] border-2 border-gray-700 rounded-[5px] outline-none"
+            className="flex-1 h-7 px-2 text-xs bg-[#fff] border-2 border-gray-700 rounded-[5px] outline-none"
           />
 
         </div>
