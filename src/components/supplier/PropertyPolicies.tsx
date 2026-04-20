@@ -35,7 +35,7 @@ const PropertyPolicies = ({
         {/* BOOKING POLICY */}
         <div>
           <label className="font-semibold text-sm mb-2 block">
-            Booking Policy
+            Booking Policy 
           </label>
           <Textarea
             className="min-h-[120px]"

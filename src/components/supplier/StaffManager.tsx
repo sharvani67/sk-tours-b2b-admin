@@ -113,15 +113,15 @@ const StaffManager = ({ staff, setStaff }: Props) => {
                   <img
                     src={URL.createObjectURL(s.photo)}
                     alt="staff"
-                    className="w-full h-[300px] object-cover border border-black rounded-md"
+                    className="w-[full] h-[300px] object-cover border border-black rounded-md"
                   />
                 ) : (
-                  <div className="w-full h-[300px] flex items-center justify-center border border-black rounded-md bg-gray-200">
+                  <div className="w-[230px] h-[300px] flex items-center justify-center border border-black rounded-md bg-gray-200">
                     <User className="w-12 h-12 text-gray-500" />
                   </div>
                 )}
 
-                <div className="flex gap-2 mt-2">
+                <div className="flex gap-4 mt-2">
                   <label className="bg-yellow-400 text-black px-5 py-1 text-sm cursor-pointer rounded-md border border-black text-center">
                     Upload
                     <input
@@ -136,7 +136,7 @@ const StaffManager = ({ staff, setStaff }: Props) => {
 
                   <button
                     onClick={() => update(i, "photo", null)}
-                    className="bg-[#FF0000] text-white px-5 py-1 text-sm rounded-md border border-black"
+                    className="ml-[38px] bg-[#FF0000] text-white px-5 py-1 text-sm rounded-md border border-black"
                   >
                     Delete
                   </button>
@@ -144,9 +144,9 @@ const StaffManager = ({ staff, setStaff }: Props) => {
               </div>
 
               {/* FORM */}
-              <div className="flex-1 space-y-1">
+              <div className="w-[950px] ml-auto space-y-1">
                 {/* NAME ROW */}
-                <div className="grid grid-cols-[120px_1fr_120px_120px] items-center gap-1">
+                <div className="grid grid-cols-[120px_1fr_120px_120px] items-center gap-2">
                   {/* LABEL */}
                   <div className="bg-[#0c2d67] text-white px-3 py-1 text-md rounded-md">
                     Name
@@ -180,7 +180,7 @@ const StaffManager = ({ staff, setStaff }: Props) => {
                 ].map((field) => (
                   <div
                     key={field.key}
-                    className="grid grid-cols-[120px_500px_120px_120px] items-center gap-1"
+                    className="grid grid-cols-[120px_500px_90px_90px] items-center gap-1"
                   >
                     <div className="bg-[#0c2d67] text-white px-3 py-1 border border-black rounded-md">
                       {field.label}
@@ -194,16 +194,16 @@ const StaffManager = ({ staff, setStaff }: Props) => {
 
                     <button
                       onClick={() => update(i, "is_active", true)}
-                      className={`py-1 border border-black rounded-md ${
+                      className={`px-2 py-1 text-sm border border-black rounded-md ${
                         s.is_active ? "bg-[#FFFF00]" : "bg-yellow-400"
                       }`}
                     >
-                      Active
+                      Active 
                     </button>
 
                     <button
                       onClick={() => update(i, "is_active", false)}
-                      className={`py-1 border border-black rounded-md ${
+                      className={`px-2 py-1 text-sm border border-black rounded-md ${
                         !s.is_active ? "bg-[#FFFF00]" : "bg-yellow-400"
                       }`}
                     >
@@ -213,7 +213,7 @@ const StaffManager = ({ staff, setStaff }: Props) => {
                 ))}
 
                 {/* ✅ LANDLINE + EXTENSION */}
-                <div className="grid grid-cols-[120px_500px_120px_120px] items-center gap-1">
+                <div className="grid grid-cols-[120px_500px_90px_90px] items-center gap-1">
                   <div className="bg-[#0c2d67] text-white px-3 py-1 border border-black rounded-md">
                     Landline
                   </div>
@@ -244,7 +244,7 @@ const StaffManager = ({ staff, setStaff }: Props) => {
                       s.is_active ? "bg-[#FFFF00]" : "bg-yellow-400"
                     }`}
                   >
-                    Active
+                    Active 
                   </button>
 
                   <button

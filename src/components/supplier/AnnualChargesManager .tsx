@@ -17,7 +17,7 @@ const AnnualChargesManager = ({ charges, setCharges }: Props) => {
       {/* TITLE */}
       <div className="flex justify-between items-center mb-2">
         <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
-          Annual Charges
+          Annual Charges 
         </div>
       </div>
 
