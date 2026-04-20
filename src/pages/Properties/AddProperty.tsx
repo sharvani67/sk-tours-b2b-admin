@@ -127,7 +127,7 @@ const closePopup = () => {
   const [images, setImages] = useState<File[]>([]);
   const [videos, setVideos] = useState<File[]>([]);
   const [coverIndex, setCoverIndex] = useState<number | null>(null);
-
+ const [categories, setCategories] = useState<any[]>([]);
   const [staff, setStaff] = useState<any[]>([]);
 
   const [sightseeing, setSightSeeing] = useState<any[]>([]);
@@ -173,6 +173,45 @@ const [annualCharges, setAnnualCharges] = useState({
   extra_amount: "",
   extra_note: "",
 });
+
+// ✅ ADD HERE 👇👇👇
+const validateTab = () => {
+
+  // TAB 0 → Overview
+  if (activeTab === 0) {
+    if (!form.name) return "Property name is required";
+    
+  }
+
+  // TAB 2 → Rooms
+  if (activeTab === 2) {
+    if (!rooms.length) return "Add at least one room";
+  }
+
+  // TAB 6 → Bank
+  if (activeTab === 6) {
+    if (!bankDetails[0]?.account_holder)
+      return "Account holder name required";
+  }
+
+  return null;
+};
+
+const validateAll = () => {
+
+  if (!form.name) return { tab: 0, msg: "Enter property name" };
+  // if (!form.category) return { tab: 0, msg: "Select category" };
+  // if (!form.state) return { tab: 0, msg: "Select state" };
+  // if (!form.city) return { tab: 0, msg: "Select city" };
+
+  if (!rooms.length) return { tab: 2, msg: "Add rooms" };
+
+  if (!bankDetails[0]?.account_holder)
+    return { tab: 6, msg: "Enter bank details" };
+
+  return null;
+};
+
 const loadDraft = async () => {
 
   try {
@@ -207,12 +246,18 @@ const loadDraft = async () => {
   /* ================= NAVIGATION ================= */
 const saveAndContinue = async () => {
 
+  const error = validateTab();
+
+  if (error) {
+    toast.error(error);
+    return;
+  }
+
   await saveDraft();
 
   if (activeTab < TABS.length - 1) {
     setActiveTab(prev => prev + 1);
   }
-
 };
   const nextTab = () => {
     if (activeTab < TABS.length - 1) {
@@ -279,6 +324,14 @@ const saveDraft = async () => {
   /* ================= SUBMIT ================= */
 
   const submitProperty = async () => {
+
+    const validation = validateAll();
+
+if (validation) {
+  toast.error(validation.msg);
+  setActiveTab(validation.tab); // 🔥 auto move to tab
+  return;
+}
 
     setSubmitting(true);
 
@@ -375,6 +428,20 @@ useEffect(() => {
   if (supplierId) fetchSupplier();
 
 }, [supplierId]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/auth/categories`);
+        const data = await res.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Failed to fetch categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
   /* ================= UI ================= */
 
   return (
@@ -440,9 +507,20 @@ useEffect(() => {
 <div className="w-full bg-[#66FFFF] rounded-md px-4 py-1 flex gap-4 items-center mb-0">
   {/* Company Name */}
   <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
-    <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
+    {/* <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
       Category:   {form.category || "N/A"}
-    </span>
+    </span> */}
+    <select
+  value={form.category}
+  onChange={(e) => handleChange("category", e.target.value)}
+>
+  <option value="">Select Category</option>
+  {categories.map(cat => (
+    <option key={cat.id} value={cat.id}>
+      {cat.name}
+    </option>
+  ))}
+</select>
   </div>
 </div>
 
@@ -465,7 +543,7 @@ useEffect(() => {
     <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
       Type of Company
     </span>
-    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[250px] text-sm border-2 border-black">
+       <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[250px] text-sm border-2 border-black">
       {form.category || "N/A"}
     </div>
   </div>

@@ -35,8 +35,38 @@ const emptyRoom: Room = {
   childBed: "",
   childNoBed: "",
 };
-
-const PricingManager = () => {
+type PricingManagerProps = {
+  rooms: any[];
+  setRooms: React.Dispatch<React.SetStateAction<any[]>>;
+  pricingData: {
+    validFrom: string;
+    validTo: string;
+    meals: {
+      lunchAdult: string;
+      lunchChild: string;
+      dinnerAdult: string;
+      dinnerChild: string;
+    };
+  };
+  setPricingData: React.Dispatch<
+    React.SetStateAction<{
+      validFrom: string;
+      validTo: string;
+      meals: {
+        lunchAdult: string;
+        lunchChild: string;
+        dinnerAdult: string;
+        dinnerChild: string;
+      };
+    }>
+  >;
+};
+const PricingManager = ({
+  rooms,
+  setRooms,
+  pricingData,
+  setPricingData,
+}: PricingManagerProps) => {
   const [activeTab, setActiveTab] = useState(0);
 
   // 👉 Separate data for each tab
@@ -109,6 +139,11 @@ const PricingManager = () => {
       addRow();
     }
   }, [activeTab]);
+
+  useEffect(() => {
+  // take current tab rooms and send to parent
+  setRooms(current.rooms);
+}, [allPricing, activeTab]);
 
   // define this ABOVE return
   const fields = [

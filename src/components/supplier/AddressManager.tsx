@@ -12,6 +12,8 @@ type Props = {
 const AddressManager = ({ form, handleChange, supplierId }: Props) => {
   const [supplierData, setSupplierData] = useState<any>({});
 
+  
+
   /* ================= FETCH SUPPLIER ================= */
 
   useEffect(() => {
@@ -56,6 +58,8 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
         return "";
     }
   };
+
+  
 
   return (
     <div>
