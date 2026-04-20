@@ -186,9 +186,7 @@ const AmenitiesManager = ({ amenities, setAmenities }: Props) => {
   };
 
   return (
-    //  <div className="bg-[#0c2d67] p-4 rounded-2xl">
-
-    // <div className="bg-[#b9d3ea] p-3 rounded-2xl">
+   
     <div className="bg-[#f4f4f4]">
       <div className="flex justify-between items-center mb-2">
         <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
@@ -210,7 +208,7 @@ const AmenitiesManager = ({ amenities, setAmenities }: Props) => {
                     type="checkbox"
                     checked={amenities.includes(amenity)}
                     onChange={() => toggleAmenity(amenity)}
-                    className="w-4 h-4 accent-[#2c5f7c] cursor-pointer flex-shrink-0"
+                    className="w-5 h-5 accent-[#2c5f7c] scale-125 cursor-pointer flex-shrink-0"
                   />
                   <span className="text-sm font-medium bg-[#f3dede] px-4 h-10 w-[220px] flex items-center rounded-md border border-[#2c5f7c]">
                     {amenity}
@@ -228,7 +226,7 @@ const AmenitiesManager = ({ amenities, setAmenities }: Props) => {
                   value={customAmenity}
                   onChange={(e) => setCustomAmenity(e.target.value)}
                   placeholder="Enter custom amenity"
-                  className="bg-[#fff] text-black border-none"
+                  className="bg-[#fff] text-black border-black"
                 />
                 <Button onClick={addCustomAmenity}>
                   <Plus className="w-4 h-4 mr-1" />
@@ -239,30 +237,34 @@ const AmenitiesManager = ({ amenities, setAmenities }: Props) => {
 
             {/* SELECTED AMENITIES DISPLAY */}
             {amenities.length > 0 && (
-              <div className="border-t-2 border-white pt-8 space-y-4 mt-3">
-                <h3 className="text-lg font-semibold text-white">
-                  Selected Amenities
-                </h3>
+  <div className="border-t pt-8 space-y-4 mt-3">
+    <h3 className="text-lg font-semibold text-black">
+      Selected Amenities
+    </h3>
 
-                <div className="flex flex-wrap gap-3">
-                  {amenities.map((amenity) => (
-                    <div
-                      key={amenity}
-                      className="flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full"
-                    >
-                      <span className="text-sm text-white">{amenity}</span>
+    <div className="grid md:grid-cols-4 lg:grid-cols-5 gap-3">
+      {amenities.map((amenity) => (
+        <div
+          key={amenity}
+          className="flex items-center justify-between border-2 border-[#2c5f7c] rounded-xl p-3 bg-[#7fd8dc]"
+        >
+          {/* TEXT */}
+          <span className="text-sm font-medium bg-[#f3dede] px-3 py-2 rounded-md border border-[#2c5f7c] flex-1 mr-2">
+            {amenity}
+          </span>
 
-                      <button
-                        onClick={() => removeAmenity(amenity)}
-                        className="text-red-500 hover:text-red-600"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* DELETE ICON */}
+          <button
+            onClick={() => removeAmenity(amenity)}
+            className="text-red-600 hover:text-red-700"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
           </div>
         </div>
       </div>

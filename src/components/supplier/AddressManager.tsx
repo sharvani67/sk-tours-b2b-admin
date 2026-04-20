@@ -68,35 +68,37 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
 
       {/* GRID */}
       <div className="grid md:grid-cols-2 gap-6">
+       
         {/* ================= LEFT CARD ================= */}
-        <div className="bg-[#66FFFF] p-3 w-full max-w-2xl rounded-md">
-          {[
-            { label: "Address Type", value: "Hotel Address(Static)" },
-            { label: "Address", value: "Jyoti Nagar" },
-            { label: "Address", value: "Chandramet" },
-            { label: "Area", value: "Jubilee Hills(Fetch)" },
-            { label: "Landmark", value: "Opp Jubilee Hills(Fetch)" },
-            { label: "Pincode", value: "505102(Fetch)" },
-            { label: "City", value: "Jubilee Hills(Fetch)" },
-            { label: "State", value: "Jubilee Hills(Fetch)" },
-            { label: "Country", value: "India(Fetch)" },
-          ].map((item, index) => (
-            <div key={index} className="flex mt-[1px]">
-              {/* LABEL */}
-              <div className="bg-[#e11900] text-white text-xs font-bold px-2 py-1 w-32 rounded-[5px] border-2 border-gray-700">
-                {item.label}
-              </div>
+<div className="bg-[#66FFFF] p-3 w-full max-w-2xl rounded-md">
+  {[
+    { label: "Address Type", key: "address_type" },
+    { label: "Address", key: "address1" },
+    { label: "Address", key: "address2" },
+    { label: "Area", key: "area" },
+    { label: "Landmark", key: "landmark" },
+    { label: "Pincode", key: "pincode" },
+    { label: "City", key: "city" },
+    { label: "State", key: "state" },
+    { label: "Country", key: "country" },
+  ].map((item, index) => (
+    <div key={item.key} className="flex mt-[1px]">
+      
+      {/* LABEL */}
+      <div className="bg-[#e11900] text-white text-xs font-bold px-2 py-1 w-32 rounded-[5px] border-2 border-gray-700">
+        {item.label}
+      </div>
 
-              {/* VALUE */}
-              <div
-                className={`flex-1 px-2 py-1 text-xs rounded-[5px] border-2 border-l-0 border-gray-700
+      {/* INPUT (EDITABLE) */}
+      <input
+        value={form[item.key] ?? getSupplierValue(item.key)}
+        onChange={(e) => handleChange(item.key, e.target.value)}
+        className={`flex-1 px-2 py-1 text-xs rounded-[5px] border-2 border-l-0 border-gray-700 outline-none
         ${index >= 3 ? "bg-[rgb(255,218,215)]" : "bg-white"}`}
-              >
-                {item.value}
-              </div>
-            </div>
-          ))}
-        </div>
+      />
+    </div>
+  ))}
+</div>
 
         {/* ================= RIGHT CARD ================= */}
         <div className="bg-[#66FFFF] p-3 rounded-md">
