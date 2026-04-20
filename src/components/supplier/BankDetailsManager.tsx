@@ -93,7 +93,7 @@ const BankDetailsManager = ({ bankDetails, setBankDetails }: Props) => {
           {bankDetails[0]?.cancelled_cheque ? (
             <img
               src={URL.createObjectURL(bankDetails[0].cancelled_cheque)}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           ) : (
             <span className="text-gray-600 text-sm">Preview</span>

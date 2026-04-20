@@ -53,26 +53,49 @@ const PricingManager = () => {
 
   // ADD ROW
   const addRow = () => {
-    const updated = { ...allPricing };
-    updated[activeTab].rooms.push({ ...emptyRoom });
-    setAllPricing(updated);
-  };
+  setAllPricing((prev) => ({
+    ...prev,
+    [activeTab]: {
+      ...prev[activeTab],
+      rooms: [...prev[activeTab].rooms, { ...emptyRoom }],
+    },
+  }));
+};
 
   // DELETE ROW
   const deleteRow = () => {
-    const updated = { ...allPricing };
-    if (updated[activeTab].rooms.length > 1) {
-      updated[activeTab].rooms.pop();
-    }
-    setAllPricing(updated);
-  };
+  setAllPricing((prev) => {
+    const rooms = prev[activeTab].rooms;
+    if (rooms.length <= 1) return prev;
+
+    return {
+      ...prev,
+      [activeTab]: {
+        ...prev[activeTab],
+        rooms: rooms.slice(0, -1),
+      },
+    };
+  });
+};
 
   // UPDATE ROOM
-  const updateRoom = (index: number, key: string, value: string) => {
-    const updated = { ...allPricing };
-    updated[activeTab].rooms[index][key as keyof Room] = value;
-    setAllPricing(updated);
-  };
+ const updateRoom = (index: number, key: string, value: string) => {
+  setAllPricing((prev) => {
+    const updatedRooms = [...prev[activeTab].rooms];
+    updatedRooms[index] = {
+      ...updatedRooms[index],
+      [key]: value,
+    };
+
+    return {
+      ...prev,
+      [activeTab]: {
+        ...prev[activeTab],
+        rooms: updatedRooms,
+      },
+    };
+  });
+};
 
   // UPDATE DATE
   const updatePricing = (key: string, value: string) => {

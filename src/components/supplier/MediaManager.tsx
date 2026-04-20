@@ -99,7 +99,7 @@
 //                     src={URL.createObjectURL(
 //                       currentImages[currentCoverIndex || 0],
 //                     )}
-//                     className="w-full h-full object-cover"
+//                     className="w-full h-full object-contain"
 //                   />
 //                 )}
 //               </div>
@@ -148,7 +148,7 @@
                         
 //                         <img
 //                           src={preview}
-//                           className="w-full h-full object-cover"
+//                           className="w-full h-full object-contain"
 //                         />
 
 //                         <button
@@ -354,14 +354,14 @@ const MediaManager = ({
                       src={URL.createObjectURL(
                         currentFiles[currentCoverIndex || 0]
                       )}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   ) : (
                     <video
                       src={URL.createObjectURL(
                         currentFiles[currentCoverIndex || 0]
                       )}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                       controls
                     />
                   ))}
@@ -410,12 +410,12 @@ const MediaManager = ({
                         {activeTab === "photo" ? (
                           <img
                             src={preview}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
                         ) : (
                           <video
                             src={preview}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
                         )}
 

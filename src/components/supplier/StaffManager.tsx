@@ -108,15 +108,15 @@ const StaffManager = ({ staff, setStaff }: Props) => {
           <div key={i} className="mb-6">
             <div className="flex gap-4">
               {/* IMAGE */}
-              <div className="w-[180px]">
+              <div className="w-[230px]">
                 {s.photo ? (
                   <img
                     src={URL.createObjectURL(s.photo)}
                     alt="staff"
-                    className="w-[full] h-[300px] object-cover border border-black rounded-md"
+                    className="w-[full] h-[300px] object-contain bg-gray-200 border border-black rounded-md"
                   />
                 ) : (
-                  <div className="w-[230px] h-[300px] flex items-center justify-center border border-black rounded-md bg-gray-200">
+                  <div className="w-[full] h-[300px] flex items-center justify-center border border-black rounded-md bg-gray-200">
                     <User className="w-12 h-12 text-gray-500" />
                   </div>
                 )}
