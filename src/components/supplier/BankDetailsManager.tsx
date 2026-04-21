@@ -6,25 +6,63 @@ type BankDetails = {
   account_number: string;
   ifsc: string;
   branch: string;
+
+  bank_address: string; // ✅ ADD
+  address: string;      // ✅ ADD
+
   cancelled_cheque: File | null;
+  gpay_number: string;
+  gpay_name: string;
 };
 
 type Props = {
   bankDetails: BankDetails[];
   setBankDetails: React.Dispatch<React.SetStateAction<BankDetails[]>>;
 };
+const fields: { label: string; key: keyof BankDetails }[] = [
+  { label: "Bank Name", key: "bank_name" },
+  { label: "Account Name", key: "account_holder" },
+  { label: "Account Number", key: "account_number" },
+  { label: "IFSC Code", key: "ifsc" },
+  { label: "Branch Name", key: "branch" },
+  { label: "Bank Address", key: "bank_address" },
+  { label: "Address", key: "address" },
 
+  // ❌ DO NOT include cancelled_cheque here
+];
 const BankDetailsManager = ({ bankDetails, setBankDetails }: Props) => {
   const [gpay, setGpay] = useState({
     number: "",
     name: "",
   });
 
-  const handleChange = (index: number, key: string, value: any) => {
-    const updated = [...bankDetails];
-    updated[index][key] = value;
-    setBankDetails(updated);
+  const handleChange = (index: number, key: keyof BankDetails, value: any) => {
+  const updated = [...bankDetails];
+
+  if (!updated[index]) {
+    updated[index] = {
+      account_holder: "",
+      bank_name: "",
+      account_number: "",
+      ifsc: "",
+      branch: "",
+      bank_address: "",
+      address: "",
+      gpay_number: "",
+      gpay_name: "",
+      cancelled_cheque: null,
+    };
+  }
+
+  updated[index] = {
+    ...updated[index],
+    [key]: value
   };
+
+  setBankDetails(updated);
+};
+
+
 
   return (
     <div>
@@ -51,15 +89,7 @@ const BankDetailsManager = ({ bankDetails, setBankDetails }: Props) => {
               Bank {bankIndex + 1}
             </div>
 
-            {[
-              { label: "Bank Name", key: "bank_name" },
-              { label: "Account Name", key: "account_holder" },
-              { label: "Account Number", key: "account_number" },
-              { label: "IFSC Code", key: "ifsc" },
-              { label: "Branch Name", key: "branch" },
-              { label: "Bank Address", key: "bank_address" },
-              { label: "Address", key: "address" },
-            ].map((item) => (
+            {fields.map((item) => (
 
               <div key={item.key} className="flex items-center gap-1 mt-[2px]">
 
@@ -69,11 +99,16 @@ const BankDetailsManager = ({ bankDetails, setBankDetails }: Props) => {
                 </div>
 
                 {/* INPUT */}
-                <input
-                  value={bankDetails[bankIndex]?.[item.key] || ""}
-                  onChange={(e) =>
-                    handleChange(bankIndex, item.key, e.target.value)
-                  }
+        
+                  <input
+                value={
+    typeof bankDetails[bankIndex]?.[item.key] === "string"
+      ? bankDetails[bankIndex]?.[item.key]
+      : ""
+  }
+  onChange={(e) =>
+    handleChange(bankIndex, item.key, e.target.value)
+  }
                   className="flex-1 h-7 px-2 py-1 text-xs bg-[#fff] border-2 border-gray-700 rounded-[5px] outline-none"
                 />
 
@@ -126,43 +161,47 @@ const BankDetailsManager = ({ bankDetails, setBankDetails }: Props) => {
       </div>
 
       {/* ================= RIGHT SIDE ================= */}
-      <div className="col-span-1 flex flex-col gap-2 mt-6">
+ <div className="col-span-1 flex flex-col gap-4 mt-6">
 
-        {/* GPAY NUMBER */}
-        <div className="flex items-center gap-1 mt-[2px]">
+  {[0, 1].map((bankIndex) => (
+    <div key={bankIndex}>
 
-          <div className="bg-[#0c2d67] text-white text-xs font-semibold px-2 h-7 flex items-center w-36 border-2 border-gray-700 rounded-[5px]">
-            Gpay Number
-          </div>
-
-          <input
-            value={gpay.number}
-            onChange={(e) =>
-              setGpay({ ...gpay, number: e.target.value })
-            }
-            className="flex-1 h-7 px-2 text-xs bg-[#fff] border-2 border-gray-700 rounded-[5px] outline-none"
-          />
-
-        </div>
-
-        {/* GPAY NAME */}
-        <div className="flex items-center gap-1 mt-[2px]">
-
-          <div className="bg-[#0c2d67] text-white text-xs font-semibold px-2 h-7 flex items-center w-36 border-2 border-gray-700 rounded-[5px]">
-            Gpay Name
-          </div>
-
-          <input
-            value={gpay.name}
-            onChange={(e) =>
-              setGpay({ ...gpay, name: e.target.value })
-            }
-            className="flex-1 h-7 px-2 text-xs bg-[#fff] border-2 border-gray-700 rounded-[5px] outline-none"
-          />
-
-        </div>
-
+      <div className="text-sm font-semibold mb-2">
+        Bank {bankIndex + 1} GPay
       </div>
+
+      <div className="flex items-center gap-1 mt-[2px]">
+        <div className="bg-[#0c2d67] text-white text-xs font-semibold px-2 h-7 flex items-center w-36 border-2 border-gray-700 rounded-[5px]">
+          Gpay Number
+        </div>
+
+        <input
+          value={bankDetails[bankIndex]?.gpay_number || ""}
+          onChange={(e) =>
+            handleChange(bankIndex, "gpay_number", e.target.value)
+          }
+          className="flex-1 h-7 px-2 text-xs bg-[#fff] border-2 border-gray-700 rounded-[5px] outline-none"
+        />
+      </div>
+
+      <div className="flex items-center gap-1 mt-[2px]">
+        <div className="bg-[#0c2d67] text-white text-xs font-semibold px-2 h-7 flex items-center w-36 border-2 border-gray-700 rounded-[5px]">
+          Gpay Name
+        </div>
+
+        <input
+          value={bankDetails[bankIndex]?.gpay_name || ""}
+          onChange={(e) =>
+            handleChange(bankIndex, "gpay_name", e.target.value)
+          }
+          className="flex-1 h-7 px-2 text-xs bg-[#fff] border-2 border-gray-700 rounded-[5px] outline-none"
+        />
+      </div>
+
+    </div>
+  ))}
+
+</div>
 
     </div>
 

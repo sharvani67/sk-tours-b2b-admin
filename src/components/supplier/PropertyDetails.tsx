@@ -109,10 +109,10 @@ const PropertyDetails = ({ form, handleChange, setCertificate }: any) => {
                 <div className="md:col-span-4 space-y-2">
                   <label className="text-sm font-semibold">Full Overview</label>
                   <textarea
-                    value={form.address}
-                    onChange={(e) => handleChange("address", e.target.value)}
-                    className="w-full rounded-xl min-h-[100px] bg-white border border-gray-300 p-3"
-                  />
+  value={form.full_overview || ""}
+  onChange={(e) => handleChange("full_overview", e.target.value)}
+  className="w-full rounded-xl min-h-[100px] bg-white border border-gray-300 p-3"
+/>
                 </div>
 
                 <div className="space-y-2 md:col-span-2">

@@ -60,20 +60,37 @@ const [propertyDraftId, setPropertyDraftId] = useState<number | null>(null);
 const [amenities, setAmenities] = useState<string[]>([]);
   /* ================= BASIC DETAILS ================= */
 
-  const [form, setForm] = useState({
-    name: "",
-    category: "",
-    state: "",
-    city: "",
-    area: "",
-    pincode: "",
-    address: "",
-    landmark: "",
-    contacts: [""],
-    emails: [""],
-    total_rooms: "",
-    hotel_remarks: ""
-  });
+const [form, setForm] = useState({
+  name: "",
+  full_overview: "",
+  category: "",
+  state: "",
+  city: "",
+  area: "",
+  pincode: "",
+  address: "",
+  landmark: "",
+
+  // ✅ ADD THESE
+  address1: "",
+  address2: "",
+  country: "",
+
+  hotel_address_type: "",
+  hotel_address1: "",
+  hotel_address2: "",
+  hotel_area: "",
+  hotel_landmark: "",
+  hotel_pincode: "",
+  hotel_city: "",
+  hotel_state: "",
+  hotel_country: "",
+
+  contacts: [""],
+  emails: [""],
+  total_rooms: "",
+  hotel_remarks: ""
+});
 const [pricingData, setPricingData] = useState({
   validFrom: "",
   validTo: "",
@@ -144,25 +161,56 @@ const closePopup = () => {
 
   const [certificate, setCertificate] = useState<File | null>(null);
 
-   type BankDetails = {
+type BankDetails = {
   account_holder: string;
   bank_name: string;
   account_number: string;
   ifsc: string;
   branch: string;
+  bank_address: string;
+  address: string;
+  gpay_number: string;
+  gpay_name: string;
   cancelled_cheque: File | null;
 };
 
- const [bankDetails, setBankDetails] = useState<BankDetails[]>([
-  {
-    account_holder: "",
-    bank_name: "",
-    account_number: "",
-    ifsc: "",
-    branch: "",
-    cancelled_cheque: null,
-  },
+const emptyBank: BankDetails = {
+  account_holder: "",
+  bank_name: "",
+  account_number: "",
+  ifsc: "",
+  branch: "",
+  bank_address: "",
+  address: "",
+  gpay_number: "",
+  gpay_name: "",
+  cancelled_cheque: null,
+};
+
+const [bankDetails, setBankDetails] = useState<BankDetails[]>([
+  { ...emptyBank },
+  { ...emptyBank } // ✅ BANK 2 FIXED
 ]);
+
+// const [bankDetails, setBankDetails] = useState<BankDetails[]>([
+//   {
+//     account_holder: "",
+//     bank_name: "",
+//     account_number: "",
+//     ifsc: "",
+//     branch: "",
+
+//     bank_address: "",
+//     address: "",
+
+//     gpay_number: "",
+//     gpay_name: "",
+
+//     cancelled_cheque: null,
+//   },
+// ]);
+
+
 const [annualCharges, setAnnualCharges] = useState({
   maintenance_amount: "",
   maintenance_note: "",
@@ -233,7 +281,24 @@ const loadDraft = async () => {
     setPolicies(data.policies ? JSON.parse(data.policies) : {});
     setCancellationRules(data.cancellation_rules ? JSON.parse(data.cancellation_rules) : []);
     setCheckinData(data.checkin_data ? JSON.parse(data.checkin_data) : {});
-    setBankDetails(data.bank_details ? JSON.parse(data.bank_details) : []);
+const parsedBanks = data.bank_details || [];
+
+setBankDetails(
+  parsedBanks.length
+    ? parsedBanks.map((b: any) => ({
+        account_holder: b.account_holder || "",
+        bank_name: b.bank_name || "",
+        account_number: b.account_number || "",
+        ifsc: b.ifsc || "",
+        branch: b.branch || "",
+        bank_address: b.bank_address || "",
+        address: b.address || "",
+        gpay_number: b.gpay_number || "",
+        gpay_name: b.gpay_name || "",
+        cancelled_cheque: null // file not from DB
+      }))
+    : [{ ...emptyBank }, { ...emptyBank }]
+);
 
   } catch (err) {
 
@@ -292,6 +357,14 @@ const saveDraft = async () => {
     formData.append("annual_charges", JSON.stringify(annualCharges));
     formData.append("contacts", JSON.stringify(form.contacts));
     formData.append("emails", JSON.stringify(form.emails));
+    formData.append("hotel_address1", form.hotel_address1);
+    formData.append("hotel_address2", form.hotel_address2);
+    formData.append("hotel_area", form.hotel_area);
+    formData.append("hotel_landmark", form.hotel_landmark);
+    formData.append("hotel_pincode", form.hotel_pincode);
+    formData.append("hotel_city", form.hotel_city);
+    formData.append("hotel_state", form.hotel_state);
+    formData.append("hotel_country", form.hotel_country);
 
     if (propertyDraftId) {
       formData.append("property_id", String(propertyDraftId));
@@ -420,7 +493,10 @@ useEffect(() => {
 
     setForm(prev => ({
       ...prev,
-      name: data.company_name
+      name: data.company_name,
+      category: data.category,        // ✅ auto fill
+  city: data.city,                // optional
+  state: data.state    
     }));
 
   };
@@ -507,20 +583,9 @@ useEffect(() => {
 <div className="w-full bg-[#66FFFF] rounded-md px-4 py-1 flex gap-4 items-center mb-0">
   {/* Company Name */}
   <div className="bg-[#0c2d67] text-white text-center py-1 px-6 rounded-md font-semibold w-full">
-    {/* <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
+    <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
       Category:   {form.category || "N/A"}
-    </span> */}
-    <select
-  value={form.category}
-  onChange={(e) => handleChange("category", e.target.value)}
->
-  <option value="">Select Category</option>
-  {categories.map(cat => (
-    <option key={cat.id} value={cat.id}>
-      {cat.name}
-    </option>
-  ))}
-</select>
+    </span>
   </div>
 </div>
 
@@ -544,7 +609,7 @@ useEffect(() => {
       Type of Company
     </span>
        <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[250px] text-sm border-2 border-black">
-      {form.category || "N/A"}
+     {form.category || "N/A"}
     </div>
   </div>
 
@@ -553,9 +618,11 @@ useEffect(() => {
     <span className="bg-[#002060] text-white px-3 py-1 rounded-md text-sm font-medium">
       City
     </span>
-    <div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[250px] text-sm border-2 border-black">
+   
+<div className="bg-[#b2f5f5] px-4 py-1 rounded-md min-w-[250px] text-sm border-2 border-black">
       {form.city || "N/A"}
     </div>
+   
   </div>
 
 </div>

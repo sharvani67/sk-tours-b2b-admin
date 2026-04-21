@@ -1,10 +1,30 @@
 import { useState, useEffect } from "react";
 import { User } from "lucide-react";
 
+// type Staff = {
+//   firstName: string;
+//   lastName: string;
+//   post: string;
+//   cell1: string;
+//   cell2: string;
+//   landmark: string;
+//   email1: string;
+//   email2: string;
+//   landline: string;
+//   extension: string;
+//   photo: File | null;
+//   is_active: boolean;
+//   show_phones: boolean;
+//   show_emails: boolean;
+//   show_photo: boolean;
+// };
+
 type Staff = {
   firstName: string;
   lastName: string;
   post: string;
+  reservation_type: string;
+  city: string;
   cell1: string;
   cell2: string;
   landmark: string;
@@ -13,7 +33,19 @@ type Staff = {
   landline: string;
   extension: string;
   photo: File | null;
-  is_active: boolean;
+
+  is_active: boolean; // ✅ ADD THIS
+
+  active_fields: {
+    post: boolean;
+    cell1: boolean;
+    cell2: boolean;
+    landmark: boolean;
+    email1: boolean;
+    email2: boolean;
+    landline: boolean;
+  };
+
   show_phones: boolean;
   show_emails: boolean;
   show_photo: boolean;
@@ -24,36 +56,71 @@ type Props = {
   setStaff: React.Dispatch<React.SetStateAction<Staff[]>>;
 };
 
+
+
 const StaffManager = ({ staff, setStaff }: Props) => {
-  const addStaff = () => {
-    setStaff([
-      ...staff,
-      {
-        firstName: "",
-        lastName: "",
-        post: "",
-        cell1: "",
-        cell2: "",
-        landmark: "",
-        email1: "",
-        email2: "",
-        landline: "",
-        extension: "",
-        photo: null,
-        is_active: true,
-        show_phones: true,
-        show_emails: true,
-        show_photo: true,
+const addStaff = () => {
+  setStaff([
+    ...staff,
+    {
+      firstName: "",
+      lastName: "",
+      post: "",
+      reservation_type: "",
+      city: "",
+      cell1: "",
+      cell2: "",
+      landmark: "",
+      email1: "",
+      email2: "",
+      landline: "",
+      extension: "",
+      photo: null,
+
+      active_fields: {
+        post: true,
+        cell1: true,
+        cell2: true,
+        landmark: true,
+        email1: true,
+        email2: true,
+        landline: true,
       },
-    ]);
-  };
 
-  const update = (i: number, key: string, value: any) => {
-    const updated = [...staff];
-    updated[i][key as keyof Staff] = value;
-    setStaff(updated);
-  };
-
+  
+      is_active: true, // ✅ IMPORTANT
+  show_phones: true,
+  show_emails: true,
+  show_photo: true,
+    },
+  ]);
+};
+const toggleField = (
+  i: number,
+  field: keyof Staff["active_fields"],
+  value: boolean
+) => {
+  const updated = [...staff];
+  updated[i].active_fields[field] = value;
+  setStaff(updated);
+};
+ const update = <K extends keyof Staff>(
+  i: number,
+  key: K,
+  value: Staff[K]
+) => {
+  const updated = [...staff];
+  updated[i][key] = value;
+  setStaff(updated);
+};
+const fields: { label: string; key: keyof Staff["active_fields"] }[] = [
+  { label: "Post", key: "post" },
+  { label: "Cell 1", key: "cell1" },
+  { label: "Cell 2", key: "cell2" },
+  { label: "Landmark", key: "landmark" },
+  { label: "Email 1", key: "email1" },
+  { label: "Email 2", key: "email2" },
+];
   const remove = (i: number) => {
     setStaff(staff.filter((_, index) => index !== i));
   };
@@ -80,22 +147,32 @@ const StaffManager = ({ staff, setStaff }: Props) => {
             Reservation Type
           </div>
 
-          <input
+          {/* <input
             type="text"
             placeholder="Enter type"
             className="bg-[#fff] p-2 border border-black rounded-md"
-          />
+          /> */}
+          <input
+  value={staff[0]?.reservation_type || ""}
+  onChange={(e) => update(0, "reservation_type", e.target.value)}
+  className="bg-[#fff] p-2 border border-black rounded-md"
+/>
 
           <div className="bg-[#0c2d67] text-white p-2 text-center rounded-md">
             City
           </div>
 
           <div className="bg-[#fff] flex items-center px-2 border border-black rounded-md">
-            <input
+            {/* <input
               type="text"
               placeholder="Enter city"
               className="bg-transparent outline-none flex-1 p-2"
-            />
+            /> */}
+            <input
+  value={staff[0]?.city || ""}
+  onChange={(e) => update(0, "city", e.target.value)}
+  className="bg-transparent outline-none flex-1 p-2"
+/>
           </div>
 
           <button className="bg-[#FF0000] text-white px-4 py-1 rounded-md border border-black">
@@ -170,29 +247,22 @@ const StaffManager = ({ staff, setStaff }: Props) => {
                 </div>
 
                 {/* OTHER FIELDS */}
-                {[
-                  { label: "Post", key: "post" },
-                  { label: "Cell 1", key: "cell1" },
-                  { label: "Cell 2", key: "cell2" },
-                  { label: "Landmark", key: "landmark" },
-                  { label: "Email 1", key: "email1" },
-                  { label: "Email 2", key: "email2" },
-                ].map((field) => (
-                  <div
-                    key={field.key}
-                    className="grid grid-cols-[120px_500px_90px_90px] items-center gap-1"
-                  >
-                    <div className="bg-[#0c2d67] text-white px-3 py-1 border border-black rounded-md">
-                      {field.label}
-                    </div>
+               {fields.map((field) => (
+  <div
+    key={field.key}
+    className="grid grid-cols-[120px_500px_90px_90px] items-center gap-1"
+  >
+    <div className="bg-[#0c2d67] text-white px-3 py-1 border border-black rounded-md">
+      {field.label}
+    </div>
 
-                    <input
-                      value={s[field.key as keyof Staff] as string}
-                      onChange={(e) => update(i, field.key, e.target.value)}
-                      className="bg-[#fff] px-3 py-1 border border-black rounded-md w-[500px]"
-                    />
+    <input
+      value={s[field.key] ?? ""}
+      onChange={(e) => update(i, field.key, e.target.value)}
+      className="bg-[#fff] px-3 py-1 border border-black rounded-md w-[500px]"
+    />
 
-                    <button
+                    {/* <button
                       onClick={() => update(i, "is_active", true)}
                       className={`px-2 py-1 text-sm border border-black rounded-md ${
                         s.is_active ? "bg-[#FFFF00]" : "bg-yellow-400"
@@ -208,7 +278,24 @@ const StaffManager = ({ staff, setStaff }: Props) => {
                       }`}
                     >
                       Hide
-                    </button>
+                    </button> */}
+<button
+  onClick={() => toggleField(i, field.key, true)}
+  className={`px-2 py-1 border border-black rounded-md ${
+    s.active_fields[field.key] ? "bg-[#FFFF00]" : "bg-yellow-400"
+  }`}
+>
+  Active
+</button>
+
+<button
+  onClick={() => toggleField(i, field.key, false)}
+  className={`px-2 py-1 border border-black rounded-md ${
+    !s.active_fields[field.key] ? "bg-[#FFFF00]" : "bg-yellow-400"
+  }`}
+>
+  Inactive
+</button>
                   </div>
                 ))}
 
@@ -239,22 +326,22 @@ const StaffManager = ({ staff, setStaff }: Props) => {
                   </div>
 
                   <button
-                    onClick={() => update(i, "is_active", true)}
-                    className={`py-1 border border-black rounded-md ${
-                      s.is_active ? "bg-[#FFFF00]" : "bg-yellow-400"
-                    }`}
-                  >
-                    Active 
-                  </button>
+  onClick={() => toggleField(i, "landline", true)}
+  className={`py-1 border border-black rounded-md ${
+    s.active_fields.landline ? "bg-[#FFFF00]" : "bg-yellow-400"
+  }`}
+>
+  Active
+</button>
 
-                  <button
-                    onClick={() => update(i, "is_active", false)}
-                    className={`py-1 border border-black rounded-md ${
-                      !s.is_active ? "bg-[#FFFF00]" : "bg-yellow-400"
-                    }`}
-                  >
-                    Hide
-                  </button>
+<button
+  onClick={() => toggleField(i, "landline", false)}
+  className={`py-1 border border-black rounded-md ${
+    !s.active_fields.landline ? "bg-[#FFFF00]" : "bg-yellow-400"
+  }`}
+>
+  Inactive
+</button>
                 </div>
 
                 {/* ACTION BUTTONS */}

@@ -71,6 +71,7 @@ const PricingManager = ({
 
   // 👉 Separate data for each tab
   const [allPricing, setAllPricing] = useState<{
+    
     [key: number]: { rooms: Room[]; pricingData: Pricing };
   }>({
     0: { rooms: [emptyRoom], pricingData: { validFrom: "", validTo: "" } },
@@ -78,7 +79,11 @@ const PricingManager = ({
     2: { rooms: [emptyRoom], pricingData: { validFrom: "", validTo: "" } },
     3: { rooms: [emptyRoom], pricingData: { validFrom: "", validTo: "" } },
   });
-
+const [checkinData, setCheckinData] = useState({
+  check_in_time: "",
+  check_out_time: "",
+  is_24hr_checkin: false,
+});
   const current = allPricing[activeTab];
 
   // ADD ROW
@@ -140,24 +145,42 @@ const PricingManager = ({
     }
   }, [activeTab]);
 
-  useEffect(() => {
-  // take current tab rooms and send to parent
-  setRooms(current.rooms);
-}, [allPricing, activeTab]);
-
-  // define this ABOVE return
-  const fields = [
-    "roomCategory",
-    "rooms",
-    "single",
-    "CPAI",
-    "MAPAI",
-    "APAI",
-    "Ex Adult",
-    "Chd with Bed",
-    "Chd no Bed",
+useEffect(() => {
+  const formatted = [
+    {
+      rate_type: 0,
+      rooms: allPricing[0].rooms,
+      validFrom: allPricing[0].pricingData.validFrom,
+      validTo: allPricing[0].pricingData.validTo
+    }
   ];
 
+  setRooms(formatted);
+}, [allPricing]);
+// }, [allPricing, activeTab]);
+
+  // define this ABOVE return
+  // const fields = [
+  //   "roomCategory",
+  //   "rooms",
+  //   "single",
+  //   "CPAI",
+  //   "MAPAI",
+  //   "APAI",
+  //   "Ex Adult",
+  //   "Chd with Bed",
+  //   "Chd no Bed",
+  // ];
+const fields = [
+  "type",
+  "rooms",
+  "single",
+  "cpai",
+  "mapai",
+  "extraAdult",
+  "childBed",
+  "childNoBed",
+];
   return (
     <div>
       {/* TITLE */}
@@ -265,40 +288,86 @@ const PricingManager = ({
           {/* BOTTOM SECTION (UNCHANGED) */}
           <div className="flex mt-3 items-start gap-1 text-sm w-full">
             {/* Meals */}
-            <div className="flex flex-col gap-[2px] w-[180px]">
-              {["Meals", "Extra Lunch", "Extra Dinner"].map((item) => (
-                <div
-                  key={item}
-                  className="bg-[#041e56] text-white p-2 text-center border h-10 flex items-center justify-center"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
+<div className="flex flex-col gap-[2px] w-[180px]">
+  {["Meals", "Extra Lunch", "Extra Dinner"].map((item) => (
+    <div
+      key={item}
+      className="bg-[#041e56] text-white p-2 text-center border h-10 flex items-center justify-center"
+    >
+      {item}
+    </div>
+  ))}
+</div>
 
-            {/* Adult */}
-            <div className="flex flex-col gap-[2px] w-[100px] ml-1">
-              <div className="bg-[#041e56] text-white h-10 flex items-center justify-center border">
-                Adult
-              </div>
-              {[1, 2].map((i) => (
-                <div key={i} className="h-10 p-2 border bg-[#66ffff]">
-                  <input className="w-full h-full text-center border border-black rounded-[5px] bg-white" />
-                </div>
-              ))}
-            </div>
+{/* Adult */}
+<div className="flex flex-col gap-[2px] w-[100px] ml-1">
+  <div className="bg-[#041e56] text-white h-10 flex items-center justify-center border">
+    Adult
+  </div>
 
-            {/* Child */}
-            <div className="flex flex-col gap-[2px] w-[100px] ml-1">
-              <div className="bg-[#041e56] text-white h-10 flex items-center justify-center border">
-                Child
-              </div>
-              {[1, 2].map((i) => (
-                <div key={i} className="h-10 p-2 border bg-[#66ffff]">
-                  <input className="w-full h-full text-center border border-black rounded-[5px] bg-white" />
-                </div>
-              ))}
-            </div>
+  {/* Extra Lunch Adult */}
+  <div className="h-10 p-2 border bg-[#66ffff]">
+    <input
+      value={pricingData.meals.lunchAdult || ""}
+      onChange={(e) =>
+        setPricingData((prev) => ({
+          ...prev,
+          meals: { ...prev.meals, lunchAdult: e.target.value },
+        }))
+      }
+      className="w-full h-full text-center border border-black rounded-[5px] bg-white"
+    />
+  </div>
+
+  {/* Extra Dinner Adult */}
+  <div className="h-10 p-2 border bg-[#66ffff]">
+    <input
+      value={pricingData.meals.dinnerAdult || ""}
+      onChange={(e) =>
+        setPricingData((prev) => ({
+          ...prev,
+          meals: { ...prev.meals, dinnerAdult: e.target.value },
+        }))
+      }
+      className="w-full h-full text-center border border-black rounded-[5px] bg-white"
+    />
+  </div>
+</div>
+
+{/* Child */}
+<div className="flex flex-col gap-[2px] w-[100px] ml-1">
+  <div className="bg-[#041e56] text-white h-10 flex items-center justify-center border">
+    Child
+  </div>
+
+  {/* Extra Lunch Child */}
+  <div className="h-10 p-2 border bg-[#66ffff]">
+    <input
+      value={pricingData.meals.lunchChild || ""}
+      onChange={(e) =>
+        setPricingData((prev) => ({
+          ...prev,
+          meals: { ...prev.meals, lunchChild: e.target.value },
+        }))
+      }
+      className="w-full h-full text-center border border-black rounded-[5px] bg-white"
+    />
+  </div>
+
+  {/* Extra Dinner Child */}
+  <div className="h-10 p-2 border bg-[#66ffff]">
+    <input
+      value={pricingData.meals.dinnerChild || ""}
+      onChange={(e) =>
+        setPricingData((prev) => ({
+          ...prev,
+          meals: { ...prev.meals, dinnerChild: e.target.value },
+        }))
+      }
+      className="w-full h-full text-center border border-black rounded-[5px] bg-white"
+    />
+  </div>
+</div>
 
             <div className="flex flex-col gap-[2px] ml-2 w-[350px]">
               <div className="bg-[#041e56] text-white h-10 flex items-center justify-center border">
@@ -319,32 +388,53 @@ const PricingManager = ({
             </div>
 
             {/* Checkin/out */}
-            <div className="flex flex-col gap-[2px] ml-2 w-[420px]">
-              <div className="bg-[#041e56] text-white h-10 flex items-center justify-center border">
-                Check in / Check out
-              </div>
-              <div className="grid grid-cols-4 h-10">
-                {/* Check In Label */}
-                <div className="bg-[#041e56] text-white flex items-center justify-center border">
-                  Check in
-                </div>
+          <div className="flex flex-col gap-[2px] ml-2 w-[420px]">
+  <div className="bg-[#041e56] text-white h-10 flex items-center justify-center border">
+    Check in / Check out
+  </div>
 
-                {/* Check In Input */}
-                <div className="h-10 p-2 border bg-[#66ffff]">
-                  <input className="w-full h-full text-center border border-black rounded-[5px] bg-white outline-none" />
-                </div>
+  <div className="grid grid-cols-4 h-10">
 
-                {/* Check Out Label */}
-                <div className="bg-[#041e56] text-white flex items-center justify-center border">
-                  Check out
-                </div>
+    {/* Check In Label */}
+    <div className="bg-[#041e56] text-white flex items-center justify-center border">
+      Check in
+    </div>
 
-                {/* Check Out Input */}
-                <div className="h-10 p-2 border bg-[#66ffff]">
-                  <input className="w-full h-full text-center border border-black rounded-[5px] bg-white outline-none" />
-                </div>
-              </div>
-            </div>
+    {/* Check In Input */}
+    <div className="h-10 p-2 border bg-[#66ffff]">
+      <input
+        value={checkinData.check_in_time || ""}
+        onChange={(e) =>
+          setCheckinData((prev: any) => ({
+            ...prev,
+            check_in_time: e.target.value,
+          }))
+        }
+        className="w-full h-full text-center border border-black rounded-[5px] bg-white outline-none"
+      />
+    </div>
+
+    {/* Check Out Label */}
+    <div className="bg-[#041e56] text-white flex items-center justify-center border">
+      Check out
+    </div>
+
+    {/* Check Out Input */}
+    <div className="h-10 p-2 border bg-[#66ffff]">
+      <input
+        value={checkinData.check_out_time || ""}
+        onChange={(e) =>
+          setCheckinData((prev: any) => ({
+            ...prev,
+            check_out_time: e.target.value,
+          }))
+        }
+        className="w-full h-full text-center border border-black rounded-[5px] bg-white outline-none"
+      />
+    </div>
+
+  </div>
+</div>
           </div>
         </div>
       </div>

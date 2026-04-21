@@ -37,7 +37,7 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
   const getSupplierValue = (key: string) => {
     switch (key) {
       case "address_type":
-        return "Supplier Address";
+        return "Hotel Address";
       case "address1":
         return supplierData.area || "";
       case "address2":
@@ -58,6 +58,20 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
         return "";
     }
   };
+
+  useEffect(() => {
+  if (!supplierData || !supplierId) return;
+
+  handleChange("address1", supplierData.address_line1 || "");
+  handleChange("address2", supplierData.address_line2 || "");
+  handleChange("area", supplierData.area || "");
+  handleChange("landmark", supplierData.landmark || "");
+  handleChange("city", supplierData.city || "");
+  handleChange("state", supplierData.state || "");
+  handleChange("pincode", supplierData.pincode || "");
+  handleChange("country", supplierData.country || "");
+
+}, [supplierData]);
 
   
 
@@ -95,11 +109,11 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
 
       {/* INPUT (EDITABLE) */}
       <input
-        value={form[item.key] ?? getSupplierValue(item.key)}
-        onChange={(e) => handleChange(item.key, e.target.value)}
-        className={`flex-1 px-2 py-1 text-xs rounded-[5px] border-2 border-l-0 border-gray-700 outline-none
-        ${index >= 3 ? "bg-[rgb(255,218,215)]" : "bg-white"}`}
-      />
+ value={form[item.key] || ""}
+  onChange={(e) => handleChange(item.key, e.target.value)}
+  className={`flex-1 px-2 py-1 text-xs rounded-[5px] border-2 border-l-0 border-gray-700 outline-none
+  ${index >= 3 ? "bg-[rgb(255,218,215)]" : "bg-white"}`}
+/>
     </div>
   ))}
 </div>
