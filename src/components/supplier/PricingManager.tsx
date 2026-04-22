@@ -8,6 +8,7 @@ type Room = {
   single: string;
   cpai: string;
   mapai: string;
+  apai:string;
   extraAdult: string;
   childBed: string;
   childNoBed: string;
@@ -160,27 +161,28 @@ useEffect(() => {
 // }, [allPricing, activeTab]);
 
   // define this ABOVE return
-  // const fields = [
-  //   "roomCategory",
-  //   "rooms",
-  //   "single",
-  //   "CPAI",
-  //   "MAPAI",
-  //   "APAI",
-  //   "Ex Adult",
-  //   "Chd with Bed",
-  //   "Chd no Bed",
-  // ];
-const fields = [
-  "type",
-  "rooms",
-  "single",
-  "cpai",
-  "mapai",
-  "extraAdult",
-  "childBed",
-  "childNoBed",
-];
+  const fields = [
+    "roomCategory",
+    "rooms",
+    "single",
+    "CPAI",
+    "MAPAI",
+    "APAI",
+    "Ex Adult",
+    "Chd with Bed",
+    "Chd no Bed",
+  ];
+// const fields = [
+//   "type",
+//   "rooms",
+//   "single",
+//   "cpai",
+//   "mapai",
+//   "Apai",
+//   "extraAdult",
+//   "childBed",
+//   "childNoBed",
+// ];
   return (
     <div>
       {/* TITLE */}
