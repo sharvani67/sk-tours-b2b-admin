@@ -414,7 +414,14 @@ export default function AdminAddProperty() {
 
       const formData = new FormData();
 
-      Object.entries(form).forEach(([k, v]) => formData.append(k, v as string));
+      // Object.entries(form).forEach(([k, v]) => formData.append(k, v as string));
+      Object.entries(form).forEach(([k, v]) => {
+        if (k === "contacts" || k === "emails") return; // 🚫 skip duplicates
+
+        if (typeof v === "string") {
+          formData.append(k, v);
+        }
+      });
 
       formData.append("supplier_id", String(supplierId));
       formData.append("rooms", JSON.stringify(rooms));

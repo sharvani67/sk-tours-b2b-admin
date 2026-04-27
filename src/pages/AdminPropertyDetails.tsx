@@ -276,7 +276,7 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
       <div>
         <p className="text-sm text-muted-foreground">Contact</p>
-        <p className="font-medium">{property.mobile}</p> 
+        <p className="font-medium">{property.contact}</p> 
           
       </div>
 
