@@ -19,6 +19,7 @@ const tabs = [
   { key: "media", label: "Media" },
   { key: "financial", label: "Bank & Check-in" },
 ];
+const [supplier, setSupplier] = useState<any>(null);
   const { id } = useParams();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -39,7 +40,14 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
   useEffect(() => {
     fetchProperty();
   }, [id]);
-
+useEffect(() => {
+fetch(`${API_URL}/api/properties/property/${id}/supplier`)
+    .then(res => res.json())
+    .then(data => {
+      console.log("SUPPLIER API:", data);
+      setSupplier(data); // ✅ IMPORTANT
+    });
+}, [id]);
   if (loading) {
     return (
       <AdminLayout>
@@ -274,17 +282,23 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
         <p className="font-medium">{property.pincode}</p>
       </div>
 
-      <div>
-        <p className="text-sm text-muted-foreground">Contact</p>
-        <p className="font-medium">{property.contact}</p> 
-          
-      </div>
+     <div>
+  <p className="text-sm text-muted-foreground">Contact</p>
+  <p className="font-medium">
+    {supplier?.mobile?.trim()
+      ? supplier.mobile
+      : "-"}
+  </p>
+</div>
 
-      <div>
-        <p className="text-sm text-muted-foreground">Email</p>
-      <p className="font-medium">{property.email}</p> 
-    
-      </div>
+<div>
+  <p className="text-sm text-muted-foreground">Email</p>
+  <p className="font-medium">
+    {supplier?.email?.trim()
+      ? supplier.email
+      : "-"}
+  </p>
+</div>
 
     
 
