@@ -354,7 +354,20 @@ export default function AdminAddProperty() {
       formData.append("faqs", JSON.stringify(faqs));
       formData.append("policies", JSON.stringify(policies));
       formData.append("cancellation_rules", JSON.stringify(cancellationRules));
-      formData.append("checkin_data", JSON.stringify(checkinData));
+ formData.append("checkin_data", JSON.stringify({
+  check_in_time: pricingData.check_in_time,
+  check_out_time: pricingData.check_out_time,
+  is_24hr_checkin: pricingData.is_24hr_checkin,
+}));
+
+const finalCheckin = {
+  ...checkinData,
+  check_in_time: pricingData.check_in_time,
+  check_out_time: pricingData.check_out_time,
+  is_24hr_checkin: pricingData.is_24hr_checkin,
+};
+
+formData.append("checkin_data", JSON.stringify(finalCheckin));
       formData.append("bank_details", JSON.stringify(bankDetails));
       formData.append("annual_charges", JSON.stringify(annualCharges));
       formData.append("contacts", JSON.stringify(form.contacts));
@@ -432,25 +445,30 @@ export default function AdminAddProperty() {
       formData.append("faqs", JSON.stringify(faqs));
       formData.append("policies", JSON.stringify(policies));
       formData.append("cancellation_rules", JSON.stringify(cancellationRules));
-      formData.append("checkin_data", JSON.stringify(checkinData));
+     formData.append("checkin_data", JSON.stringify({
+  check_in_time: pricingData.check_in_time,
+  check_out_time: pricingData.check_out_time,
+  is_24hr_checkin: pricingData.is_24hr_checkin,
+}));
       formData.append("contacts", JSON.stringify(form.contacts));
       formData.append("emails", JSON.stringify(form.emails));
       formData.append("valid_from", pricingData.validFrom);
       formData.append("valid_to", pricingData.validTo);
       formData.append("meals", JSON.stringify(pricingData.meals));
-      formData.append("check_in_time", pricingData.check_in_time);
-      formData.append("check_out_time", pricingData.check_out_time);
-      formData.append("is_24hr_checkin", String(pricingData.is_24hr_checkin));
+     
+      // formData.append("check_in_time", pricingData.check_in_time);
+      // formData.append("check_out_time", pricingData.check_out_time);
+      // formData.append("is_24hr_checkin", String(pricingData.is_24hr_checkin));
       formData.append("annual_charges", JSON.stringify(annualCharges));
       if (certificate) formData.append("certificate", certificate);
 
       images.forEach((img) => formData.append("images", img));
       videos.forEach((v) => formData.append("videos", v));
 
-      videoLinks.forEach((link) => {
-        formData.append("video_links[]", link);
-      });
-
+      // videoLinks.forEach((link) => {
+      //   formData.append("video_links[]", link);
+      // });
+      formData.append("video_links", JSON.stringify(videoLinks));
       staff.forEach((member) => {
         if (member.photo) formData.append("staffPhotos", member.photo);
       });
