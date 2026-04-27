@@ -88,6 +88,7 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
   }
 };
 
+
   return (
     <AdminLayout>
         <div className="max-w-4xl mx-auto mb-4">
@@ -96,7 +97,7 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
       onClick={() => navigate(-1)}
       className="mb-2"
     >
-      ← Back
+       ← Back 
     </Button>
   </div>
       <div className="max-w-6xl mx-auto space-y-8">
@@ -241,6 +242,8 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
     {/* Details Grid */}
     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
 
+      
+
       <div>
         <p className="text-sm text-muted-foreground">Property Name</p>
         <p className="font-medium">{property.name}</p>
@@ -273,14 +276,19 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
       <div>
         <p className="text-sm text-muted-foreground">Contact</p>
-        <p className="font-medium">{property.contact}</p>
+        <p className="font-medium">{property.mobile}</p> 
+          
       </div>
 
       <div>
         <p className="text-sm text-muted-foreground">Email</p>
-        <p className="font-medium">{property.email}</p>
+      <p className="font-medium">{property.email}</p> 
+    
       </div>
 
+    
+
+     
       <div className="md:col-span-2">
         <p className="text-sm text-muted-foreground">Address</p>
         <p className="font-medium">{property.address}</p>

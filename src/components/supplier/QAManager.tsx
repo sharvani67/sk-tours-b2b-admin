@@ -58,14 +58,14 @@ useEffect(() => {
             {/* DELETE BUTTON */}
             <button
               onClick={() => removeFAQ(index)}
-              className="absolute top-2 right-2 bg-[#FF0000] text-white p-1 rounded"
+              className="absolute top-1 right-2 bg-[#FF0000] text-white p-1 rounded"
             >
               <Trash2 size={14} />
             </button>
 
             {/* QUESTION */}
-            <div className="bg-[#0c2d67] text-white p-3">
-              <label className="block text-sm mb-1">Question</label>
+            <div className="bg-[#0c2d67] text-white p-2">
+              <label className="block text-sm">Question</label>
 
               <Input
                 placeholder="Enter question"
@@ -78,8 +78,8 @@ useEffect(() => {
             </div>
 
             {/* ANSWER */}
-            <div className="bg-[#69bcbc] p-3">
-              <label className="block text-sm mb-1 text-black">
+            <div className="bg-[#0c2d67] p-2">
+              <label className="block text-sm text-white">
                 Answer
               </label>
 
