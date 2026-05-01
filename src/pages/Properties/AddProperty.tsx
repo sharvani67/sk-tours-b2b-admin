@@ -71,6 +71,7 @@ export default function AdminAddProperty() {
     landmark: "",
 
     // ✅ ADD THESE
+    address_type: "",
     address1: "",
     address2: "",
     country: "",
