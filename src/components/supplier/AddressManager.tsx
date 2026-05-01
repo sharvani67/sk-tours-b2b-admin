@@ -73,7 +73,20 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
 
 }, [supplierData]);
 
-  
+  useEffect(() => {
+  if (!supplierId) return;
+
+  // LEFT SIDE DEFAULT
+  if (!form.address_type) {
+    handleChange("address_type", "Hotel Address");
+  }
+
+  // RIGHT SIDE DEFAULT
+  if (!form.hotel_address_type) {
+    handleChange("hotel_address_type", "Central Reservation");
+  }
+
+}, [supplierId]);
 
   return (
     <div>
@@ -91,8 +104,8 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
 <div className="bg-[#66FFFF] p-3 w-full max-w-2xl rounded-md">
   {[
     { label: "Address Type", key: "address_type" },
-    { label: "Address", key: "address1" },
-    { label: "Address", key: "address2" },
+    { label: "Address 1", key: "address1" },
+    { label: "Address 2", key: "address2" },
     { label: "Area", key: "area" },
     { label: "Landmark", key: "landmark" },
     { label: "Pincode", key: "pincode" },
@@ -122,8 +135,8 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
         <div className="bg-[#66FFFF] p-3 rounded-md">
           {[
             { label: "Address Type", key: "hotel_address_type", value:"Central Reservation(Static)" },
-            { label: "Address", key: "hotel_address1" },
-            { label: "Address", key: "hotel_address2" },
+            { label: "Address 1", key: "hotel_address1" },
+            { label: "Address 2", key: "hotel_address2" },
             { label: "Area", key: "hotel_area" },
             { label: "Landmark", key: "hotel_landmark" },
             { label: "Pincode", key: "hotel_pincode" },
@@ -139,7 +152,7 @@ const AddressManager = ({ form, handleChange, supplierId }: Props) => {
 
               {/* INPUT */}
          <input
-  value={form[item.key] ?? item.value ?? ""}
+  value={form[item.key] || ""}
   onChange={(e) => handleChange(item.key, e.target.value)}
   className={`flex-1 px-2 py-1 text-xs border-2 rounded-[5px] border-l-0 border-gray-700 outline-none 
   ${item.key === "hotel_country" ? "bg-[#FFDADA]" : "bg-white"}`}

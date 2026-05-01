@@ -305,7 +305,7 @@ fetch(`${API_URL}/api/properties/property/${id}/supplier`)
      
       <div className="md:col-span-2">
         <p className="text-sm text-muted-foreground">Address</p>
-        <p className="font-medium">{property.address}</p>
+        <p className="font-medium">{property.state}, {property.city}</p>
       </div>
 
     </div>
